@@ -173,6 +173,7 @@ function checkedPlant(mixed $plant): array
         || !Seeds::isHex32($encounter)) {
         respond(400, ['error' => 'seed, parents (two) and encounter are each 64 lowercase hex characters.']);
     }
+    refuseSelfCross($parents);
     if (!(is_float($height) || is_int($height)) || $height < 0.05 || $height > 4.0
         || !is_int($family) || $family < 0 || $family > 6) {
         respond(400, ['error' => 'height is metres, 0.05 to 4; family is 0 to 6.']);
@@ -250,6 +251,19 @@ function checkedPlant(mixed $plant): array
 }
 
 /**
+ * **A plant is the cross of two different plants** (14 October 2026). Both
+ * parents the same seed is a plant crossed with itself, which the app never
+ * makes — its exchange stops at *same seed* — so one arriving here was made by
+ * hand, and is refused as a wrong cross is: 422.
+ */
+function refuseSelfCross(array $parents): void
+{
+    if ($parents[0] === $parents[1]) {
+        respond(422, ['error' => 'A plant is the cross of two different parents.']);
+    }
+}
+
+/**
  * What one gardener chooses to show beside a plant in the Wild Fields: their
  * gardener name, where they met and the month they met, each the value to
  * show or absent for not. Since 1 October 2026 (`WildStore.php`).
@@ -282,20 +296,41 @@ function checkedShown(mixed $shown): array
             'month' => $month];
 }
 
+/** The rate limit, one a request: it holds the salt once read. */
+function limits(array $settings): Limits
+{
+    static $limits = null;
+    return $limits ??= new Limits(store($settings)->connection());
+}
+
 /**
- * Stops here if this caller has written too often lately.
+ * Stops here if everybody behind this address together has written too often
+ * lately.
  *
  * Before the body is read and before anything is looked up, so a caller that
  * is over its limit costs the service a counter and nothing else. `Limits.php`
  * says what is kept and for how long — a salted bucket and a count, never an
- * address.
+ * address — and why there are two counts.
  */
 function withinLimits(array $settings, string $path): void
 {
-    $wait = (new Limits(store($settings)->connection()))
-        ->wait($path, Limits::caller($_SERVER), time());
-    if ($wait === null) return;
+    refuseIfWaiting(limits($settings)->wait($path, Limits::caller($_SERVER), time(), Limits::BY_ADDRESS));
+}
 
+/**
+ * And if this one gardener has (14 October 2026): `$key` is the meeting token
+ * the request carries, or what stands in for one. After the body is read,
+ * because that is where the token is, so a crowd on one address does not
+ * share one person's allowance.
+ */
+function withinGardenersLimit(array $settings, string $path, string $key): void
+{
+    refuseIfWaiting(limits($settings)->wait($path, $key, time(), Limits::BY_GARDENER));
+}
+
+function refuseIfWaiting(?int $wait): void
+{
+    if ($wait === null) return;
     header('Retry-After: ' . $wait);
     respond(429, [
         'error' => 'That is more writing than this service takes from one place in under an hour.',
@@ -315,8 +350,9 @@ function route(string $method, string $path): never
     }
 
     // Every route that writes, and `pending` too: it is the one a phone calls
-    // unprompted, so it is the one a script would call in a loop.
-    if ($method === 'POST' && isset(Limits::ROUTES[$path])) {
+    // unprompted, so it is the one a script would call in a loop. By address
+    // here; by gardener in each route, once its body is read.
+    if ($method === 'POST' && isset(Limits::CEILINGS[$path])) {
         withinLimits($settings, $path);
     }
 
@@ -442,6 +478,7 @@ function route(string $method, string $path): never
         if (!Seeds::isHex16($to) || !Seeds::isHex16($from) || $to === $from) {
             respond(400, ['error' => 'to and from are each 32 lowercase hex characters, and are not the same token.']);
         }
+        withinGardenersLimit($settings, $path, $from);
         $plant = checkedPlant($body['plant'] ?? null);
         [$offer, $new] = store($settings)->offers()->offer(
             $plant['seed'], $to, $from, $plant['parents'][0], $plant['parents'][1],
@@ -475,6 +512,15 @@ function route(string $method, string $path): never
         foreach ($tokens as $token) {
             if (!Seeds::isHex16($token)) respond(400, ['error' => 'Each token is 32 lowercase hex characters.']);
         }
+        // **One phone, by the bag it asks with**: a phone sends every token
+        // it holds each time, so the bag, sorted, is the same request after
+        // request until it meets somebody new. An empty bag asks about nothing
+        // and is counted by its address alone.
+        if ($tokens !== []) {
+            $bag = array_values(array_unique($tokens));
+            sort($bag, SORT_STRING);
+            withinGardenersLimit($settings, $path, implode(',', $bag));
+        }
         // **And the Wild Fields', on the same request** (1 October 2026): a
         // plant one of these meetings grew that either gardener has released,
         // with what each chose to show beside it. One poll rather than two, so
@@ -493,6 +539,7 @@ function route(string $method, string $path): never
         if (!Seeds::isHex32($seed) || !Seeds::isHex16($to) || !is_bool($yes)) {
             respond(400, ['error' => 'seed is 64 hex characters, to is 32, and yes is a boolean.']);
         }
+        withinGardenersLimit($settings, $path, $to);
         $answered = store($settings)->offers()->answer($seed, $to, $yes, time());
         // The same answer whether there is no such offer or the token is wrong,
         // so the route cannot be used to find out which plants have been offered.
@@ -507,6 +554,7 @@ function route(string $method, string $path): never
         if (!Seeds::isHex32($seed) || !Seeds::isHex16($token)) {
             respond(400, ['error' => 'seed is 64 hex characters and token is 32.']);
         }
+        withinGardenersLimit($settings, $path, $token);
         $offer = store($settings)->offers()->withdraw($seed, $token, time());
         if ($offer === null) respond(404, ['error' => 'No offer for that plant at that token.']);
         respond(200, ['offer' => $offer]);
@@ -602,6 +650,10 @@ function route(string $method, string $path): never
         if ($token !== null && !Seeds::isHex16($token)) {
             respond(400, ['error' => 'token is 32 lowercase hex characters, or absent.']);
         }
+        refuseSelfCross($parents);
+        // A release without a token is counted by its plant: a plant is let
+        // go once, so it is one gardener's act either way.
+        withinGardenersLimit($settings, $path, $token ?? $seed);
         if ($theirs !== null && (!Seeds::isHex16($theirs) || $token === null || $theirs === $token)) {
             respond(400, ['error' => 'theirs is 32 lowercase hex characters, sent with token and not the same, or absent.']);
         }
@@ -632,6 +684,22 @@ function route(string $method, string $path): never
             respond(403, ['error' => 'This plant has stood in the garden, and only the two who grew it can release it.']);
         }
         [$planting, $new] = $store->wild()->release($seed, $parents[0], $parents[1]);
+        if ($planting === null) {
+            // **Planted in an area since the way was cleared** (14 October
+            // 2026): the other gardener offered it and it was answered yes in
+            // the moment between `letGo` and the release, and an area holds it
+            // now (`Placed.php`). Cleared again — taken back, as the release
+            // would have taken it back had it come a moment later — and let go
+            // once more. Still held, it is somebody else's moment, and the
+            // phone is told to try again.
+            if (!$store->offers()->letGo($seed, $token, time())) {
+                respond(403, ['error' => 'This plant has stood in the garden, and only the two who grew it can release it.']);
+            }
+            [$planting, $new] = $store->wild()->release($seed, $parents[0], $parents[1]);
+            if ($planting === null) {
+                respond(409, ['error' => 'This plant is being planted in the garden at this moment. Try again.']);
+            }
+        }
         $beside = $theirs === null ? null : $store->wild()->beside($seed, $token, $theirs, $shown);
         // Read again, so the planting answered carries what was just chosen.
         if ($beside !== null) $planting = $store->wild()->find($seed) ?? $planting;
@@ -652,6 +720,7 @@ function route(string $method, string $path): never
         if (!Seeds::isHex32($seed) || !Seeds::isHex16($token)) {
             respond(400, ['error' => 'seed is 64 hex characters and token is 32.']);
         }
+        withinGardenersLimit($settings, $path, $token);
         $seen = store($settings)->wild()->answer($seed, $token, checkedShown($body['shown'] ?? null));
         // One answer for no such plant, a plant released without names, and
         // somebody else's token, as `/api/walk/answer` gives.
@@ -669,6 +738,8 @@ function route(string $method, string $path): never
             $plant['encounter'], $plant['height'], $plant['family'], $plant['kind'], $plant['hue'],
             $plant['habit']
         );
+        // Standing somewhere public already, in another area or the field.
+        if ($planting === null) respond(409, ['error' => 'This plant already stands somewhere else.']);
         respond($new ? 201 : 200, $planting);
     }
 

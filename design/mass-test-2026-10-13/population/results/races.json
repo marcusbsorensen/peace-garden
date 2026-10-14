@@ -1,0 +1,54 @@
+{
+ "R1_release_twenty_at_once": {
+  "1 created, 0 told, 19 failed, 1 row": 1,
+  "1 created, 19 told, 0 failed, 1 row": 19
+ },
+ "R2_yes_2_at_once": {
+  "offer accepted, planting absent, 1 answers said planted, statuses 200/200": 15,
+  "offer accepted, planting standing, 1 answers said planted, statuses 200/200": 15
+ },
+ "R2_yes_3_at_once": {
+  "offer accepted, planting absent, 1 answers said planted, statuses 200/200/200": 10,
+  "offer accepted, planting standing, 1 answers said planted, statuses 200/200/200": 20
+ },
+ "R3_yes_and_withdraw_at_once": {
+  "offer withdrawn, planting absent": 27,
+  "offer accepted, planting standing": 3
+ },
+ "R4_offer_and_release_at_once": {
+  "offer 410, release 201, then yes 404: wild yes, area absent": 13,
+  "offer 201, release 201, then yes 200: wild yes, area absent": 18,
+  "offer 201, release 201, then yes 200: wild yes, area standing": 9
+ },
+ "R5_fifty_yes_into_the_glasshouse": {
+  "statuses": {
+   "200": 50
+  },
+  "clashes": 0,
+  "ms_for_all": 307,
+  "slowest_ms": 299
+ },
+ "R6_both_choose_the_place_at_once": {
+  "place shown, month shown, statuses 200/200": 30
+ },
+ "R7_forty_new_callers_at_once": {
+  "failed_per_round_of_40": [
+   0,
+   0,
+   0,
+   1,
+   0,
+   1,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   1,
+   0
+  ],
+  "failed_share": "0.5%"
+ }
+}

@@ -1,0 +1,794 @@
+{
+ "db": "pgmt_main",
+ "cases": [
+  {
+   "name": "release: a seed that is not the cross",
+   "want": [
+    422
+   ],
+   "got": 422,
+   "ok": true
+  },
+  {
+   "name": "offer: a seed that is not the cross",
+   "want": [
+    422
+   ],
+   "got": 422,
+   "ok": true
+  },
+  {
+   "name": "release: the right seed, the wrong meeting",
+   "want": [
+    422
+   ],
+   "got": 422,
+   "ok": true
+  },
+  {
+   "name": "offer: the right seed, the wrong meeting",
+   "want": [
+    422
+   ],
+   "got": 422,
+   "ok": true
+  },
+  {
+   "name": "release: one parent swapped for a stranger's",
+   "want": [
+    422
+   ],
+   "got": 422,
+   "ok": true
+  },
+  {
+   "name": "release: three parents",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "release: upper-case hex",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: from and to the same token",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "release: an invented lineage (accepted by design)",
+   "want": [
+    201
+   ],
+   "got": 201,
+   "ok": true
+  },
+  {
+   "name": "release: a plant crossed with itself (the app never makes one)",
+   "want": [
+    422,
+    400
+   ],
+   "got": 201,
+   "ok": false,
+   "body": "{\"planting\":{\"seed\":\"3342a9d74c367f7e7e0c81890c5aa7ca64cdbb3608c12ceb97aa9b41c6662d21\",\"parents\":[\"f12485d5db7b678065f828187c405dfa4be36a2d571f1c6a4bba9eccbe5e0964\",\"f12485d5db7b678065f828187c405dfa4b"
+  },
+  {
+   "name": "offer: a true cross, first time",
+   "want": [
+    201
+   ],
+   "got": 201,
+   "ok": true
+  },
+  {
+   "name": "offer: the same request replayed",
+   "want": [
+    200
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "offer: the other phone offering the same child",
+   "want": [
+    200
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "offer: the same plant with two invented tokens",
+   "want": [
+    409
+   ],
+   "got": 409,
+   "ok": true
+  },
+  {
+   "name": "offer: the real recipient, an invented sender",
+   "want": [
+    409
+   ],
+   "got": 409,
+   "ok": true
+  },
+  {
+   "name": "answer: the offerer answering their own offer",
+   "want": [
+    404
+   ],
+   "got": 404,
+   "ok": true
+  },
+  {
+   "name": "answer: an invented token",
+   "want": [
+    404
+   ],
+   "got": 404,
+   "ok": true
+  },
+  {
+   "name": "withdraw: an invented token",
+   "want": [
+    404
+   ],
+   "got": 404,
+   "ok": true
+  },
+  {
+   "name": "answer: yes, by the right token",
+   "want": [
+    200
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "answer: yes, replayed",
+   "want": [
+    200
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "the accepted plant is public with its meeting",
+   "want": [
+    "present"
+   ],
+   "got": "present",
+   "ok": true
+  },
+  {
+   "name": "release: a stranger, no token, a published plant",
+   "want": [
+    403
+   ],
+   "got": 403,
+   "ok": true
+  },
+  {
+   "name": "release: a stranger with a token stolen from another meeting",
+   "want": [
+    403
+   ],
+   "got": 403,
+   "ok": true
+  },
+  {
+   "name": "offer: a stranger re-offering a published plant",
+   "want": [
+    409
+   ],
+   "got": 409,
+   "ok": true
+  },
+  {
+   "name": "withdraw: by the recipient",
+   "want": [
+    200
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "a withdrawn planting leaves its plot",
+   "want": [
+    "absent"
+   ],
+   "ok": true,
+   "got": "absent"
+  },
+  {
+   "name": "offer: the withdrawn plant again, by the same pair",
+   "want": [
+    200
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "offer: the withdrawn plant again, by strangers",
+   "want": [
+    409
+   ],
+   "got": 409,
+   "ok": true
+  },
+  {
+   "name": "release: the withdrawn plant, by a stranger",
+   "want": [
+    403
+   ],
+   "got": 403,
+   "ok": true
+  },
+  {
+   "name": "release: the withdrawn plant, by one of the two",
+   "want": [
+    201
+   ],
+   "got": 201,
+   "ok": true
+  },
+  {
+   "name": "release: with names, SQL-shaped",
+   "want": [
+    201
+   ],
+   "got": 201,
+   "ok": true
+  },
+  {
+   "name": "release: the same gardener again",
+   "want": [
+    200
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "release: the other gardener's copy",
+   "want": [
+    200
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "SQL-shaped and RTL names come back exactly, place shown once both agree",
+   "want": [
+    "exact"
+   ],
+   "got": "{\"names\":[\"Robert'); DROP TABLE wild_fields;--\",\"مريم\"],\"place\":\"1' OR '1'='1\",\"month\":null}",
+   "ok": true
+  },
+  {
+   "name": "wild answer: a stranger",
+   "want": [
+    404
+   ],
+   "got": 404,
+   "ok": true
+  },
+  {
+   "name": "curate.php hide",
+   "want": [
+    "Hidden"
+   ],
+   "got": "Hidden:",
+   "ok": true
+  },
+  {
+   "name": "a hidden plant is in no tile",
+   "want": [
+    "absent"
+   ],
+   "ok": true,
+   "got": "absent"
+  },
+  {
+   "name": "release: a hidden plant, by its releaser",
+   "want": [
+    410
+   ],
+   "got": 410,
+   "ok": true
+  },
+  {
+   "name": "release: a hidden plant, no token",
+   "want": [
+    410
+   ],
+   "got": 410,
+   "ok": true
+  },
+  {
+   "name": "offer: a hidden plant",
+   "want": [
+    410
+   ],
+   "got": 410,
+   "ok": true
+  },
+  {
+   "name": "pending still tells the releaser about a hidden plant (README says so)",
+   "want": [
+    "told"
+   ],
+   "got": "told",
+   "ok": true
+  },
+  {
+   "name": "curate.php unhide",
+   "want": [
+    "Standing again"
+   ],
+   "got": "Standing again:",
+   "ok": true
+  },
+  {
+   "name": "release: after unhide, answered as standing",
+   "want": [
+    200
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "curate.php refuses fewer than six characters",
+   "want": [
+    2
+   ],
+   "got": 2,
+   "ok": true
+  },
+  {
+   "name": "body: not JSON",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "body: a JSON array",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "body: a JSON string",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "body: empty",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "body: nested 600 deep",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "body: invalid UTF-8",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "body: a lone surrogate in a name",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "body: 9 KB, cut at 8 KB by readBody",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "body: 2 MB (nginx default limit is 1 MB)",
+   "want": [
+    413,
+    400
+   ],
+   "got": 413,
+   "ok": true
+  },
+  {
+   "name": "body: 900 KB (under nginx's limit; PHP reads 8 KB)",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: height as a string",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: height 1e309",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: family 7",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: family 3.0",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: hue exactly 1",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: kind with a capital",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: kind of 65 letters",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: kind with an accent",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: an area that does not exist",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: area as an array",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "offer: kind as a number",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "release: token as a number",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "release: shown as a string",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "release: name as a number",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "pending: 129 tokens",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "pending: 128 tokens",
+   "want": [
+    200
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "pending: tokens as an object",
+   "want": [
+    200,
+    400
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "pending: a token that is a fingerprint",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "GET on a write route",
+   "want": [
+    404
+   ],
+   "got": 404,
+   "ok": true
+  },
+  {
+   "name": "tile 8 (one past the edge)",
+   "want": [
+    404
+   ],
+   "got": 404,
+   "ok": true
+  },
+  {
+   "name": "tile 08",
+   "want": [
+    404
+   ],
+   "got": 404,
+   "ok": true
+  },
+  {
+   "name": "plot 999999 of the walk",
+   "want": [
+    200
+   ],
+   "got": 200,
+   "ok": true
+  },
+  {
+   "name": "the service file itself",
+   "want": [
+    403
+   ],
+   "got": 403,
+   "ok": true
+  },
+  {
+   "name": "config.php",
+   "want": [
+    403
+   ],
+   "got": 403,
+   "ok": true
+  },
+  {
+   "name": "name: Arabic",
+   "want": [
+    201
+   ],
+   "got": 201,
+   "ok": true
+  },
+  {
+   "name": "name: Hebrew",
+   "want": [
+    201
+   ],
+   "got": 201,
+   "ok": true
+  },
+  {
+   "name": "name: emoji without a joiner",
+   "want": [
+    201
+   ],
+   "got": 201,
+   "ok": true
+  },
+  {
+   "name": "name: 48 emoji (48 code points)",
+   "want": [
+    201
+   ],
+   "got": 201,
+   "ok": true
+  },
+  {
+   "name": "name: 49 code points",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "name: combining marks: 24 letters, 48 code points",
+   "want": [
+    201
+   ],
+   "got": 201,
+   "ok": true
+  },
+  {
+   "name": "name: right-to-left override U+202E",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "name: emoji with a zero-width joiner (the app strips it first)",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "name: Persian with ZWNJ (the app strips it first)",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "name: a NUL byte",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "name: only spaces",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "name: HTML",
+   "want": [
+    201
+   ],
+   "got": 201,
+   "ok": true
+  },
+  {
+   "name": "name: no-break spaces round it (PHP trims ASCII only)",
+   "want": [
+    201
+   ],
+   "got": 201,
+   "ok": true
+  },
+  {
+   "name": "month: 2026-13",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "shown without theirs",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "theirs equal to token",
+   "want": [
+    400
+   ],
+   "got": 400,
+   "ok": true
+  },
+  {
+   "name": "rate limit: one address, eleven releases",
+   "want": [
+    "9 then 429"
+   ],
+   "got": "201,201,201,201,201,201,201,201,201,429,429",
+   "ok": true
+  },
+  {
+   "name": "rate limit: twenty releases from one IPv6 /64",
+   "want": [
+    "9 then 429"
+   ],
+   "got": "20 accepted",
+   "ok": false,
+   "finding": true
+  },
+  {
+   "name": "rate limit: nine malformed releases spend the allowance",
+   "want": [
+    429
+   ],
+   "got": 429,
+   "ok": true
+  },
+  {
+   "name": "rate limit: Retry-After present",
+   "want": [
+    "a number"
+   ],
+   "got": "3299",
+   "ok": true
+  }
+ ]
+}

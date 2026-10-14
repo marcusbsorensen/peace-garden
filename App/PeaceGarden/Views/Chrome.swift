@@ -31,11 +31,18 @@ enum Chrome {
     // set of colours somebody has to keep in step. The alphas are not mirrored:
     // dark type on a light ground reads heavier at the same opacity, so the
     // light values are pulled back a little to keep the three levels apart.
+    //
+    // **Except `faint` in the light, which was pulled back too far** (mass
+    // test, 13 October, finding 8): 0.52 on the light ground is 3.7 : 1, under
+    // the 4.5 : 1 small text needs, and it is the small text — the label
+    // voice, a plant's place and date, the seed screen's row labels. At 0.60
+    // it is 4.8 : 1, still the faintest of the three and still apart from
+    // `muted` (6.8 : 1).
     static let ink = adaptive(dark: .white, light: UIColor(white: 0.07, alpha: 1))
     static let muted = adaptive(dark: UIColor(white: 1, alpha: 0.72),
                                 light: UIColor(white: 0.07, alpha: 0.70))
     static let faint = adaptive(dark: UIColor(white: 1, alpha: 0.56),
-                                light: UIColor(white: 0.07, alpha: 0.52))
+                                light: UIColor(white: 0.07, alpha: 0.60))
     /// Rules and borders, never text. Lifted only enough that a capsule's edge
     /// is visible outdoors.
     static let hairline = adaptive(dark: UIColor(white: 1, alpha: 0.24),
@@ -79,6 +86,37 @@ enum Chrome {
     static let pinkGold = Color(red: 0.851, green: 0.659, blue: 0.549)  // #D9A88C
     static let ochre = Color(red: 0.690, green: 0.478, blue: 0.290)     // #B07A4A
     static let crimson = Color(red: 0.494, green: 0.114, blue: 0.157)   // #7E1D28
+
+    // MARK: - On, and the two lights
+
+    /// A switch that is on (Marcus, 13 October 2026: *the calm sage background
+    /// instead of light grey*).
+    ///
+    /// **The sage stop of the logo's own ramp**, in both of the pair BRAND.md
+    /// gives it: `#9CC29E` on dark and `#397E3D` on light. Against the screen's
+    /// ground, computed rather than eyeballed, the track is 10.6 : 1 on black —
+    /// as light as the grey it replaced, so the white knob reads against it as
+    /// it did — and 4.6 : 1 on the light ground, where it carries the knob at
+    /// 5.0 : 1. Both are well over the 3 : 1 an edge that says *on* needs.
+    static let sage = adaptive(dark: rgb(0x9CC29E), light: rgb(0x397E3D))
+
+    /// The sun's strokes, on the chosen answer of *Light and dark*: a warm
+    /// orange. `#F2A65A` on dark, 8.6 : 1 on the chosen capsule's wash;
+    /// `#B5561A` on light, 3.7 : 1 on the wash and 4.5 : 1 on the ground.
+    static let sunOrange = adaptive(dark: rgb(0xF2A65A), light: rgb(0xB5561A))
+
+    /// The moon's strokes, beside the sun's: a pale yellow. `#F4E4A1` on dark,
+    /// 13.6 : 1 on the wash. **On light it cannot be pale** — a pale yellow on
+    /// a near-white ground is 1.2 : 1 and disappears — so it deepens to a gold,
+    /// `#8C6A00`, 3.8 : 1 on the wash and 4.7 : 1 on the ground.
+    static let moonYellow = adaptive(dark: rgb(0xF4E4A1), light: rgb(0x8C6A00))
+
+    private static func rgb(_ hex: UInt32) -> UIColor {
+        UIColor(red: CGFloat((hex >> 16) & 0xFF) / 255,
+                green: CGFloat((hex >> 8) & 0xFF) / 255,
+                blue: CGFloat(hex & 0xFF) / 255,
+                alpha: 1)
+    }
 
     /// Text stops being readable somewhere past this. On an iPad a paragraph
     /// set to the full width of the screen is a wall; the plant is allowed the
@@ -193,11 +231,34 @@ enum PlantingLocationMode: String, CaseIterable, Sendable {
     /// Whatever the gardener would rather it said.
     case custom
 
+    /// What the *Location description* menu calls each answer. The first is
+    /// Marcus's wording of 13 October 2026, which replaced *One of the places*.
     var label: LocalizedStringResource {
         switch self {
-        case .abstract: return "One of the places"
+        case .abstract: return "A place from abstract list"
         case .geographic: return "Where you actually are"
         case .custom: return "Something you write"
+        }
+    }
+
+    /// The one line under the menu, for the answer that is chosen and no other
+    /// (Marcus, 13 October 2026).
+    ///
+    /// Each says what that answer does, in a sentence. Until then the section
+    /// carried a line under each answer's control and, whichever was chosen,
+    /// ninety words on everything that crosses between two phones — which is
+    /// an account of the meeting rather than of this setting, and belongs with
+    /// the privacy account rather than among the switches.
+    ///
+    /// *Something you write* keeps the sentence it already had, because it was
+    /// already one plain sentence, and true: what is written is used nowhere
+    /// else yet (`places.custom.v1`). When a seed does carry it, this is the
+    /// sentence to change.
+    var note: LocalizedStringResource {
+        switch self {
+        case .abstract: return "Where you met is given as a place from the abstract list."
+        case .geographic: return "Where you met is logged on this phone as the coordinates it measured, when you both ask."
+        case .custom: return "What you write here is kept in this phone's settings, and for now it appears only there."
         }
     }
 }
@@ -312,6 +373,31 @@ enum GardenDaylight: String, CaseIterable, Sendable {
         }
     }
 
+    /// Which light a stroke of the mark is, and so the colour it takes when its
+    /// answer is the chosen one: the sun warm orange, the moon pale yellow
+    /// (Marcus, 13 October 2026).
+    enum Light: Sendable {
+        case sun, moon
+
+        var colour: Color {
+            switch self {
+            case .sun: return Chrome.sunOrange
+            case .moon: return Chrome.moonYellow
+            }
+        }
+    }
+
+    /// The same mark, drawn a light at a time, so that the middle answer's sun
+    /// and moon can each wear their own colour.
+    var parts: [(light: Light, shape: AnyShape)] {
+        switch self {
+        case .always: return [(.sun, AnyShape(SunGlyph()))]
+        case .byTheClock: return [(.sun, AnyShape(SunAndMoonGlyph(part: .sun))),
+                                  (.moon, AnyShape(SunAndMoonGlyph(part: .moon)))]
+        case .alwaysNight: return [(.moon, AnyShape(MoonGlyph()))]
+        }
+    }
+
     /// The hour to draw the garden at, given the hour it actually is.
     func hour(when actual: Double) -> Double {
         switch self {
@@ -351,6 +437,18 @@ enum StagePlantStyle: String, CaseIterable, Sendable {
     /// Whether the tint is the plant's whole colour, and therefore worth
     /// letting somebody choose.
     var isTinted: Bool { self != .full }
+
+    /// The system's mark for each answer, on the seed screen's control
+    /// (`PlantDrawingToggle`): a palette for the plant's own colours, a drop
+    /// for one ink, and the transparent cube that is the system's own word
+    /// for a wireframe. Known marks rather than three more words.
+    var symbol: String {
+        switch self {
+        case .full: return "paintpalette"
+        case .monochrome: return "drop"
+        case .wireframe: return "cube.transparent"
+        }
+    }
 }
 
 extension Chrome {
@@ -441,11 +539,21 @@ private struct ChromeTracking: ViewModifier {
 }
 
 /// Uppercases, unless the language would rather it did not.
+///
+/// **Capitals for the eye, words for the ear** (14 October). `textCase`
+/// changes the string itself, so VoiceOver was handed *LOCATION DESCRIPTION*
+/// and read it as capitals — letter by letter, for some words — and an
+/// explicit label beside it was uppercased too, because the label is
+/// resolved in the same environment. So what VoiceOver reads is the same
+/// content with the case left as written: one representation, here, for
+/// every label and heading in the two voices.
 private struct ChromeLetterCase: ViewModifier {
     @Environment(\.locale) private var locale
 
     func body(content: Content) -> some View {
-        content.textCase(Chrome.letterCase(in: locale))
+        content
+            .textCase(Chrome.letterCase(in: locale))
+            .accessibilityRepresentation { content.textCase(nil) }
     }
 }
 
@@ -497,21 +605,48 @@ extension View {
         environment(\.layoutDirection, .leftToRight)
     }
 
+    /// Type at the size the design set, grown or shrunk with the size of text
+    /// the phone is set to. Every `.font(.system(size:))` a person reads goes
+    /// through here or through the three voices below. See `ScaledSystemFont`.
+    func scaledFont(size: CGFloat, weight: Font.Weight = .light, design: Font.Design = .default,
+                    monospacedDigits: Bool = false) -> some View {
+        modifier(ScaledSystemFont(size: size, weight: weight, design: design,
+                                  monospacedDigits: monospacedDigits))
+    }
+
     /// Small, wide-tracked, uppercase: the app's label voice.
+    ///
+    /// **Regular below twelve points, light from twelve up** (mass test, 13
+    /// October, finding 8). At ten and eleven points the light weight's
+    /// strokes are thinner than a pixel, so the capitals never reach the grey
+    /// they are drawn in, and the voice failed the contrast audit in Dark too,
+    /// where its grey is 6.5 : 1 by arithmetic. One step of weight brings the
+    /// strokes up to their colour; the voice stays small, spaced and quiet.
+    ///
+    /// **It grows as far as AX3** (14 October). Tracked capitals are the
+    /// widest type in the app, and a long word in them — Danish and Dutch
+    /// make long words — no longer fits an SE's column past AX3, where it
+    /// breaks in the middle.
     func chromeLabel(size: CGFloat = 11, weight: Font.Weight = .light) -> some View {
-        font(.system(size: size, weight: weight, design: .default))
+        scaledFont(size: size, weight: size < 12 && weight == .light ? .regular : weight)
             .modifier(ChromeTracking(2.4))
             .modifier(ChromeLetterCase())
+            .dynamicTypeSize(...DynamicTypeSize.accessibility3)
     }
 
     /// The heading voice: uppercase and wide-tracked, like the label voice but
     /// at size. It is what marks the three moments the app explains itself —
     /// the seed forming, the seed planted, two seeds meeting — as one sequence
     /// rather than three unrelated screens.
+    ///
+    /// **It grows as far as AX2** (14 October), for the label voice's reason
+    /// at a larger size: at AX5 *ONTMOETEN* and *PRENDENDO* broke mid-word on
+    /// an SE, and at AX2 the heading is already twice its size at Large.
     func chromeHeading(size: CGFloat = 20) -> some View {
-        font(.system(size: size, weight: .light, design: .default))
+        scaledFont(size: size)
             .modifier(ChromeTracking(2.8))
             .modifier(ChromeLetterCase())
+            .dynamicTypeSize(...DynamicTypeSize.accessibility2)
     }
 
     /// The serif voice, used only for plant names.
@@ -523,8 +658,63 @@ extension View {
     /// and the ending, each set beside what it means. Grep before adding
     /// anything that is neither.
     func plantName(size: CGFloat = 26) -> some View {
-        font(.system(size: size, weight: .light, design: .serif))
+        scaledFont(size: size, design: .serif)
             .italic()
+    }
+}
+
+/// A system font at a designed size that follows Dynamic Type.
+///
+/// **Every size in the app was fixed** (mass test, 13 October, finding 4: of
+/// 1,499 texts compared from Large to the accessibility sizes, none grew).
+/// The design's sizes are its own — eleven-point tracked capitals, a fifteen-
+/// point light paragraph — and none of them is a text style's, so each is
+/// scaled by the text style nearest to it rather than replaced by one: at
+/// Large every screen is exactly what it was, and at any other size each
+/// line grows as the system's own type of that size grows.
+///
+/// Where a screen cannot hold the largest sizes, it says so with
+/// `dynamicTypeSize(...)` at the screen, and that caps this too.
+struct ScaledSystemFont: ViewModifier {
+    @ScaledMetric private var size: CGFloat
+    let weight: Font.Weight
+    let design: Font.Design
+    let monospacedDigits: Bool
+
+    init(size: CGFloat, weight: Font.Weight, design: Font.Design, monospacedDigits: Bool) {
+        _size = ScaledMetric(wrappedValue: size, relativeTo: Self.style(near: size))
+        self.weight = weight
+        self.design = design
+        self.monospacedDigits = monospacedDigits
+    }
+
+    func body(content: Content) -> some View {
+        let font = Font.system(size: size, weight: weight, design: design)
+        content.font(monospacedDigits ? font.monospacedDigit() : font)
+    }
+
+    /// The text style whose size at Large is nearest, so a size grows at that
+    /// style's rate. The small styles grow fastest — caption 1 goes from 12 to
+    /// 43 at the largest size, the large title from 34 to 60 — which is the
+    /// system's judgement about what needs the help, taken whole.
+    ///
+    /// **Nothing follows caption 2**, though the ten- and eleven-point label
+    /// voice is nearest it: caption 2 is eleven points at every size from the
+    /// smallest to Large, so a label that followed it did not move when the
+    /// size was turned down, and the audit called it *partially unsupported*.
+    /// Caption 1 moves at every step.
+    static func style(near size: CGFloat) -> Font.TextStyle {
+        switch size {
+        case ..<12.5: return .caption
+        case ..<14: return .footnote
+        case ..<15.5: return .subheadline
+        case ..<16.5: return .callout
+        case ..<18.5: return .body
+        case ..<21: return .title3
+        case ..<25: return .title2
+        case ..<31: return .title
+        default: return .largeTitle
+        }
     }
 }
 
@@ -579,9 +769,14 @@ struct QuietButton: View {
             Text(title)
                 .chromeLabel()
                 .foregroundStyle(isProminent ? Chrome.ink : Chrome.muted)
+                .multilineTextAlignment(.center)
                 .pressable(isProminent: isProminent)
         }
         .buttonStyle(.plain)
+        // **Grows as far as AX1**, where the longest of these (*They don't
+        // have the app*) takes two lines inside its capsule on an SE; past
+        // that the capsule's ends cut into the words (14 October).
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }
 }
 
@@ -630,6 +825,25 @@ extension View {
                     .padding(.trailing, 12)
                     .padding(.top, 8)
             }
+    }
+
+    /// For a column centred between two spacers: it stands exactly as it did
+    /// while it fits the screen, and scrolls once it does not.
+    ///
+    /// **Why at all.** A column of words between spacers on a 667-point SE was
+    /// already full at the type sizes the design set, and once the type follows
+    /// Dynamic Type (mass test, 13 October, findings 4 and 7) a column that
+    /// does not fit gives up height line by line and ends in an ellipsis. In a
+    /// scroll view whose content is at least the screen tall, the spacers
+    /// still centre the column whenever it fits, and the scroll view neither
+    /// bounces nor scrolls until it has to.
+    func scrollsWhenTooTall() -> some View {
+        GeometryReader { proxy in
+            ScrollView {
+                self.frame(maxWidth: .infinity, minHeight: proxy.size.height)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+        }
     }
 
     /// Lays a `SproutingRule` along the bottom edge of this view, so the rule's
@@ -687,7 +901,7 @@ extension View {
         padding(.horizontal, horizontal)
             .padding(.vertical, vertical)
             .overlay(
-                Capsule().strokeBorder(
+                ControlEdge().strokeBorder(
                     // The prominent one is brighter, so the hierarchy survives
                     // now that both have an outline. Well under the text it
                     // surrounds either way: an edge that competes with its own
@@ -700,6 +914,31 @@ extension View {
             // are small targets and the corners are worth having; a tap just
             // outside the outline is a tap meant for the button.
             .contentShape(Rectangle())
+    }
+}
+
+/// The edge `pressable` draws: a capsule round one line, and round more than
+/// one a rounded rectangle whose corners stop at the capsule's.
+///
+/// **Why not a capsule always** (14 October). With the type following
+/// Dynamic Type, a label can take two or three lines, and a capsule round
+/// three lines is a lozenge whose ends cut through the first and last words.
+/// The corners never grow past 24 points — the radius of the 48-point marks
+/// at the foot of the stage, which stay circles — so every one-line control
+/// is exactly the capsule it was.
+struct ControlEdge: InsettableShape {
+    var inset: CGFloat = 0
+
+    func path(in rect: CGRect) -> Path {
+        let box = rect.insetBy(dx: inset, dy: inset)
+        let radius = max(0, min(24 - inset, box.height / 2, box.width / 2))
+        return Path(roundedRect: box, cornerRadius: radius)
+    }
+
+    func inset(by amount: CGFloat) -> ControlEdge {
+        var edge = self
+        edge.inset += amount
+        return edge
     }
 }
 
@@ -1366,13 +1605,152 @@ struct ChromeIconLabel: View {
                 // is never wrapped or truncated. Stacked, it has a hundred
                 // points and the longest word in the catalogue is Swedish
                 // INSTÄLLNINGAR — so it is allowed to shrink a little rather
-                // than clip, which is the one place in the chrome where type
-                // is not a fixed size.
+                // than clip.
+                //
+                // **It grows with Dynamic Type only as far as XL**, and then
+                // shrinks back rather than clip (14 October). One word at a
+                // time leaves about 140 points for it beside the other three
+                // marks on an SE, and INSTÄLLNINGAR takes 119 at Large: the
+                // row has no more room to give, and VoiceOver reads every
+                // word at whatever size the phone asks for.
                 .lineLimit(1)
-                .minimumScaleFactor(axis == .horizontal ? 1 : 0.75)
-                .fixedSize(horizontal: axis == .horizontal, vertical: true)
+                .minimumScaleFactor(axis == .horizontal ? 0.8 : 0.75)
+                .fixedSize(horizontal: false, vertical: true)
+                .dynamicTypeSize(...DynamicTypeSize.xLarge)
                 .transition(.opacity)
         }
+    }
+}
+
+/// The mark that opened a screen, standing before that screen's title.
+///
+/// **The row at the foot of the stage names four screens by their marks**, and
+/// each screen it opens says its own name in capitals at the top (Marcus,
+/// 13 October: *"show the glyphs from the lower menu next to each title on the
+/// screens they open"*). The mark beside the title is the same drawing as the
+/// one that was touched, so the screen answers *which one did I open* in the
+/// language the row already speaks.
+///
+/// **The same drawing at the same weight, sized to the capitals.** The frame
+/// runs from the baseline to the cap height, plus the 0.9 pt every mark keeps
+/// clear inside its box for its own stroke, and the mark takes its usual share
+/// of it (`markBox`): the garden stands on the baseline and reaches the top of
+/// the capitals, and a rounder mark sits centred on them, as each sits in its
+/// circle at the foot. `Chrome.monoline` does not scale, as it does not in the
+/// row.
+///
+/// **Coloured as the title is**, because it strokes in the foreground style the
+/// title is set in, so one `foregroundStyle` after `titleGlyph(_:size:)` reaches
+/// both. Silent to VoiceOver, which already reads the title, and pinned to the
+/// hand it was drawn with (`drawnHand()`); under right-to-left the mark still
+/// stands before the title, which is then on its right.
+struct TitleGlyph: View {
+    let glyph: AnyShape
+    /// The title's point size as it is drawn: the designed size, grown with
+    /// Dynamic Type at the rate `chromeHeading` grows it, so the mark keeps to
+    /// the capitals at every size.
+    @ScaledMetric private var size: CGFloat
+
+    init(glyph: AnyShape, size: CGFloat) {
+        self.glyph = glyph
+        _size = ScaledMetric(wrappedValue: size, relativeTo: ScaledSystemFont.style(near: size))
+    }
+
+    /// The room a mark keeps inside its box for its own stroke.
+    static let inset: CGFloat = 0.9
+
+    /// Baseline to cap height, plus the stroke's room above and below.
+    static func side(for size: CGFloat) -> CGFloat {
+        UIFont.systemFont(ofSize: size, weight: .light).capHeight + 2 * inset
+    }
+
+    var body: some View {
+        let side = Self.side(for: size)
+        glyph
+            .stroke(.foreground, style: Chrome.monoline)
+            .frame(width: side, height: side)
+            .drawnHand()
+            // The box's floor, less the stroke's room, on the title's baseline.
+            .alignmentGuide(.firstTextBaseline) { $0[.bottom] - Self.inset }
+            .alignmentGuide(.lastTextBaseline) { $0[.bottom] - Self.inset }
+            .accessibilityHidden(true)
+    }
+}
+
+extension View {
+    /// This title, with the mark that opened its screen before it. See
+    /// `TitleGlyph`. `size` is the title's own point size.
+    func titleGlyph(_ glyph: some Shape, size: CGFloat) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: (size * 0.5).rounded()) {
+            TitleGlyph(glyph: AnyShape(glyph), size: size)
+                // Capped where the heading voice is, so it stays the height
+                // of the capitals beside it.
+                .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+            self
+        }
+    }
+}
+
+/// A few answers to one question, as marks in one capsule.
+///
+/// **The capsule of Settings' Light row** (`LightToggle`): the hairline round
+/// the whole, and round the chosen answer a capsule of its own, a faint wash
+/// inside the prominent edge, which slides between answers. Lifted out generic
+/// so the seed screen's plant drawing is that control and not one that looks
+/// like it.
+///
+/// **How a chosen mark is drawn is the caller's**, because `mark` is handed
+/// whether its answer is chosen. The seed screen lifts its mark from `faint` to
+/// `ink`. The Light row no longer does: since 13 October its chosen sun is
+/// orange and its moon yellow (`Chrome.sunOrange`, `Chrome.moonYellow`), so
+/// the two controls share the capsule and differ in the chosen mark's colour.
+/// `LightToggle` could still move onto this, drawing its colours in `mark`;
+/// its answers are 58 points wide to this one's 52.
+///
+/// Each answer is read aloud by its own label and the whole by `label`, so a
+/// VoiceOver user hears the question and which answer is selected.
+struct MarkChooser<Option: Hashable, Mark: View>: View {
+    let options: [Option]
+    let selection: Option
+    let label: Text
+    let optionLabel: (Option) -> Text
+    @ViewBuilder let mark: (Option, Bool) -> Mark
+    let choose: (Option) -> Void
+
+    @Namespace private var wash
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(options, id: \.self) { option in
+                segment(option)
+            }
+        }
+        .padding(3)
+        .overlay(Capsule().strokeBorder(Chrome.hairline, lineWidth: 1))
+        .animation(.easeInOut(duration: 0.22), value: selection)
+        .sensoryFeedback(.selection, trigger: selection)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(label)
+    }
+
+    private func segment(_ option: Option) -> some View {
+        let chosen = option == selection
+        return Button { choose(option) } label: {
+            mark(option, chosen)
+                .frame(minWidth: 52, minHeight: 44)
+                .background {
+                    if chosen {
+                        Capsule()
+                            .fill(Chrome.ink.opacity(0.10))
+                            .overlay(Capsule().strokeBorder(Chrome.ink.opacity(0.32), lineWidth: 1))
+                            .matchedGeometryEffect(id: "wash", in: wash)
+                    }
+                }
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(optionLabel(option))
+        .accessibilityAddTraits(chosen ? .isSelected : [])
     }
 }
 
@@ -1611,7 +1989,7 @@ struct HoldToConfirm: View {
             // width of an unwrapped line and took the sentence off the glass.
             if holding, !isMark {
                 Text(consequence)
-                    .font(.system(size: 13, weight: .light))
+                    .scaledFont(size: 13, weight: .light)
                     .foregroundStyle(Chrome.muted)
                     .lineSpacing(4)
                     .multilineTextAlignment(isMark ? .center : .leading)
@@ -1647,10 +2025,15 @@ struct HoldToConfirm: View {
             // reach for by accident because it caught their eye.
             row(glyphTint: tint, textTint: isMark ? Chrome.muted : Chrome.ink)
 
+            // The second copy is ink, not words: VoiceOver reads the first one
+            // only. Left in, every row was read twice — *Reset everything,
+            // Reset everything*, *Release, Release* (mass test, 13 October,
+            // finding 10).
             row(glyphTint: filledForeground, textTint: filledForeground)
                 .mask(alignment: .leading) {
                     Rectangle().scaleEffect(x: progress, anchor: .leading)
                 }
+                .accessibilityHidden(true)
         }
         // Behind the label rather than beside it in the stack, so the face is
         // exactly as wide as what it says and never as wide as what it is
@@ -1665,6 +2048,11 @@ struct HoldToConfirm: View {
         .clipShape(Capsule())
         .overlay(Capsule().strokeBorder(Chrome.hairline, lineWidth: 1))
         .contentShape(Rectangle())
+        // **A pill grows as far as AX2.** The fill wipes across a capsule,
+        // and a capsule round three lines of words is a lozenge whose ends cut
+        // into the first and last letters; at AX2 the longest of the four
+        // labels is still one line on an SE (14 October).
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
     }
 
     @ViewBuilder
@@ -1688,7 +2076,7 @@ struct HoldToConfirm: View {
                     .stroke(glyphTint, style: Chrome.monoline)
                     .frame(width: 15, height: 15)
                 Text(title)
-                    .font(.system(size: 15, weight: .light))
+                    .scaledFont(size: 15, weight: .light)
                     .foregroundStyle(textTint)
             }
             .padding(.horizontal, 18)

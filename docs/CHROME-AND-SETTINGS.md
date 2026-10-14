@@ -10,7 +10,7 @@ recorded.
 
 Some of it has moved since. Where it has, the section keeps the reasoning it
 was built on, marks the part that no longer holds as superseded with the date,
-and says what is there now. The last pass against the code was 24 September.
+and says what is there now. The last pass against the code was 13 October.
 
 ## What is wrong today
 
@@ -92,6 +92,29 @@ points round, and VoiceOver reads it as *What the name means*. The mark is
 transcribed from the SVG path the website draws, not redrawn, so the two cannot
 drift apart; a change starts from the site's path and comes to the app second.
 
+**13 October: the cog stands beside the heading.** Marcus asked for each screen
+the row opens to carry its mark beside its title. On Settings it is `CogShape`,
+the stage's own, in the same 1.2-point pen (`Chrome.monoline`) and in the
+heading's ink rather than the row's `muted`, drawn in a 22-point frame
+(`SettingsView.headingMark`) so its ink stands a little over the twenty-point
+capitals. It is a picture of the word beside it, so VoiceOver reads the word and
+not the picture. The two-second hold that opens *Testing* now sits on the cog
+and the word together.
+
+**13 October: the marks reach the screens they open, and the seed screen says how
+the plant is drawn** (Marcus). A screen with a title wears the mark that opened it
+before the title (`TitleGlyph`, `titleGlyph(_:size:)`): the same drawing at the same
+weight, baseline to cap height, in the title's ink, silent to VoiceOver. The garden's
+*Peace garden* has `GardenGlyph`; Settings takes the cog, drawn by its own header
+as the paragraph above says, at 22 points rather than through `TitleGlyph`; the seed
+screen and Meet have no title and so no mark. Meet's corner is the circled X every other screen
+closes with, where it was the word *Cancel*, and VoiceOver still reads *Cancel* or
+*Not this time*. Under the plant's name on the seed screen, three system marks —
+palette, drop, transparent cube — choose *How the plant is drawn* on the same
+`Chrome.plantStyleKey` as Settings, which keeps its row (`PlantDrawingToggle`, on
+`MarkChooser`, the Light row's control made generic). `design/title-glyphs-2026-10-13/`
+has the pictures and the choices.
+
 ## The name
 
 One layout, always. No swap between a display state and an edit state, because
@@ -150,8 +173,8 @@ screen holds now:
 
 | Heading | Controls | Line underneath |
 | --- | --- | --- |
-| Display | **Show plant name**, **Show growth stage**, *Menu bar*, **Let the plant turn**, *How the plant is drawn* (with *Its colour* when the drawing is tinted), *Appearance*, and *Light* — three marks, day, the clock, night | Under the menu bar, turning, appearance and light, each saying what the choice does |
-| Seed planting location | *How the place is said*: One of the places, Where you actually are, Something you write — and under it the place, the coordinates or the words | Under each state; then, whichever is chosen, the plain account of everything that crosses between two phones |
+| Display | **Show plant name**, **Show growth stage**, *Menu bar*, **Let the plant turn**, *How the plant is drawn* (with *Its colour* when the drawing is tinted), *Appearance*, and *Light and dark* — three marks, day, the clock, night, the chosen one in colour | Under the menu bar, turning, appearance and light, each saying what the choice does |
+| Seed planting location | *Location description*: A place from abstract list, Where you actually are, Something you write — and under the first, *Abstract list*; under the third, the words | One line, for the chosen answer only (since 13 October; see below) |
 | Joint seeds | Label `GARDENER USERNAME`, field on the rule; toggle **Alert me when a joint seed is shared** | *Plants you have already grown keep the name they were grown under.* and *Your username will only show publicly if you approve.* |
 | Starting again | The held rows, below | revealed while held |
 
@@ -163,6 +186,70 @@ page on the website reads the name live. The location switch went into *How
 the place is said*: a menu of figurative places and a switch that wrote down a
 coordinate were two answers to one question, and only one of them can be the
 answer.
+
+**13 October: *Location description*, and one line** (Marcus: the location
+settings were *very cryptic, not in a good way*). The labels are his words:
+
+| Was | Now |
+| --- | --- |
+| How the place is said | **Location description** |
+| One of the places | **A place from abstract list** |
+| Which one | **Abstract list** |
+
+*Where you actually are* and *Something you write* keep their names. Under the
+menu stands one line, the chosen answer's own (`PlantingLocationMode.note`), and
+it changes with the answer:
+
+| Answer | The line |
+| --- | --- |
+| A place from abstract list | *Where you met is given as a place from the abstract list.* |
+| Where you actually are | *Where you met is logged on this phone as the coordinates it measured, when you both ask.* |
+| Something you write | *What you write here is kept in this phone's settings, and for now it appears only there.* |
+
+The third is the sentence that stood under the field, unchanged. What left the
+screen: the line under *Which one*, the two sentences on coordinates, and the
+ninety-word account of everything that crosses between two phones, which had
+stood under all three answers. Marcus: *it reads more like something that can be
+shown on an About page under Privacy — it's not Settings text.* The app has no
+such page yet, so the account's key is left in the catalogue as it was,
+translated in all seven languages, and `design/settings-clarity-2026-10-13/`
+puts two places for it to Marcus — an About sheet from the foot of Settings, or
+a link to the website's privacy page, whose second paragraph (`privacy2`) says
+most of it.
+
+**14 October: the About sheet** (Marcus, 4A and 5A). A quiet button at the foot
+of Settings, under *Starting again* — an i in a ring and *About* — opens a sheet
+(`AboutView`) with the screen's own header: the same mark beside its title
+(`InfoGlyph` through `TitleGlyph`) and the circled X. Under *Privacy* stand the
+account of a meeting, from the catalogue's translated key (*made*, where the
+code had drifted to *drawn*), and the two sentences on coordinates, under the
+label *Where you actually are*, their translations taken back out of the stale
+keys. The same mark beside *Location description* opens the sheet at Privacy,
+and VoiceOver reads it as *Privacy*. Two new words: *About* and *Privacy*.
+`design/ui-followups-2026-10-14/about.png` has it.
+
+**13 October: the switches are sage when on.** `Chrome.sage`, the sage stop of
+the logo's ramp in the pair BRAND.md gives it: `#9CC29E` in Dark, `#397E3D` in
+Light. They were `Chrome.muted`, a grey that said *on* only by being lighter than
+*off*. The dark sage is as light as that grey was, 10.6 : 1 on black, so the
+white knob reads against it as it did (2.0 : 1); the light sage is 4.6 : 1 on
+the light ground and carries the knob at 5.0 : 1.
+
+**13 October: the chosen light is in colour.** In *Light and dark* the chosen
+mark is drawn with its sun in `Chrome.sunOrange` and its moon in
+`Chrome.moonYellow`; the middle answer, *Follows the hour*, has both, each in
+its own (`GardenDaylight.parts`, and `SunAndMoonGlyph(part:)`, which draws one
+light at a time). The other two marks stay `faint`, and the capsule round the
+chosen one is unchanged. Against that capsule's wash:
+
+| Token | Dark | Light | On the wash, Dark / Light |
+| --- | --- | --- | --- |
+| `Chrome.sunOrange` | `#F2A65A` | `#B5561A` | 8.6 : 1 / 3.7 : 1 |
+| `Chrome.moonYellow` | `#F4E4A1` | `#8C6A00` | 13.6 : 1 / 3.8 : 1 |
+
+In Light the pale yellow cannot stay pale — on the wash it is 1.0 : 1 — so the
+moon deepens to a gold. The garden's tray draws the same control, so it carries
+the colours too. VoiceOver still hears each mark's name and *selected*.
 
 **Appearance reaches every screen but the garden's** (Marcus, 12 October).
 *Dark*, *Light* or *Follow the phone* is applied once, at the top of the app
@@ -233,7 +320,10 @@ the button rather than sliding behind it.
 Colour has been the plants' alone until now — all chrome is white at four
 opacities against black. These three rows are the exception, and they earn it
 because they are the only places in the app where something is lost. Keeping
-colour rare is what will make it mean anything here.
+colour rare is what will make it mean anything here. *(Since 13 October two
+more places carry colour, both to say what is chosen: a switch that is on is
+sage, and the chosen light in* Light and dark *is orange and yellow. See
+above.)*
 
 | Row | Fill | Label once filled |
 | --- | --- | --- |
@@ -312,8 +402,9 @@ A three-second hold is a motor task, and some people cannot make one.
 **Log**, on the settings screen, the seed screen, the offer inside Exchange,
 and in the `NSLocationWhenInUseUsageDescription` string. *(Since 2 September
 there is no switch on either screen to carry the word: location is one of the
-three answers to* How the place is said*. It stands in the Exchange offer and
-the purpose string, which are the two places that still ask.)* The seed screen was
+three answers to the menu called Location description since 13 October, and the
+line under that answer says logged. It stands in the Exchange offer and the
+purpose string, which are the two places that still ask.)* The seed screen was
 not on the original list and carries a third copy of the same switch; leaving
 it saying *keep* would have been the drift this section exists to prevent.
 
@@ -350,7 +441,12 @@ The place offer inside Exchange shortens to match:
   open book, joined them on 24 September. The cog, pencil, seed, recycling turn
   and garden stay in `Chrome.swift`.
 - `App/PeaceGarden/Views/SettingsView.swift` — the name row, the copy, and the
-  three held rows. Takes `close` rather than reading `dismiss`.
+  three held rows. Takes `close` rather than reading `dismiss`. Since 13
+  October also the cog by the heading, the sage switches, *Location
+  description* and its line, and `LightToggle`'s colours; the tokens are
+  `Chrome.sage`, `Chrome.sunOrange` and `Chrome.moonYellow`, and the line is
+  `PlantingLocationMode.note`, both in `Chrome.swift`. `-pgSettingsAt` (Debug)
+  scrolls the screen to a heading for screenshots.
 - `App/PeaceGarden/Views/ExchangeView.swift` — the place offer's wording.
 - `App/PeaceGarden/Resources/Info.plist` — the location purpose string.
 

@@ -776,6 +776,53 @@
         }
       }
     },
+    "A place from abstract list" : {
+      "comment" : "One answer in the Location description menu in Settings: the place is said with one of the app's own figurative places (After the storm, On the winds...), picked from the Abstract list under it. Marcus's wording, with no article before 'abstract list'; a language that needs one may use it.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Et sted fra den abstrakte liste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Un lugar de la lista abstracta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Un lieu de la liste abstraite"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Un luogo dalla lista astratta"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Et sted fra den abstrakte listen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Een plek uit de abstracte lijst"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En plats från den abstrakta listan"
+          }
+        }
+      }
+    },
     "A place, if you like" : {
       "comment" : "Placeholder in that field. Everything on this screen is optional.",
       "localizations" : {
@@ -1012,6 +1059,7 @@
       }
     },
     "A seed planted while this is on carries the coordinates the phone measured, to five decimal places. Nothing is looked up and no place is named — the numbers are the honest record, and a map can say the rest." : {
+      "comment" : "On the About sheet under Privacy, beneath the label 'Where you actually are', the answer to 'Location description' that logs coordinates; 'this' is that answer. Until 13 October 2026 it stood under that answer in Settings.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -1104,6 +1152,53 @@
         }
       }
     },
+    "About" : {
+      "comment" : "The heading of the About sheet, and the button at the foot of Settings that opens it, beside an i in a ring. The sheet says what the app hands on and keeps; for now it has one section, Privacy. Set in capitals. One word where the language allows.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Om"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Acerca de"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "À propos"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Informazioni"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Om"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Over"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Om"
+          }
+        }
+      }
+    },
     "About this meeting" : {
       "comment" : "Label over the field for a line to remember a meeting by, and that field's own hidden label.",
       "localizations" : {
@@ -1147,6 +1242,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Om det här mötet"
+          }
+        }
+      }
+    },
+    "Abstract list" : {
+      "comment" : "Label over the menu of the app's figurative places (After the storm, On the winds...) in Settings, shown when Location description is 'A place from abstract list'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abstrakt liste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lista abstracta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Liste abstraite"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lista astratta"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Abstrakt liste"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Abstracte lijst"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Abstrakt lista"
           }
         }
       }
@@ -1288,6 +1430,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Säg till när ett gemensamt frö delas"
+          }
+        }
+      }
+    },
+    "Allow Peace Garden to add to Photos in Settings." : {
+      "comment" : "Shown in place of that line when saving was refused because the person has not allowed the app to add to Photos. 'Settings' is the phone's Settings app and 'Photos' the system's Photos app. 'Peace Garden' is the app's name and stays as it is.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giv Peace Garden lov til at føje til Fotos under Indstillinger."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Permite a Peace Garden añadir a Fotos en Ajustes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Autorise Peace Garden à ajouter à Photos dans Réglages."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Consenti a Peace Garden di aggiungere a Foto in Impostazioni."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gi Peace Garden lov til å legge til i Bilder under Innstillinger."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Geef Peace Garden in Instellingen toestemming om aan Foto's toe te voegen."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ge Peace Garden tillåtelse att lägga till i Bilder under Inställningar."
           }
         }
       }
@@ -2417,7 +2606,7 @@
       }
     },
     "Cancel" : {
-      "comment" : "Button in the top corner of the meeting screen, while it is still looking for somebody. Stops looking and closes.",
+      "comment" : "Read aloud by VoiceOver for the X in the top corner of the meeting screen, while it is still looking for somebody. Stops looking and closes.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -3355,6 +3544,53 @@
         }
       }
     },
+    "Fireflies" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the lights that can be put out in the garden. A drift of fireflies.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ildfluer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Luciérnagas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lucioles"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lucciole"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ildfluer"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vuurvliegjes"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eldflugor"
+          }
+        }
+      }
+    },
     "First bloom" : {
       "comment" : "Row label on the seed screen, beside how old the plant will be when it first flowers.",
       "localizations" : {
@@ -3490,6 +3726,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Följer klockan"
+          }
+        }
+      }
+    },
+    "Fox" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A fox curled asleep, in glow-in-the-dark paint.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ræv"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Zorro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Renard"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Volpe"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Rev"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vos"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Räv"
           }
         }
       }
@@ -3874,6 +4157,53 @@
         }
       }
     },
+    "Ground %lld" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the grounds the garden can stand on, in the garden's tray. They have no names; the number is its place in the row, counted from 1.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terræn %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terreno %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terrain %lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terreno %lld"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terreng %lld"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terrein %lld"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Terräng %lld"
+          }
+        }
+      }
+    },
     "Growing" : {
       "comment" : "What a plant is doing, in the caption under it. Past being a seedling, not yet in bud.",
       "localizations" : {
@@ -3917,6 +4247,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Växer"
+          }
+        }
+      }
+    },
+    "Hare" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A hare sitting up, in glow-in-the-dark paint.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hare"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Liebre"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lièvre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lepre"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hare"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Haas"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hare"
           }
         }
       }
@@ -4107,6 +4484,7 @@
       }
     },
     "How the place is said" : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -5750,6 +6128,53 @@
         }
       }
     },
+    "Lantern" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the lights that can be put out in the garden. A small iron lantern on a short post.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lanterne"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Farol"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lanterne"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lanterna"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lykt"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lantaarn"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lykta"
+          }
+        }
+      }
+    },
     "Leave it" : {
       "comment" : "Button that cancels: leave things as they are. Used to dismiss an alert, and beside 'Keep it' on the edit screen.",
       "localizations" : {
@@ -6213,6 +6638,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Länk kopierad"
+          }
+        }
+      }
+    },
+    "Location description" : {
+      "comment" : "Label over the menu in Settings, under Seed planting location, that chooses how a seed's planting place is described. Its three answers are 'A place from abstract list', 'Where you actually are' and 'Something you write'. Marcus's wording, 13 October 2026.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stedsbeskrivelse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Descripción del lugar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Description du lieu"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Descrizione del luogo"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Stedsbeskrivelse"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Beschrijving van de plek"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Platsbeskrivning"
           }
         }
       }
@@ -6779,6 +7251,53 @@
         }
       }
     },
+    "Moth" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A moth at rest on a stake, wings open, in glow-in-the-dark paint.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Natsværmer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Polilla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Papillon de nuit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Falena"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nattsvermer"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nachtvlinder"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nattfjäril"
+          }
+        }
+      }
+    },
     "Name the plant on screen" : {
       "comment" : "A switch. On, the plant's name and what it is doing are drawn under it; off, the screen has no words on it at all.",
       "extractionState" : "stale",
@@ -6980,7 +7499,7 @@
       }
     },
     "Not this time" : {
-      "comment" : "Button in the top corner of the screen showing a plant that has just been made. Leaves without keeping it. Gentler than 'Discard' on purpose.",
+      "comment" : "A button in a capsule, in the top corner of the screen showing a plant that has just been made: leaves without keeping it. Everywhere else that corner is an X; this is the one moment it is words. Gentler than 'Discard' on purpose.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -7831,6 +8350,7 @@
       }
     },
     "One of the places" : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -7966,6 +8486,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Orkidé"
+          }
+        }
+      }
+    },
+    "Paper lamp" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the lights that can be put out in the garden. A paper lamp hung from a bamboo cane, glowing through its paper.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Papirlampe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Farolillo de papel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lampion"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lanterna di carta"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Papirlykt"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Papieren lampion"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Papperslykta"
           }
         }
       }
@@ -8205,6 +8772,53 @@
         }
       }
     },
+    "Play time-lapse" : {
+      "comment" : "VoiceOver label for the play glyph on a plant's screen, top left: plays the plant's life from its first sprouting to now in twelve seconds, in place. 'Time-lapse' as the Camera app's mode is called in this language.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afspil time-lapse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Reproducir time-lapse"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lire l’accéléré"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Riproduci time-lapse"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Spill av time-lapse"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Speel time-lapse af"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Spela upp time-lapse"
+          }
+        }
+      }
+    },
     "Plume" : {
       "comment" : "A plant form: a feathery, many-branched head. A panicle.",
       "localizations" : {
@@ -8295,6 +8909,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vallmo"
+          }
+        }
+      }
+    },
+    "Privacy" : {
+      "comment" : "The section of the About sheet that says what leaves the phone at a meeting and what a logged place is. Also VoiceOver's name for the i in a ring beside 'Location description' in Settings, which opens the sheet at this section. The same word as the heading of the website's privacy page.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privatliv"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Privacidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Confidentialité"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Riservatezza"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Personvern"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Privacy"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Integritet"
           }
         }
       }
@@ -8718,6 +9379,147 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Återställ vyn"
+          }
+        }
+      }
+    },
+    "Save as moving wallpaper" : {
+      "comment" : "In the same menu. Saves a Live Photo of the plant turning a little to the Photos app, which the lock screen can play when the phone wakes. Same word for wallpaper as the row above. A menu row.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gem som levende baggrund"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Guardar como fondo animado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enregistrer comme fond d’écran animé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Salva come sfondo animato"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arkiver som levende bakgrunn"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bewaar als bewegende achtergrond"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Spara som levande bakgrundsbild"
+          }
+        }
+      }
+    },
+    "Save as wallpaper" : {
+      "comment" : "In the same menu. Saves a picture of the plant the size of this phone's screen to the Photos app; the person then sets it as their wallpaper from there. Use the word iOS uses for wallpaper in your language. A menu row.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gem som baggrund"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Guardar como fondo de pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enregistrer comme fond d’écran"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Salva come sfondo"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arkiver som bakgrunn"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bewaar als achtergrond"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Spara som bakgrundsbild"
+          }
+        }
+      }
+    },
+    "Saved to Photos. Open it there, tap %@, then Use as Wallpaper." : {
+      "comment" : "Shown for a few seconds after a wallpaper is saved. %@ is the share glyph itself (a box with an arrow), drawn in the line, not a word. 'Photos' is the system's Photos app and 'Use as Wallpaper' the system's own action in its share sheet: use the names iOS uses in your language.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemt i Fotos. Åbn det der, tryk på %@, og vælg Brug som baggrund."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Guardado en Fotos. Ábrelo allí, toca %@ y elige Usar como fondo de pantalla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enregistré dans Photos. Ouvre-le, touche %@, puis Utiliser en fond d’écran."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Salvato in Foto. Aprilo lì, tocca %@, poi Usa come sfondo."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arkivert i Bilder. Åpne det der, trykk på %@ og velg Bruk som bakgrunn."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bewaard in Foto's. Open het daar, tik op %@ en kies Gebruik als achtergrond."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sparad i Bilder. Öppna den där, tryck på %@ och välj Använd som bakgrundsbild."
           }
         }
       }
@@ -9192,6 +9994,194 @@
         }
       }
     },
+    "Share" : {
+      "comment" : "VoiceOver's name for the share mark (a box with an arrow coming out of it) at the top right of a plant's screen and of the stage, where your own plant stands. Also said in place of that glyph when VoiceOver reads the line shown after a wallpaper is saved. One word: the verb on the system's own share button.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Del"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compartir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Partager"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Condividi"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Del"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deel"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dela"
+          }
+        }
+      }
+    },
+    "Share picture" : {
+      "comment" : "In the menu that opens from the share mark on a plant's screen. Sends a still picture of the plant as it is now through the phone's share sheet (Photos, Mail, Messages and so on). Keep it short: a menu row.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Del billede"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compartir imagen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Partager l’image"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Condividi immagine"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Del bilde"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deel afbeelding"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dela bild"
+          }
+        }
+      }
+    },
+    "Share time-lapse" : {
+      "comment" : "In the menu that opens from the share mark, on a plant's screen and on the stage. Sends the plant's time-lapse, its life from the first sprouting to now in twelve seconds, as a video through the phone's share sheet. 'Time-lapse' as in 'Play time-lapse'. A menu row.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Del time-lapse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compartir time-lapse"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Partager l’accéléré"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Condividi time-lapse"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Del time-lapse"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deel time-lapse"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dela time-lapse"
+          }
+        }
+      }
+    },
+    "Share turning video" : {
+      "comment" : "In the same menu. Sends a short video of the plant turning slowly once round on its stem. 'Turning' is the same verb as in the setting 'Let the plant turn'. A menu row.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Del video af planten, der drejer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Compartir vídeo de la planta girando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Partager une vidéo de la plante qui tourne"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Condividi un video della pianta che gira"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Del video av planten som dreier"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deel een video van de draaiende plant"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dela video där växten vrider sig"
+          }
+        }
+      }
+    },
     "Show" : {
       "localizations" : {
         "da" : {
@@ -9424,6 +10414,7 @@
       }
     },
     "Shown when a seed is exchanged with another, as the place where the seed is planted." : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -9465,6 +10456,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visas när ett frö utbyts med ett annat, som platsen där fröet planteras."
+          }
+        }
+      }
+    },
+    "Snail" : {
+      "comment" : "Spoken by VoiceOver, never drawn: one of the figures that can be put out in the garden. A snail, in glow-in-the-dark paint.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Snegl"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Caracol"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Escargot"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lumaca"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Snegle"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Slak"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Snigel"
           }
         }
       }
@@ -9792,6 +10830,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Börja om"
+          }
+        }
+      }
+    },
+    "Stop time-lapse" : {
+      "comment" : "VoiceOver label for the same glyph while the time-lapse plays: stops it and goes back to the plant as it is now.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop time-lapse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detener time-lapse"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arrêter l’accéléré"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Interrompi time-lapse"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Stopp time-lapse"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Stop time-lapse"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Stoppa time-lapse"
           }
         }
       }
@@ -11912,7 +12997,7 @@
       }
     },
     "What you write here is kept in this phone's settings, and for now it appears only there." : {
-      "comment" : "Under the field where a custom place is written, in Settings. True as it stands: what is written is kept in the phone's settings and nothing else uses it yet.",
+      "comment" : "One plain line under the Location description menu in Settings, shown only while 'Something you write' is chosen, above the field where the place is written. True as it stands: what is written is kept in the phone's settings and nothing else uses it yet.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -12111,7 +13196,7 @@
       }
     },
     "When you meet someone, your phones connect directly, encrypted, and each hands the other its seed, when that seed was made, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the new plant, and one the other phone can use later to offer that plant to the web garden. Each phone keeps both second numbers with the plant, and a number for the meeting made from the first two." : {
-      "comment" : "The plainest account the app gives of what leaves the phone at a meeting, under the place settings. A list of facts: each item is something the phone really sends, and the last sentence is what it keeps afterwards.",
+      "comment" : "The plainest account the app gives of what leaves the phone at a meeting, on the About sheet under Privacy (until 13 October 2026 it stood under the place settings). A list of facts: each item is something the phone really sends, and the last sentence is what it keeps afterwards.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -12724,6 +13809,100 @@
         }
       }
     },
+    "Where you met is given as a place from the abstract list." : {
+      "comment" : "One plain line under the Location description menu in Settings, shown only while 'A place from abstract list' is chosen: a meeting's note gives where you met as one of the app's figurative places. 'You' is the two people who met.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvor I mødtes, angives som et sted fra den abstrakte liste."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El lugar del encuentro se indica con uno de la lista abstracta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L’endroit où vous vous êtes rencontrés est indiqué par un lieu de la liste abstraite."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dove vi siete incontrati è indicato con un luogo della lista astratta."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hvor dere møttes, oppgis som et sted fra den abstrakte listen."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Waar jullie elkaar ontmoetten, wordt aangegeven met een plek uit de abstracte lijst."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Var ni möttes anges som en plats från den abstrakta listan."
+          }
+        }
+      }
+    },
+    "Where you met is logged on this phone as the coordinates it measured, when you both ask." : {
+      "comment" : "One plain line under the Location description menu in Settings, shown only while 'Where you actually are' is chosen. Logged as in written down, the same word as the offer on the way into a meeting. 'It' is the phone; 'you both' is the two people who met, each of whom has to ask.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvor I mødtes, registreres på denne telefon som de koordinater, den målte, når I begge beder om det."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El lugar del encuentro se registra en este teléfono con las coordenadas que midió, cuando las dos personas lo piden."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L’endroit où vous vous êtes rencontrés est enregistré sur ce téléphone avec les coordonnées qu’il a mesurées, si vous le demandez tous les deux."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dove vi siete incontrati viene registrato su questo telefono con le coordinate che ha misurato, quando lo chiedete entrambi."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hvor dere møttes, registreres på denne telefonen som koordinatene den målte, når dere begge ber om det."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Waar jullie elkaar ontmoetten, wordt op deze telefoon vastgelegd als de coördinaten die hij mat, als jullie er allebei om vragen."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Var ni möttes registreras på den här telefonen som de koordinater den mätte, när ni båda ber om det."
+          }
+        }
+      }
+    },
     "Where you were" : {
       "localizations" : {
         "da" : {
@@ -12818,6 +13997,7 @@
       }
     },
     "Which one" : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {

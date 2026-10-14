@@ -98,6 +98,20 @@ final class PlotMemo {
 
     init() {}
 
+    @ObservationIgnored private var keptKey: Any?
+    @ObservationIgnored private var keptValue: Any?
+
+    /// Something worked out from where everything stands, made again only
+    /// when `key` changes: what VoiceOver finds on the plot, which is a few
+    /// hundred elements in a big garden.
+    func kept<Key: Equatable, Value>(_ key: Key, make: () -> Value) -> Value {
+        if let held = keptKey as? Key, held == key, let value = keptValue as? Value { return value }
+        let value = make()
+        keptKey = key
+        keptValue = value
+        return value
+    }
+
     /// The garden is on screen: see `GardenSprites.opened()`.
     func open() {
         guard !isOpen else { return }

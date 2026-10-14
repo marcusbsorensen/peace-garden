@@ -16,7 +16,7 @@ import XCTest
 ///   catalogue language, `pseudo` (English, every string doubled) or `rtl`
 ///   (English, forced right to left); size is `L`, `XXXL`, `AX3` or `AX5`;
 ///   appearance `light` (with the garden by day) or `dark` (by night).
-/// - `PG_MT_SCREENS`: any of `stage,seed,meet,settings,garden,plant,firstlight`.
+/// - `PG_MT_SCREENS`: any of `stage,seed,meet,settings,garden,plant,firstlight,about`.
 /// - `PG_MT_AUDIT`: locales to run `performAccessibilityAudit` on, or `all`.
 @MainActor
 final class MassTestScreensUITests: XCTestCase {
@@ -78,6 +78,9 @@ final class MassTestScreensUITests: XCTestCase {
         case "seed": arguments += ["-pgOpen", "seed"]
         case "meet": arguments += ["-pgOpen", "meet"]
         case "settings": arguments += ["-pgOpen", "settings"]
+        // The About sheet (14 October), opened from its row at the foot of
+        // Settings, which `-pgSettingsAt about` scrolls to.
+        case "about": arguments += ["-pgOpen", "settings", "-pgSettingsAt", "about"]
         case "garden": arguments += ["-pgOpen", "garden", "-pgTray", "YES"]
         // A plant's screen is reached through the developer's tile grid: a
         // plant on the plot answers a finger on its leaves through a tap
@@ -110,6 +113,11 @@ final class MassTestScreensUITests: XCTestCase {
             MassTest.pause(3)
         case "firstlight", "meet":
             MassTest.pause(6)
+        case "about":
+            MassTest.pause(3)
+            let row = app.buttons["settings.about"]
+            if row.waitForExistence(timeout: 5) { row.tap() } else { note["error"] = "no About row" }
+            MassTest.pause(2.5)
         default:
             MassTest.pause(3)
         }
@@ -123,6 +131,11 @@ final class MassTestScreensUITests: XCTestCase {
             }
             MassTest.pause(1)
             try record("settings-end", app: app, folder: folder, audit: audit)
+        }
+        if screen == "about" {
+            app.swipeUp(velocity: .fast)
+            MassTest.pause(1.5)
+            try record("about-end", app: app, folder: folder, audit: audit)
         }
     }
 

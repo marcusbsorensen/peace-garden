@@ -37,6 +37,8 @@ struct PlantSceneView: UIViewRepresentable {
     /// `nil` gives the plant the whole view and centres it there, which is what
     /// a screen with nothing written under the plant wants.
     var bandTop: CGFloat?
+    /// Plays the plant's life again in place, when asked. See `TimeLapsePlayer`.
+    var timeLapse: TimeLapsePlayer?
     var onTap: (() -> Void)?
 
     func makeCoordinator() -> Coordinator {
@@ -59,6 +61,7 @@ struct PlantSceneView: UIViewRepresentable {
 
         let coordinator = context.coordinator
         view.scene?.rootNode.addChildNode(coordinator.plantPivot)
+        coordinator.plantPivot.addChildNode(coordinator.replayRoot)
         view.scene?.rootNode.addChildNode(coordinator.cameraRig)
         coordinator.cameraRig.addChildNode(coordinator.cameraNode)
         view.pointOfView = coordinator.cameraNode
@@ -75,6 +78,7 @@ struct PlantSceneView: UIViewRepresentable {
         coordinator.rebuildIfNeeded(genome: genome, growth: growth)
         coordinator.setArrival(arrival)
         coordinator.setAutoRotation(autoRotates)
+        timeLapse?.attach(coordinator)
         return view
     }
 
@@ -85,6 +89,7 @@ struct PlantSceneView: UIViewRepresentable {
         context.coordinator.rebuildIfNeeded(genome: genome, growth: growth)
         context.coordinator.setArrival(arrival)
         context.coordinator.setAutoRotation(autoRotates)
+        timeLapse?.attach(context.coordinator)
     }
 
     static func dismantleUIView(_ uiView: SCNView, coordinator: Coordinator) {
@@ -105,6 +110,9 @@ struct PlantSceneView: UIViewRepresentable {
 
     final class Coordinator: NSObject {
         let plantPivot = SCNNode()
+        /// Where a time-lapse hangs its replayed plant: on the turntable beside
+        /// the live one, so the two turn as one and hand over without a jump.
+        let replayRoot = SCNNode()
         let cameraRig = SCNNode()
         let cameraNode = PlantSceneBuilder.makeCameraNode()
 
@@ -118,6 +126,16 @@ struct PlantSceneView: UIViewRepresentable {
         private var referenceSeed: SeedID?
         /// The plant as it is now. Sets what the camera aims at.
         private var meshBounds: (min: SIMD3<Float>, max: SIMD3<Float>)?
+        /// While a time-lapse plays, the aim is held on the plant as it was
+        /// when it began — which is where the replay ends — so the sprout
+        /// grows up into the plant from the same foot, under a camera that
+        /// holds still, rather than the camera climbing with it.
+        private var heldBounds: (min: SIMD3<Float>, max: SIMD3<Float>)?
+        /// How much of the live plant shows. Below 1 only while a time-lapse
+        /// hands the stage over to its replay and back.
+        var livePlantOpacity: CGFloat = 1 {
+            didSet { plantNode?.opacity = livePlantOpacity }
+        }
         private var viewSize: CGSize = .zero
         private var style: StagePlantStyle = .full
         private var tint: UIColor = .white
@@ -218,6 +236,7 @@ struct PlantSceneView: UIViewRepresentable {
             let mesh = PlantBuilder(genome: genome).mesh(growth: growth)
             let node = PlantSceneBuilder.node(for: mesh, palette: genome.palette)
             PlantSceneBuilder.restyle(node, as: style, tint: tint)
+            node.opacity = livePlantOpacity
 
             plantNode?.removeFromParentNode()
             plantPivot.addChildNode(node)
@@ -283,7 +302,8 @@ struct PlantSceneView: UIViewRepresentable {
         }
 
         private func applyFraming() {
-            guard let reference, let plantNode, let here = meshBounds, viewSize.height > 1 else { return }
+            guard let reference, let plantNode, let here = heldBounds ?? meshBounds,
+                  viewSize.height > 1 else { return }
             // Framed into the part of the view above the band, and standing on
             // it. It used to be framed into the whole view, on the argument
             // that the band is hidden most of the time and a plant sized to
@@ -378,6 +398,21 @@ struct PlantSceneView: UIViewRepresentable {
         static func easeInOut(_ t: Double) -> Double {
             let x = min(max(t, 0), 1)
             return x * x * (3 - 2 * x)
+        }
+
+        /// A time-lapse takes the stage: the aim holds where it is.
+        func beginTimeLapse() {
+            heldBounds = meshBounds
+            applyFraming()
+        }
+
+        /// And gives it back: the live plant whole, the replay gone.
+        func endTimeLapse() {
+            heldBounds = nil
+            livePlantOpacity = 1
+            for node in replayRoot.childNodes { node.removeFromParentNode() }
+            replayRoot.opacity = 1
+            applyFraming()
         }
 
         func setAutoRotation(_ enabled: Bool) {

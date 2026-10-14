@@ -1,0 +1,2 @@
+{"plan_meetings":43900,"planted_checked":8528,"taken_back_markers":428,"true_crosses":8528,"violations":[]}
+{"plan_meetings":102320,"planted_checked":30119,"taken_back_markers":428,"true_crosses":30119,"violations":[]}

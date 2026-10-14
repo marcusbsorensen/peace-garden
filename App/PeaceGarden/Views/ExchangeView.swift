@@ -46,8 +46,12 @@ struct ExchangeView: View {
                 phases
             }
         }
+        // The X in a ring, as the seed, the garden and Settings close, and the
+        // words *Not this time* over a plant just made. See `MeetCloseControl`.
+        // Closing still stops the search (`onDisappear`) and still leaves a
+        // new plant unkept.
         .overlay(alignment: .topTrailing) {
-            QuietButton(title: closeTitle) { dismiss() }
+            MeetCloseControl(overAPlantJustMade: isOverAPlantJustMade) { dismiss() }
                 .padding(.trailing, 12)
                 .padding(.top, 12)
         }
@@ -105,9 +109,10 @@ struct ExchangeView: View {
         }
     }
 
-    private var closeTitle: LocalizedStringKey {
-        if case .grown = service.phase { return "Not this time" }
-        return "Cancel"
+    /// Whether a plant has just been made here and is waiting to be kept.
+    private var isOverAPlantJustMade: Bool {
+        if case .grown = service.phase { return true }
+        return false
     }
 
     /// The place offer sits between the name and the search, so that the only
@@ -157,7 +162,7 @@ struct ExchangeView: View {
             // away, and this is the one control on either screen where a wrong
             // guess about what it does cannot be undone.
             Text("A meeting can log the coordinates of the spot it happened in. They stay on this phone, and a meeting logs them only when both of you have asked.")
-                .font(.system(size: 14, weight: .light))
+                .scaledFont(size: 14, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -180,6 +185,7 @@ struct ExchangeView: View {
         .padding(.horizontal, 40)
         .frame(maxWidth: Chrome.readableWidth)
         .frame(maxWidth: .infinity)
+        .scrollsWhenTooTall()
     }
 
     @ViewBuilder
@@ -207,7 +213,7 @@ struct ExchangeView: View {
                 .foregroundStyle(Chrome.ink)
 
             Text("Your name sits beside your plant on the other person's phone, and in the note they keep of the meeting.")
-                .font(.system(size: 14, weight: .light))
+                .scaledFont(size: 14, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -218,7 +224,7 @@ struct ExchangeView: View {
                 prompt: Text("Gardener").foregroundStyle(Chrome.faint)
             )
                 .labelsHidden()
-                .font(.system(size: 24, weight: .light))
+                .scaledFont(size: 24, weight: .light)
                 .foregroundStyle(Chrome.ink)
                 .multilineTextAlignment(.center)
                 .textInputAutocapitalization(.words)
@@ -243,6 +249,7 @@ struct ExchangeView: View {
         .padding(.horizontal, 46)
         .frame(maxWidth: Chrome.readableWidth)
         .frame(maxWidth: .infinity)
+        .scrollsWhenTooTall()
     }
 
     private var trimmedName: String {
@@ -329,11 +336,11 @@ struct ExchangeView: View {
             Spacer()
             BreathingDot(diameter: 9)
             title
-                .font(.system(size: 20, weight: .light, design: .serif))
+                .scaledFont(size: 20, weight: .light, design: .serif)
                 .foregroundStyle(Chrome.ink)
                 .multilineTextAlignment(.center)
             detail
-                .font(.system(size: 14, weight: .light))
+                .scaledFont(size: 14, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -342,6 +349,7 @@ struct ExchangeView: View {
         .padding(.horizontal, 46)
         .frame(maxWidth: Chrome.readableWidth)
         .frame(maxWidth: .infinity)
+        .scrollsWhenTooTall()
     }
 
     private func grown(_ outcome: ExchangeOutcome) -> some View {
@@ -354,13 +362,13 @@ struct ExchangeView: View {
         VStack(spacing: 20) {
             Spacer()
             Text("Nothing took")
-                .font(.system(size: 20, weight: .light, design: .serif))
+                .scaledFont(size: 20, weight: .light, design: .serif)
                 .foregroundStyle(Chrome.ink)
             // Already in this phone's language: `PollenExchangeService` looks
             // its failures up as it makes them, because half of them carry a
             // system error whose own text is localised too.
             Text(verbatim: message)
-                .font(.system(size: 14, weight: .light))
+                .scaledFont(size: 14, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -373,6 +381,34 @@ struct ExchangeView: View {
         .padding(.horizontal, 46)
         .frame(maxWidth: Chrome.readableWidth)
         .frame(maxWidth: .infinity)
+        .scrollsWhenTooTall()
     }
 
+}
+
+/// The way out of Meet, in the top corner.
+///
+/// **The circled X, as every screen behind the row closes** (Marcus, 13
+/// October: *consistency*), read aloud as *Cancel*, because the system symbol
+/// alone would say only *Close* and closing here also stops the search.
+///
+/// **Over a plant just made, the words *Not this time*** in their capsule
+/// (Marcus, 14 October: 3A). It is the one moment closing means more than
+/// closing — it leaves the new plant unkept — and an X would not say so.
+struct MeetCloseControl: View {
+    /// Whether a plant has just been made and is waiting to be kept.
+    let overAPlantJustMade: Bool
+    let close: () -> Void
+
+    var body: some View {
+        if overAPlantJustMade {
+            QuietButton(title: "Not this time", action: close)
+                // Read as written, not in the capsule's capitals: a string,
+                // because a `Text` label takes them too.
+                .accessibilityLabel(String(localized: "Not this time"))
+        } else {
+            CloseButton(action: close)
+                .accessibilityLabel(Text("Cancel"))
+        }
+    }
 }

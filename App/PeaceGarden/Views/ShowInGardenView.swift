@@ -172,7 +172,7 @@ struct ShowInGardenView: View {
                     // and this is the sentence on the screen that most needs
                     // reading.
                     Text("Keeping it here is final for this plant. Yours stays exactly where it is either way.")
-                        .font(.system(size: 12, weight: .light))
+                        .scaledFont(size: 12, weight: .light)
                         .foregroundStyle(Chrome.faint)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
@@ -181,7 +181,7 @@ struct ShowInGardenView: View {
                     QuietButton(title: other.ask, isProminent: true) { ask() }
                     QuietButton(title: "Not now") { dismiss() }
                     Text("It appears in the garden only once they say yes.")
-                        .font(.system(size: 12, weight: .light))
+                        .scaledFont(size: 12, weight: .light)
                         .foregroundStyle(Chrome.faint)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
@@ -203,7 +203,7 @@ struct ShowInGardenView: View {
 
     private func headline(_ key: LocalizedStringKey) -> some View {
         Text(key)
-            .font(.system(size: 19, weight: .light, design: .serif))
+            .scaledFont(size: 19, weight: .light, design: .serif)
             .foregroundStyle(Chrome.ink)
             .multilineTextAlignment(.center)
             .lineSpacing(4)
@@ -213,7 +213,7 @@ struct ShowInGardenView: View {
 
     private func fact(_ key: LocalizedStringKey) -> some View {
         Text(key)
-            .font(.system(size: 14, weight: .light))
+            .scaledFont(size: 14, weight: .light)
             .foregroundStyle(Chrome.muted)
             .multilineTextAlignment(.center)
             .lineSpacing(3)

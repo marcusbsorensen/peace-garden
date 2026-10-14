@@ -253,10 +253,101 @@ Two of the rows are 404s on purpose, and a 200 on either is the failure:
 `loadStrings` reads the status; and `/README.md`, because this file belongs to
 whoever deploys.
 
+Since 14 October 2026 it also reads the headers below (§Headers), whether
+paths that visitors wear are on, and whether `/download` names the iOS that
+`project.yml` targets. `PG_BASE=http://127.0.0.1:8822 tools/deploy.sh --check`
+runs it against a local copy.
+
 The fragment is the payload and never reaches the server, so a seed can only be
 tested in a browser. Any link the app mints will do; `assets/js/link.js` also
 carries `PINNED`, the same fragment `PollenLinkTests` and `tools/reference/`
 both agree on, which is a valid offer from *Marcus* of *Aurelia nocturna*.
+
+## Headers
+
+What a response says about itself is set in one place, the head of
+`index.php`, and it can only be set there: nginx serves every file that exists
+before `index.php` is reached, and on this host no `.htaccess` is read (above).
+So the headers below are on everything PHP answers — the pages, `/plant.wasm`,
+the plot service and the misses — and on nothing else. Since 14 October 2026,
+after the site's mass test (`design/mass-test-2026-10-13/site/README.md`,
+findings L1 and L3):
+
+| Header | On | Value |
+| --- | --- | --- |
+| `Strict-Transport-Security` | everything PHP answers | `max-age=31536000`, this name only (no `includeSubDomains`, no preload) |
+| `Referrer-Policy` | the same | `strict-origin-when-cross-origin` |
+| `X-Content-Type-Options` | the same | `nosniff` |
+| `X-Powered-By` | — | taken off (`header_remove`); the host's PHP named itself and its version |
+| `Content-Security-Policy` | the pages | `default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-<the import map>'; style-src-attr 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'` |
+| `Cache-Control` | `/plant.wasm?v=<this build>` | `private, max-age=31536000, immutable` |
+| | `/plant.wasm`, or an old stamp | `public, no-cache` |
+| `ETag`, `Last-Modified`, `Vary: Accept-Encoding` | `/plant.wasm` | on the 200 and the 304 alike |
+
+**The policy is the pages as they are**: their own scripts, styles, images and
+requests, the import map `index.php` writes into each head (named by its hash,
+which `index.php` works out as it writes it), and `wasm-unsafe-eval`, without
+which a browser will not compile the plant renderer — it allows WebAssembly and
+nothing else. No page has an inline script of its own, a `style` attribute or
+a `<style>` block. Style attributes are allowed all the same, for WebKit: every
+browser on an iPhone draws a `<select>` with one inside its own shadow tree and
+refuses it otherwise, one refusal in Safari's console on every page with the
+language chooser and nothing different on screen. And the site crawler found no refusal on any page in any of
+the 43 languages in Chrome, or in five of them in WebKit (14 October 2026). Anything new of that kind is
+refused by the browser and named in its console, which is the point: change
+the policy in `index.php` first. A browser keeps the policy it stored with a
+page until the page's bytes change, which every page's did with this deploy,
+since the stylesheet's stamp changed.
+
+**HSTS is a year from the first visit.** A browser that has seen it will not
+open `http://peacegarden.app` again for that long, and will not let anybody
+click past a certificate error either, so the certificate's renewal at 20i is
+now something the site depends on rather than something it would merely look
+bad without.
+
+**The renderer is kept for a year at the address that names its build.** Every
+page asks for `/plant.wasm?v=<mtime-size>`, the stamp of the module on the
+server, so when `v` is this build's the answer promises never to change and a
+returning reader asks for nothing. On 13 October it was `no-cache`, and a
+conditional request carrying the right tag came back `200` with the whole
+three megabytes, cache status MISS at the origin and at the CDN, so the tag is
+lost in front of this host and every visit to a page that grows a plant
+downloaded the module again. A stale stamp — a page kept from before a deploy —
+is given the current build with `no-cache`, so new bytes are never kept a year
+under an old name. The year is `private`, the browser's alone: a browser keys
+what it keeps on the whole address, query included, while whether 20i's CDN
+does is not something this repository can see, and a CDN that ignored the
+query would hand out the old module under every new stamp for a year with no
+way to purge it. The CDN was not keeping the module before either.
+`If-None-Match` is read as a list, with weak tags and `*`,
+and `If-Modified-Since` is asked when it is absent; a 304 carries no
+`Content-Type`.
+
+**Scripts, the stylesheet and the other static files are nginx's**, and the
+vhost sends them with an `ETag` and a `Last-Modified` and no `Cache-Control`.
+They revalidate properly (a `304` on 13 October for `/assets/site.css`), and
+each is stamped in the pages, so a new one is a new address. Two things here
+cannot be changed from this repository: they are not marked immutable, and
+20i's CDN drops `Vary: Accept-Encoding` from the gzipped ones. Routing them
+through `index.php` would let it set both, at the cost of thirty-odd PHP
+requests on a first visit to an area page and of nginx's own compression, and
+the relative imports between modules would need a different stamping scheme;
+it was judged not worth it for files this small that already revalidate. If it
+ever is, the place is a support request to 20i for a `location ^~ /assets/`
+block with `add_header Cache-Control "public, max-age=31536000, immutable"` on
+requests with a `v`.
+
+**After a deploy**, `tools/deploy.sh --check` reads all of this back. By hand:
+
+```sh
+curl -sSI https://peacegarden.app/ | grep -i -e strict-transport -e content-security -e referrer -e powered
+m=$(curl -sS https://peacegarden.app/ | sed -n 's/.*data-module="\([^"]*\)".*/\1/p')
+curl -sSI -H 'Accept-Encoding: gzip' "https://peacegarden.app$m" | grep -i cache-control   # immutable
+```
+
+and in a browser, open `/walk`, then `/quiet`: the second page's
+`plant.wasm?v=…` request is answered from the browser's own cache (DevTools,
+Network, *Size* says *disk cache* or *memory cache*), with nothing sent.
 
 ## Already filled in
 
@@ -293,6 +384,18 @@ tools/deploy.sh --check      # check what is live, upload nothing
 That uploads this directory and then reads back the status and content type of
 every path, plus whether the Team ID in the association file still matches
 `project.yml`.
+
+**A deploy that raises `Schema::VERSION`** migrates the database on the first
+request after it (*The schema*, under the plot service). To run that migration
+where its output can be read instead, straight after the upload:
+
+```sh
+ssh peacegarden 'php ~/public_html/.api/migrate.php'
+```
+
+It says the version before and after, which tables it converted to utf8mb4,
+and what the data migrations found. Running it when nothing is due changes
+nothing.
 
 It uploads with `--delete`, because the failure that prevents is invisible: a
 file left at `/s` by an older upload wins at nginx's `try_files` and is served
@@ -412,8 +515,14 @@ the service's own files unreachable, as it does `.pages/`.
     phones, which ask by token. The key is `offer_key`, which the nightly copy
     carries with `walk_offers`. **A declined offer is erased the same way**
     and keeps the word `declined`, which still refuses a second offer. Rows
-    withdrawn or declined before this are erased by a migration that runs on
-    every request and finds nothing once it has run.
+    withdrawn or declined before this are erased by the migration (*The
+    schema*, below), which finds nothing once it has run.
+  - **A "yes" sent twice is one yes** (14 October 2026). Two copies of the
+    same answer at once — a phone retrying after a slow answer, a double tap
+    — both find the planting; the one that loses settling the offer reads it
+    again, and takes the planting back only if the offer is no longer
+    accepted. Until then it took it back while the offer still said
+    accepted, leaving the plant nowhere (the population test's finding 1).
   - **An offer nobody answers lapses after thirty days**: it becomes a
     withdrawal, answered at the moment it lapsed, and is erased the same way.
     Checked whenever the offer is looked up, swept on every `offer` and
@@ -425,13 +534,40 @@ the service's own files unreachable, as it does `.pages/`.
     What it does prevent is anybody planting *somebody else's* plant or
     answering for them. Rate limiting belongs in front of the service.
   - Checked by `tools/reference/check_offers.php`, in CI.
-- **How often one caller may write**, `.api/Limits.php`: 18 offers, 55 answers,
-  28 withdrawals, 220 askings and 9 releases per address in a window of
-  fifty-five minutes — the hourly 20, 60, 30, 240 and 10 scaled to it — answered `429` with a
-  `Retry-After` when the allowance is gone. It is in PHP because the vhost is
+- **How often one caller may write**, `.api/Limits.php`, counted twice since
+  14 October 2026, and answered `429` with a `Retry-After` when either
+  allowance is gone:
+
+  | in fifty-five minutes | one gardener | one address |
+  | --- | --- | --- |
+  | `walk/offer` | 18 | 90 |
+  | `walk/answer` | 55 | 275 |
+  | `walk/withdraw` | 28 | 140 |
+  | `walk/pending` | 220 | 1,100 |
+  | `wild/release` | 9 | 45 |
+  | `wild/answer` | 55 | 275 |
+  | `wild/wear` | — | 110 |
+
+  **One gardener** is the meeting token the request carries (`from` for an
+  offer, `to` for an answer, `token` for a withdrawal, a release or a name,
+  the whole bag for `pending`, the seed for a release with no token), at the
+  hourly 20, 60, 30, 240 and 10 scaled to the window, as the address's
+  allowance was until then. **One address** is everybody behind it,
+  `Limits::CROWD` (five) times that; an IPv6 address counts as its /64, which
+  is what one phone or one home line holds. The address count is taken before
+  the body is read, so a malformed request spends it; the gardener's after.
+  Why both: a festival's Wi-Fi or a mobile carrier puts many phones behind one
+  address, and on one address the old allowance refused a quarter of a
+  hundred gardeners opening the app (the population test's finding 6) — while
+  a token is minted by the phone, so a script can mint one per request and
+  only the address holds it back: at most 45 invented plants an hour in the
+  Wild Fields from one IPv4 address or one /64, where IPv6 had no cap before.
+  The count is one upsert in a transaction at READ COMMITTED, retried on a
+  deadlock or a duplicate key, so two phones writing for the first time in the
+  same moment no longer meet a 500 (finding 2). It is in PHP because the vhost is
   not ours to configure, so it caps what is *written* rather than what arrives
   — which is the half that matters on an append-only walk. What is stored is a
-  salted digest of the address and a count. The salt is random per install and
+  salted digest of the address or the token and a count. The salt is random per install and
   lives in the same database, so anybody holding the database could try every
   IPv4 address against a digest; what protects an address is that its row is
   deleted once its window is over — at the first limited request after it, or
@@ -465,7 +601,18 @@ the service's own files unreachable, as it does `.pages/`.
     seed, both parents, and the spot, which is the seed's first four bytes on
     a 64-metre field whose edges meet (`WildFields`, in SeedCore).
   - A released plant is refused by every area afterwards: `walk/offer` answers
-    `410`.
+    `410`. **One public place is held by the database** (14 October 2026,
+    `.api/Placed.php`): `placed` has a row per plant standing in an area or
+    the field, written in the planting's or the release's own transaction,
+    so an offer answered yes and a release of the same plant at the same
+    moment cannot both stand (finding 5). The yes that comes second plants
+    nothing and the offer is withdrawn; the release that comes second clears
+    the way again, as it would have a moment later. Taking back lets go in
+    the same transaction. `placed` is not in the nightly copy: the migration
+    makes it again from the tables that are.
+  - A plant crossed with itself — both parents the same seed — is refused,
+    `422`, here and by `walk/offer` (since 14 October 2026; the app never
+    makes one).
   - **Who stands beside it** (Marcus, 1 October 2026; `wild_names`). The
     release also takes `theirs` (the token the other phone minted) and
     `shown` (`{name?, place?, month?}`, the releaser's choice, absent for
@@ -487,12 +634,19 @@ the service's own files unreachable, as it does `.pages/`.
   - **Taking a plant down** is by hand, with `.api/curate.php` (below):
     hidden, it is in no count and no tile, so neither are the names beside
     it, and a second release of it answers `410`.
-  - **Paths that visitors wear** (2 October 2026, `.api/WildWear.php`), **off
-    unless `.api/config.php` says `'wear' => true`**, which the server's does
-    not. Off, both routes answer 404 before the rate limit, `GET /api/wild`
-    carries no `wear`, `/wild` does not load `wear.js`, and `/privacy` leaves
-    out `privacy9`, the paragraph that describes it (`index.php`, reading the
-    switch through `.api/settings.php` as the routes do). On:
+  - **Paths that visitors wear** (2 October 2026, `.api/WildWear.php`), **on
+    at peacegarden.app**: the server's `.api/config.php` says `'wear' =>
+    true`. The site's mass test found it on on 13 October 2026, when this file
+    still said the server's did not, and Marcus chose to keep it on
+    (14 October). `tools/deploy.sh --check` now reads `/api/wild` and fails
+    if `wear` is missing, so this line and the host cannot part again; if it
+    is ever turned off on purpose, change that row and this line together.
+    The switch defaults to off, and a copy whose `config.php` does not say
+    `'wear' => true` has it off: both routes answer 404 before the rate
+    limit, `GET /api/wild` carries no `wear`, `/wild` does not load
+    `wear.js`, and `/privacy` leaves out `privacy9`, the paragraph that
+    describes it (`index.php`, reading the switch through
+    `.api/settings.php` as the routes do). On:
     `GET /api/wild/wear` answers `[[x, z, wear], …]` for the field's
     half-metre cells, faded to today. `POST /api/wild/wear` takes
     `{cells: [[x, z], …]}`, at most 256, each counted once and at most six
@@ -510,6 +664,24 @@ the service's own files unreachable, as it does `.pages/`.
   the cross of the parents it names.
 - Storage defaults to SQLite **beside** `public_html` (`../peacegarden-data/`),
   never inside it. The 20i database goes in `config.php` once it exists.
+- **The schema**, `.api/Schema.php`, since 14 October 2026. The database keeps
+  the version it was last migrated to, one row in `schema_version`; a request
+  reads that row — one statement — and runs the migration only when the
+  code's `Schema::VERSION` is higher, under `GET_LOCK` on MariaDB, so one
+  request migrates and the rest wait for it. Until then every request ran the
+  whole migration, eighty-four statements including ten ALTERs that always
+  failed, and under load most of the database's threads waited on one
+  another's metadata locks (finding 3). Every step is idempotent: tables
+  `IF NOT EXISTS`, a column added only where `information_schema` says it is
+  missing, the erasures that find nothing once done. **Every table is utf8mb4
+  in `utf8mb4_unicode_ci`**, named in its `CREATE TABLE`, and the migration
+  converts any table of ours that is not, after one read of
+  `information_schema` (finding 4: a database created latin1 refused a name
+  with an emoji after the plant was standing). **A change to any store's
+  migration raises `Schema::VERSION`** in the same commit, or a database
+  already at the old number never sees it. `php ~/public_html/.api/migrate.php`
+  runs the whole migration by hand, whatever the version, and says what it
+  did.
 
 Locally, with the browser pages beside it:
 `php -S localhost:8803 -t Server tools/wasm/dev-router.php` — which serves
@@ -529,16 +701,19 @@ The rate limit holds a local copy to nine releases a window too, so a field
 for looking at is sown from the command line through `WildStore` rather than
 over HTTP.
 
-**`/plant.wasm` is revalidated, not cached for a day.** It used to be
-`max-age=86400, must-revalidate`, on the reasoning that a module changes
-rarely. The flaw is that a new build is not a new URL — the path never changes
-— so a browser that fetched it yesterday ran yesterday's Swift today. The day
-the Quiet Garden opened, a browser that had visited `/walk` the day before was
-told `/quiet` could not be reached. It is `no-cache` now, which with the ETag
-is one small conditional request rather than eight megabytes. A development
-copy says `no-store`, because there it is rebuilt every few minutes, and the
-two workbench pages ask for a fresh address each load as well, for copies a
-browser stored before any of this.
+**`/plant.wasm` is kept for a year at its stamped address, and revalidated at
+its bare one.** It used to be `max-age=86400, must-revalidate`, on the
+reasoning that a module changes rarely. The flaw was that a new build was not
+a new URL, so a browser that fetched it yesterday ran yesterday's Swift today:
+the day the Quiet Garden opened, a browser that had visited `/walk` the day
+before was told `/quiet` could not be reached. Then it was `no-cache`, which
+with the ETag was meant to be one small conditional request rather than eight
+megabytes — and at the live host was not, because the tag is lost in front of
+it (§Headers). Since 14 October 2026 the pages ask for `/plant.wasm?v=<stamp>`
+and that address is `immutable` for a year while the stamp is this build's; a
+new build is a new address. A development copy says `no-store`, because there
+it is rebuilt every few minutes, and the two workbench pages ask for a fresh
+address each load as well, for copies a browser stored before any of this.
 
 **Against the app**, which is the only way to watch the asking end to end:
 launch the simulator with `-pgPlots http://localhost:8803` and the app talks to
@@ -611,7 +786,10 @@ on the server, and none older than thirty days but the newest.
 mysqldump refuses a list naming a table that is not there, and the service
 makes its tables on the first request after a deploy, so a deploy with no
 request before 03:17 used to lose that night's copy. `backup.php` now opens the
-store first, running the same migrations a request would. For `wild_names`,
+store first, which migrates the database if it is older than the code, as a
+request would (*The schema*, above). **Every MariaDB copy starts by dropping
+`schema_version`** (since 14 October 2026), so a restore is migrated again on
+the request after it. For `wild_names`,
 after the upload all the same: open `/wild` once, and check that
 `php ~/public_html/.api/backup.php --tables` lists `wild_names`.
 
@@ -661,7 +839,8 @@ whether it could reach the folder. The folder was in `~/Documents` until 24
 September 2026, where macOS's privacy controls refused the job with *Operation
 not permitted*; it is in Application Support now, which a background job may
 reach. Restoring an older copy brings erased rows back into the live tables,
-and the first request afterwards erases them again.
+and the first request afterwards erases them again — for a copy taken before 14
+October 2026, only once `migrate.php` has run (*Restoring*).
 
 From the Mac:
 
@@ -686,6 +865,19 @@ it came from.
 gunzip -c ~/Library/Application\ Support/Peace\ Garden\ backups/walk-….sql.gz \
   | ssh peacegarden 'mysql --defaults-file=… <database>'
 ```
+
+Then, for a copy taken before 14 October 2026:
+
+```
+ssh peacegarden 'php ~/public_html/.api/migrate.php'
+```
+
+A copy taken since starts by dropping `schema_version`, so the first request
+after the restore runs the whole migration by itself — erasing what the older
+copy brought back, converting what needs converting, and claiming every
+plant's one public place afresh. An older copy has no such line, and the live
+database's version would say it was already migrated; `migrate.php` runs it
+whatever the version says. Running it after a newer copy too does no harm.
 
 There is no one-line script for this on purpose. Restoring is the rare thing
 done once under pressure, and a script that did it would also be a script that

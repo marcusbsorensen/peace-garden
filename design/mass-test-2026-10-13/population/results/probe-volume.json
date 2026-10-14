@@ -1,0 +1,118 @@
+{
+ "db": "pgmt_main",
+ "perRoute": {
+  "/api/garden": {
+   "n": 20,
+   "p50": 2.4,
+   "p95": 10.1,
+   "p99": 11.9,
+   "max": 11.9
+  },
+  "/api/wild": {
+   "n": 20,
+   "p50": 324.1,
+   "p95": 845,
+   "p99": 951,
+   "max": 951
+  },
+  "/api/wild/tile/3/4": {
+   "n": 20,
+   "p50": 167.1,
+   "p95": 455.5,
+   "p99": 505.7,
+   "max": 505.7
+  },
+  "/api/walk": {
+   "n": 20,
+   "p50": 163.3,
+   "p95": 472.3,
+   "p99": 500.3,
+   "max": 500.3
+  },
+  "/api/glasshouse/plot/0": {
+   "n": 20,
+   "p50": 196.7,
+   "p95": 439.2,
+   "p99": 652.6,
+   "max": 652.6
+  },
+  "/api/coppice/plot/0": {
+   "n": 20,
+   "p50": 306.7,
+   "p95": 590.4,
+   "p99": 951.2,
+   "max": 951.2
+  },
+  "/api/ground": {
+   "n": 20,
+   "p50": 346.8,
+   "p95": 955.2,
+   "p99": 2117.8,
+   "max": 2117.8
+  }
+ },
+ "statementsPerRequest": 84,
+ "dbMsPerRequest": 303,
+ "top": [
+  {
+   "n": 120,
+   "totalMs": 4193.1,
+   "avgUs": 34942,
+   "text": "ALTER TABLE `walk_offers` ADD COLUMN `kind` VARCHARACTER (?) NOT NULL "
+  },
+  {
+   "n": 120,
+   "totalMs": 3751.8,
+   "avgUs": 31265,
+   "text": "ALTER TABLE `cold_frame` ADD COLUMN `slot_span` INTEGER NOT NULL DEFAU"
+  },
+  {
+   "n": 120,
+   "totalMs": 3655.6,
+   "avgUs": 30463,
+   "text": "ALTER TABLE `walk_offers` ADD COLUMN `hue` FLOAT8 PRECISION NULL "
+  },
+  {
+   "n": 120,
+   "totalMs": 3616.7,
+   "avgUs": 30139,
+   "text": "ALTER TABLE `walk_offers` ADD COLUMN `area` VARCHARACTER (?) NOT NULL "
+  },
+  {
+   "n": 120,
+   "totalMs": 3508.2,
+   "avgUs": 29235,
+   "text": "ALTER TABLE `cold_frame` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL "
+  },
+  {
+   "n": 120,
+   "totalMs": 3452.2,
+   "avgUs": 28769,
+   "text": "ALTER TABLE `long_walk` ADD COLUMN `hidden` INTEGER NOT NULL DEFAULT ?"
+  },
+  {
+   "n": 120,
+   "totalMs": 3264.6,
+   "avgUs": 27205,
+   "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL"
+  },
+  {
+   "n": 120,
+   "totalMs": 3093.2,
+   "avgUs": 25777,
+   "text": "ALTER TABLE `seedbed` ADD COLUMN `slot_span` INTEGER NOT NULL DEFAULT "
+  },
+  {
+   "n": 120,
+   "totalMs": 2966.6,
+   "avgUs": 24722,
+   "text": "ALTER TABLE `quiet_garden` ADD COLUMN `habit` VARCHARACTER (?) NOT NUL"
+  },
+  {
+   "n": 120,
+   "totalMs": 2748.2,
+   "avgUs": 22902,
+   "text": "ALTER TABLE `seedbed` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEF"
+  }
+ ]
+}

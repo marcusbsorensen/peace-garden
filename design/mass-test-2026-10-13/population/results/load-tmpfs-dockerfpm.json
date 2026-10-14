@@ -1,0 +1,860 @@
+{
+ "db": "pgmt_main",
+ "tag": "tmpfs-dockerfpm",
+ "seconds": 20,
+ "plots": {
+  "travel": 16,
+  "peace": 37,
+  "meeting": 24,
+  "kinship": 20,
+  "pattern": 13,
+  "beginnings": 25,
+  "waiting": 10,
+  "light": 18,
+  "renewal": 13,
+  "ground": 9
+ },
+ "databaseMB": 30,
+ "results": [
+  {
+   "kind": "read",
+   "level": 10,
+   "seconds": 20,
+   "requests": 8024,
+   "perSecond": 400.9,
+   "n": 8024,
+   "p50": 21.4,
+   "p95": 47.8,
+   "p99": 80.4,
+   "max": 263.5,
+   "errorShare": 0,
+   "statuses": {
+    "200": 8024
+   },
+   "routes": {
+    "/api/ground/plot/n": {
+     "n": 246,
+     "p50": 21.9,
+     "p95": 58.9,
+     "p99": 86.5,
+     "max": 263.5
+    },
+    "/api/wild": {
+     "n": 734,
+     "p50": 25.8,
+     "p95": 52.4,
+     "p99": 101.7,
+     "max": 241.1
+    },
+    "/api/wild/tile/n/n": {
+     "n": 4002,
+     "p50": 21.4,
+     "p95": 46.5,
+     "p99": 78,
+     "max": 241.2
+    },
+    "/api/walk/plot/n": {
+     "n": 245,
+     "p50": 20.4,
+     "p95": 50.7,
+     "p99": 82.4,
+     "max": 246.2
+    },
+    "/api/frame": {
+     "n": 85,
+     "p50": 20.1,
+     "p95": 51,
+     "p99": 84.4,
+     "max": 84.4
+    },
+    "/api/orchard": {
+     "n": 90,
+     "p50": 19.8,
+     "p95": 40.5,
+     "p99": 59.8,
+     "max": 59.8
+    },
+    "/api/coppice/plot/n": {
+     "n": 250,
+     "p50": 20.9,
+     "p95": 55.9,
+     "p99": 116.4,
+     "max": 233.2
+    },
+    "/api/cross/plot/n": {
+     "n": 214,
+     "p50": 20.3,
+     "p95": 41.6,
+     "p99": 53.9,
+     "max": 79.9
+    },
+    "/api/orchard/plot/n": {
+     "n": 233,
+     "p50": 20.5,
+     "p95": 42.7,
+     "p99": 60.8,
+     "max": 113.5
+    },
+    "/api/knot": {
+     "n": 81,
+     "p50": 19.2,
+     "p95": 36,
+     "p99": 49.4,
+     "max": 49.4
+    },
+    "/api/quiet/plot/n": {
+     "n": 251,
+     "p50": 20.9,
+     "p95": 44.6,
+     "p99": 77.2,
+     "max": 89.1
+    },
+    "/api/frame/plot/n": {
+     "n": 252,
+     "p50": 20.6,
+     "p95": 42,
+     "p99": 93.7,
+     "max": 145
+    },
+    "/api/coppice": {
+     "n": 95,
+     "p50": 20.1,
+     "p95": 53,
+     "p99": 89.4,
+     "max": 89.4
+    },
+    "/api/seedbed/plot/n": {
+     "n": 246,
+     "p50": 20,
+     "p95": 50.1,
+     "p99": 102.5,
+     "max": 145.7
+    },
+    "/api/knot/plot/n": {
+     "n": 256,
+     "p50": 21.3,
+     "p95": 43.1,
+     "p99": 56.8,
+     "max": 89.4
+    },
+    "/api/walk": {
+     "n": 79,
+     "p50": 19.5,
+     "p95": 50,
+     "p99": 111.8,
+     "max": 111.8
+    },
+    "/api/seedbed": {
+     "n": 82,
+     "p50": 20.4,
+     "p95": 43.6,
+     "p99": 78.3,
+     "max": 78.3
+    },
+    "/api/glasshouse": {
+     "n": 81,
+     "p50": 20,
+     "p95": 63,
+     "p99": 88.7,
+     "max": 88.7
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 239,
+     "p50": 20,
+     "p95": 42.8,
+     "p99": 88.2,
+     "max": 122
+    },
+    "/api/cross": {
+     "n": 95,
+     "p50": 20.5,
+     "p95": 51.3,
+     "p99": 73.3,
+     "max": 73.3
+    },
+    "/api/quiet": {
+     "n": 93,
+     "p50": 17.7,
+     "p95": 51.5,
+     "p99": 85.6,
+     "max": 85.6
+    },
+    "/api/ground": {
+     "n": 75,
+     "p50": 20.3,
+     "p95": 58.9,
+     "p99": 87.6,
+     "max": 87.6
+    }
+   },
+   "top": [
+    {
+     "n": 8023,
+     "totalMs": 36860,
+     "avgUs": 4594,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 734,
+     "totalMs": 4499,
+     "avgUs": 6129,
+     "text": "SELECT `tile_x` , `tile_z` , COUNT ( * ) AS `plants` FROM `wild_fields` WHERE `hidden` = ?"
+    },
+    {
+     "n": 4001,
+     "totalMs": 3259,
+     "avgUs": 814,
+     "text": "SELECT `f` . `seed` , `f` . `parent_a` , `f` . `parent_b` , `n` . `name_a` , `n` . `name_b"
+    },
+    {
+     "n": 8024,
+     "totalMs": 2637,
+     "avgUs": 329,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `kind` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 8024,
+     "totalMs": 2634,
+     "avgUs": 328,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 8024,
+     "totalMs": 2592,
+     "avgUs": 323,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `hue` FLOAT8 PRECISION NULL "
+    }
+   ]
+  },
+  {
+   "kind": "read",
+   "level": 50,
+   "seconds": 20.1,
+   "requests": 6400,
+   "perSecond": 318,
+   "n": 6400,
+   "p50": 132,
+   "p95": 301.1,
+   "p99": 352.5,
+   "max": 411.4,
+   "errorShare": 0,
+   "statuses": {
+    "200": 6400
+   },
+   "routes": {
+    "/api/wild/tile/n/n": {
+     "n": 3189,
+     "p50": 128.7,
+     "p95": 298.6,
+     "p99": 354.9,
+     "max": 402.3
+    },
+    "/api/walk/plot/n": {
+     "n": 186,
+     "p50": 131.6,
+     "p95": 298.9,
+     "p99": 352,
+     "max": 411.4
+    },
+    "/api/wild": {
+     "n": 633,
+     "p50": 141,
+     "p95": 303.9,
+     "p99": 356.3,
+     "max": 407
+    },
+    "/api/quiet/plot/n": {
+     "n": 195,
+     "p50": 135.4,
+     "p95": 286.2,
+     "p99": 363.2,
+     "max": 384
+    },
+    "/api/cross/plot/n": {
+     "n": 214,
+     "p50": 138.3,
+     "p95": 318.6,
+     "p99": 360.4,
+     "max": 396.1
+    },
+    "/api/orchard/plot/n": {
+     "n": 187,
+     "p50": 142.2,
+     "p95": 293.1,
+     "p99": 354.6,
+     "max": 395.6
+    },
+    "/api/quiet": {
+     "n": 68,
+     "p50": 130.7,
+     "p95": 327.4,
+     "p99": 380.1,
+     "max": 380.1
+    },
+    "/api/ground/plot/n": {
+     "n": 167,
+     "p50": 131.6,
+     "p95": 310.6,
+     "p99": 375.1,
+     "max": 375.6
+    },
+    "/api/ground": {
+     "n": 68,
+     "p50": 132.9,
+     "p95": 280.1,
+     "p99": 329.8,
+     "max": 329.8
+    },
+    "/api/coppice/plot/n": {
+     "n": 200,
+     "p50": 128.3,
+     "p95": 301.3,
+     "p99": 347,
+     "max": 351.1
+    },
+    "/api/seedbed": {
+     "n": 69,
+     "p50": 127.8,
+     "p95": 295.4,
+     "p99": 341,
+     "max": 341
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 223,
+     "p50": 135.3,
+     "p95": 300,
+     "p99": 327.6,
+     "max": 358.7
+    },
+    "/api/seedbed/plot/n": {
+     "n": 202,
+     "p50": 135.1,
+     "p95": 296.4,
+     "p99": 332.1,
+     "max": 363.1
+    },
+    "/api/knot/plot/n": {
+     "n": 184,
+     "p50": 138.4,
+     "p95": 296.9,
+     "p99": 345.7,
+     "max": 377.7
+    },
+    "/api/cross": {
+     "n": 56,
+     "p50": 131,
+     "p95": 291.5,
+     "p99": 315.7,
+     "max": 315.7
+    },
+    "/api/orchard": {
+     "n": 54,
+     "p50": 136.1,
+     "p95": 249.4,
+     "p99": 316.3,
+     "max": 316.3
+    },
+    "/api/frame/plot/n": {
+     "n": 175,
+     "p50": 142.1,
+     "p95": 314,
+     "p99": 344.1,
+     "max": 348.3
+    },
+    "/api/knot": {
+     "n": 66,
+     "p50": 144,
+     "p95": 324.2,
+     "p99": 331.4,
+     "max": 331.4
+    },
+    "/api/glasshouse": {
+     "n": 67,
+     "p50": 131.2,
+     "p95": 328.3,
+     "p99": 360.6,
+     "max": 360.6
+    },
+    "/api/frame": {
+     "n": 71,
+     "p50": 135,
+     "p95": 308.3,
+     "p99": 355.4,
+     "max": 355.4
+    },
+    "/api/coppice": {
+     "n": 58,
+     "p50": 146,
+     "p95": 314.8,
+     "p99": 356.9,
+     "max": 356.9
+    },
+    "/api/walk": {
+     "n": 68,
+     "p50": 134.5,
+     "p95": 276.7,
+     "p99": 360.1,
+     "max": 360.1
+    }
+   },
+   "top": [
+    {
+     "n": 6398,
+     "totalMs": 32468,
+     "avgUs": 5075,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 6400,
+     "totalMs": 28330,
+     "avgUs": 4427,
+     "text": "CREATE TABLE IF NOT EXISTS `walk_offers` ( `offer` INT8 PRIMARY KEY AUTO_INCREMENT , `seed"
+    },
+    {
+     "n": 6400,
+     "totalMs": 26089,
+     "avgUs": 4076,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_waiting` ON `walk_offers` ( `state` , `offered_at`"
+    },
+    {
+     "n": 6400,
+     "totalMs": 25392,
+     "avgUs": 3967,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 6400,
+     "totalMs": 25326,
+     "avgUs": 3957,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_to` ON `walk_offers` ( `token_to` ) "
+    },
+    {
+     "n": 6400,
+     "totalMs": 25085,
+     "avgUs": 3919,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `area` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    }
+   ]
+  },
+  {
+   "kind": "read",
+   "level": 200,
+   "seconds": 20.4,
+   "requests": 5071,
+   "perSecond": 248.6,
+   "n": 5071,
+   "p50": 600.8,
+   "p95": 2574.5,
+   "p99": 3110.6,
+   "max": 3585.5,
+   "errorShare": 0,
+   "statuses": {
+    "200": 5071
+   },
+   "routes": {
+    "/api/coppice": {
+     "n": 34,
+     "p50": 619,
+     "p95": 2690.4,
+     "p99": 2905.9,
+     "max": 2905.9
+    },
+    "/api/wild/tile/n/n": {
+     "n": 2566,
+     "p50": 606,
+     "p95": 2535.2,
+     "p99": 3179,
+     "max": 3585.5
+    },
+    "/api/quiet/plot/n": {
+     "n": 147,
+     "p50": 587.7,
+     "p95": 2869.6,
+     "p99": 3245.2,
+     "max": 3410.6
+    },
+    "/api/cross": {
+     "n": 44,
+     "p50": 591.3,
+     "p95": 2968.1,
+     "p99": 3401.9,
+     "max": 3401.9
+    },
+    "/api/wild": {
+     "n": 496,
+     "p50": 599.3,
+     "p95": 2320.1,
+     "p99": 3001.8,
+     "max": 3540.1
+    },
+    "/api/orchard/plot/n": {
+     "n": 167,
+     "p50": 586.5,
+     "p95": 1254.5,
+     "p99": 2800.3,
+     "max": 2944.2
+    },
+    "/api/seedbed/plot/n": {
+     "n": 151,
+     "p50": 611.3,
+     "p95": 2565.7,
+     "p99": 3428.9,
+     "max": 3563.8
+    },
+    "/api/walk/plot/n": {
+     "n": 148,
+     "p50": 594.7,
+     "p95": 2081.4,
+     "p99": 2846.8,
+     "max": 2921.8
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 128,
+     "p50": 586.8,
+     "p95": 2195.8,
+     "p99": 2923.2,
+     "max": 3023.6
+    },
+    "/api/ground/plot/n": {
+     "n": 173,
+     "p50": 589.6,
+     "p95": 2757.9,
+     "p99": 3344.2,
+     "max": 3575.1
+    },
+    "/api/cross/plot/n": {
+     "n": 141,
+     "p50": 603.7,
+     "p95": 2695.4,
+     "p99": 3031.3,
+     "max": 3201.8
+    },
+    "/api/knot/plot/n": {
+     "n": 158,
+     "p50": 590.5,
+     "p95": 2341.3,
+     "p99": 2918.5,
+     "max": 3226.1
+    },
+    "/api/coppice/plot/n": {
+     "n": 137,
+     "p50": 584.6,
+     "p95": 2915.3,
+     "p99": 3107.8,
+     "max": 3421.7
+    },
+    "/api/quiet": {
+     "n": 50,
+     "p50": 614.8,
+     "p95": 2170.7,
+     "p99": 3024.6,
+     "max": 3024.6
+    },
+    "/api/knot": {
+     "n": 53,
+     "p50": 599.1,
+     "p95": 2824.8,
+     "p99": 3545.7,
+     "max": 3545.7
+    },
+    "/api/walk": {
+     "n": 48,
+     "p50": 601.4,
+     "p95": 2565.9,
+     "p99": 3063.8,
+     "max": 3063.8
+    },
+    "/api/frame/plot/n": {
+     "n": 146,
+     "p50": 595.7,
+     "p95": 2624.5,
+     "p99": 3064.1,
+     "max": 3483.6
+    },
+    "/api/frame": {
+     "n": 59,
+     "p50": 579.1,
+     "p95": 2811.9,
+     "p99": 2855.4,
+     "max": 2855.4
+    },
+    "/api/ground": {
+     "n": 63,
+     "p50": 587.5,
+     "p95": 2605.5,
+     "p99": 3444.7,
+     "max": 3444.7
+    },
+    "/api/orchard": {
+     "n": 50,
+     "p50": 581.4,
+     "p95": 2251.2,
+     "p99": 2918.8,
+     "max": 2918.8
+    },
+    "/api/glasshouse": {
+     "n": 52,
+     "p50": 631.7,
+     "p95": 2830.5,
+     "p99": 2913,
+     "max": 2913
+    },
+    "/api/seedbed": {
+     "n": 60,
+     "p50": 611.7,
+     "p95": 2741.2,
+     "p99": 3447.1,
+     "max": 3447.1
+    }
+   },
+   "top": [
+    {
+     "n": 5071,
+     "totalMs": 31911,
+     "avgUs": 6293,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 5071,
+     "totalMs": 27107,
+     "avgUs": 5345,
+     "text": "CREATE TABLE IF NOT EXISTS `walk_offers` ( `offer` INT8 PRIMARY KEY AUTO_INCREMENT , `seed"
+    },
+    {
+     "n": 5071,
+     "totalMs": 25447,
+     "avgUs": 5018,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_waiting` ON `walk_offers` ( `state` , `offered_at`"
+    },
+    {
+     "n": 5070,
+     "totalMs": 24849,
+     "avgUs": 4901,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `hue` FLOAT8 PRECISION NULL "
+    },
+    {
+     "n": 5071,
+     "totalMs": 23783,
+     "avgUs": 4690,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_to` ON `walk_offers` ( `token_to` ) "
+    },
+    {
+     "n": 5071,
+     "totalMs": 23223,
+     "avgUs": 4580,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    }
+   ]
+  },
+  {
+   "kind": "write",
+   "level": 10,
+   "seconds": 20,
+   "requests": 5196,
+   "perSecond": 259.4,
+   "n": 5196,
+   "p50": 32.2,
+   "p95": 75.2,
+   "p99": 103.1,
+   "max": 899.8,
+   "errorShare": 0,
+   "statuses": {
+    "201": 5196
+   },
+   "routes": {
+    "/api/wild/release": {
+     "n": 2628,
+     "p50": 32.7,
+     "p95": 74.5,
+     "p99": 106.8,
+     "max": 899.8
+    },
+    "/api/walk/offer": {
+     "n": 2568,
+     "p50": 31.7,
+     "p95": 75.5,
+     "p99": 98.7,
+     "max": 865.7
+    }
+   },
+   "top": [
+    {
+     "n": 10384,
+     "totalMs": 55576,
+     "avgUs": 5352,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 10392,
+     "totalMs": 7531,
+     "avgUs": 725,
+     "text": "CREATE TABLE IF NOT EXISTS `walk_offers` ( `offer` INT8 PRIMARY KEY AUTO_INCREMENT , `seed"
+    },
+    {
+     "n": 10392,
+     "totalMs": 6643,
+     "avgUs": 639,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_waiting` ON `walk_offers` ( `state` , `offered_at`"
+    },
+    {
+     "n": 10392,
+     "totalMs": 6615,
+     "avgUs": 637,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `kind` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 10392,
+     "totalMs": 6507,
+     "avgUs": 626,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 10392,
+     "totalMs": 6495,
+     "avgUs": 625,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `hue` FLOAT8 PRECISION NULL "
+    }
+   ]
+  },
+  {
+   "kind": "write",
+   "level": 50,
+   "seconds": 20.6,
+   "requests": 2484,
+   "perSecond": 120.7,
+   "n": 2484,
+   "p50": 414.4,
+   "p95": 713.8,
+   "p99": 846.9,
+   "max": 901.6,
+   "errorShare": 0,
+   "statuses": {
+    "201": 2484
+   },
+   "routes": {
+    "/api/wild/release": {
+     "n": 1269,
+     "p50": 408.6,
+     "p95": 705.4,
+     "p99": 845.9,
+     "max": 901.6
+    },
+    "/api/walk/offer": {
+     "n": 1215,
+     "p50": 418.3,
+     "p95": 724.1,
+     "p99": 849.9,
+     "max": 892.7
+    }
+   },
+   "top": [
+    {
+     "n": 4966,
+     "totalMs": 36227,
+     "avgUs": 7295,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 4967,
+     "totalMs": 34846,
+     "avgUs": 7015,
+     "text": "CREATE TABLE IF NOT EXISTS `walk_offers` ( `offer` INT8 PRIMARY KEY AUTO_INCREMENT , `seed"
+    },
+    {
+     "n": 4968,
+     "totalMs": 31639,
+     "avgUs": 6369,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_waiting` ON `walk_offers` ( `state` , `offered_at`"
+    },
+    {
+     "n": 4968,
+     "totalMs": 31489,
+     "avgUs": 6338,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `kind` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 4967,
+     "totalMs": 30793,
+     "avgUs": 6199,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 4968,
+     "totalMs": 30788,
+     "avgUs": 6197,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `area` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    }
+   ]
+  },
+  {
+   "kind": "write",
+   "level": 200,
+   "seconds": 6.9,
+   "requests": 868,
+   "perSecond": 126.2,
+   "n": 868,
+   "p50": 1460.5,
+   "p95": 1856.8,
+   "p99": 1892.9,
+   "max": 1929.7,
+   "errorShare": 0,
+   "statuses": {
+    "201": 868
+   },
+   "routes": {
+    "/api/walk/offer": {
+     "n": 435,
+     "p50": 1451.6,
+     "p95": 1856.6,
+     "p99": 1900.3,
+     "max": 1929.7
+    },
+    "/api/wild/release": {
+     "n": 433,
+     "p50": 1474.3,
+     "p95": 1857.1,
+     "p99": 1887.2,
+     "max": 1900.9
+    }
+   },
+   "top": [
+    {
+     "n": 1735,
+     "totalMs": 14090,
+     "avgUs": 8121,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 1736,
+     "totalMs": 11373,
+     "avgUs": 6551,
+     "text": "CREATE TABLE IF NOT EXISTS `walk_offers` ( `offer` INT8 PRIMARY KEY AUTO_INCREMENT , `seed"
+    },
+    {
+     "n": 1736,
+     "totalMs": 10409,
+     "avgUs": 5996,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_waiting` ON `walk_offers` ( `state` , `offered_at`"
+    },
+    {
+     "n": 1736,
+     "totalMs": 10179,
+     "avgUs": 5864,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_to` ON `walk_offers` ( `token_to` ) "
+    },
+    {
+     "n": 1736,
+     "totalMs": 9940,
+     "avgUs": 5726,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 1736,
+     "totalMs": 9684,
+     "avgUs": 5579,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `area` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    }
+   ]
+  }
+ ]
+}

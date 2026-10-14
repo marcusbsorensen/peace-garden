@@ -1,0 +1,755 @@
+{
+ "db": "pgmt_main",
+ "tag": "before-read",
+ "seconds": 20,
+ "plots": {
+  "travel": 16,
+  "peace": 37,
+  "meeting": 24,
+  "kinship": 20,
+  "pattern": 13,
+  "beginnings": 25,
+  "waiting": 10,
+  "light": 18,
+  "renewal": 13,
+  "ground": 9
+ },
+ "databaseMB": 18.6,
+ "results": [
+  {
+   "kind": "read",
+   "level": 10,
+   "seconds": 20.7,
+   "requests": 4988,
+   "perSecond": 240.8,
+   "n": 4988,
+   "p50": 26.2,
+   "p95": 117.7,
+   "p99": 218.1,
+   "max": 337,
+   "errorShare": 0,
+   "statuses": {
+    "200": 4988
+   },
+   "routes": {
+    "/api/wild/tile/n/n": {
+     "n": 2495,
+     "p50": 26,
+     "p95": 114.5,
+     "p99": 206.9,
+     "max": 319.9
+    },
+    "/api/walk/plot/n": {
+     "n": 133,
+     "p50": 27,
+     "p95": 149.7,
+     "p99": 236.2,
+     "max": 248.3
+    },
+    "/api/wild": {
+     "n": 502,
+     "p50": 33.5,
+     "p95": 161.3,
+     "p99": 264.5,
+     "max": 317.5
+    },
+    "/api/glasshouse": {
+     "n": 52,
+     "p50": 26.2,
+     "p95": 117.8,
+     "p99": 193.5,
+     "max": 193.5
+    },
+    "/api/frame": {
+     "n": 52,
+     "p50": 23.2,
+     "p95": 75.1,
+     "p99": 132.2,
+     "max": 132.2
+    },
+    "/api/coppice/plot/n": {
+     "n": 155,
+     "p50": 24.3,
+     "p95": 107.2,
+     "p99": 159.5,
+     "max": 165.8
+    },
+    "/api/orchard/plot/n": {
+     "n": 147,
+     "p50": 27.8,
+     "p95": 109.3,
+     "p99": 202.5,
+     "max": 230.1
+    },
+    "/api/cross/plot/n": {
+     "n": 171,
+     "p50": 24.9,
+     "p95": 99.7,
+     "p99": 173.7,
+     "max": 176.8
+    },
+    "/api/quiet/plot/n": {
+     "n": 136,
+     "p50": 26.5,
+     "p95": 120.7,
+     "p99": 152.8,
+     "max": 185.5
+    },
+    "/api/coppice": {
+     "n": 59,
+     "p50": 26.3,
+     "p95": 84.9,
+     "p99": 149.6,
+     "max": 149.6
+    },
+    "/api/ground": {
+     "n": 57,
+     "p50": 25,
+     "p95": 83.1,
+     "p99": 139.3,
+     "max": 139.3
+    },
+    "/api/ground/plot/n": {
+     "n": 157,
+     "p50": 25.2,
+     "p95": 130.9,
+     "p99": 276.8,
+     "max": 283.3
+    },
+    "/api/knot/plot/n": {
+     "n": 158,
+     "p50": 21.7,
+     "p95": 100,
+     "p99": 161.5,
+     "max": 233
+    },
+    "/api/frame/plot/n": {
+     "n": 142,
+     "p50": 25.8,
+     "p95": 120.2,
+     "p99": 248.4,
+     "max": 337
+    },
+    "/api/seedbed": {
+     "n": 54,
+     "p50": 27.1,
+     "p95": 90.6,
+     "p99": 154.6,
+     "max": 154.6
+    },
+    "/api/seedbed/plot/n": {
+     "n": 140,
+     "p50": 24.3,
+     "p95": 124.7,
+     "p99": 194.1,
+     "max": 202.6
+    },
+    "/api/orchard": {
+     "n": 50,
+     "p50": 26.9,
+     "p95": 84.6,
+     "p99": 163.6,
+     "max": 163.6
+    },
+    "/api/walk": {
+     "n": 47,
+     "p50": 28.6,
+     "p95": 138.8,
+     "p99": 262.9,
+     "max": 262.9
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 122,
+     "p50": 23.8,
+     "p95": 107,
+     "p99": 228.9,
+     "max": 263.5
+    },
+    "/api/quiet": {
+     "n": 62,
+     "p50": 25.8,
+     "p95": 119,
+     "p99": 126.9,
+     "max": 126.9
+    },
+    "/api/knot": {
+     "n": 47,
+     "p50": 21.1,
+     "p95": 63.8,
+     "p99": 81.8,
+     "max": 81.8
+    },
+    "/api/cross": {
+     "n": 50,
+     "p50": 21.6,
+     "p95": 104.5,
+     "p99": 233.7,
+     "max": 233.7
+    }
+   },
+   "top": [
+    {
+     "n": 4986,
+     "totalMs": 38358,
+     "avgUs": 7693,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 502,
+     "totalMs": 7021,
+     "avgUs": 13986,
+     "text": "SELECT `tile_x` , `tile_z` , COUNT ( * ) AS `plants` FROM `wild_fields` WHERE `hidden` = ?"
+    },
+    {
+     "n": 2495,
+     "totalMs": 4136,
+     "avgUs": 1658,
+     "text": "SELECT `f` . `seed` , `f` . `parent_a` , `f` . `parent_b` , `n` . `name_a` , `n` . `name_b"
+    },
+    {
+     "n": 4988,
+     "totalMs": 2539,
+     "avgUs": 509,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `area` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 4988,
+     "totalMs": 2512,
+     "avgUs": 504,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 4988,
+     "totalMs": 2498,
+     "avgUs": 501,
+     "text": "CREATE TABLE IF NOT EXISTS `walk_offers` ( `offer` INT8 PRIMARY KEY AUTO_INCREMENT , `seed"
+    }
+   ],
+   "threadStates": {
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS long_walk_hidden ON l": 3,
+    "Waiting for table metadata lock: ALTER TABLE long_walk ADD COLUMN hidden INTEGER ": 4,
+    "Writing to net": 48,
+    "Sending data": 44,
+    "Optimizing": 1,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS long_walk_plot ON lon": 2,
+    "setup": 2,
+    "starting": 8,
+    "Reset for next command": 3,
+    "Query end": 3,
+    "Query": 2,
+    "Preparing": 1,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS long_walk ( arrival B": 4,
+    "Opening tables": 3,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_to ON wal": 2,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_from ON w": 1,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN kind VARCHAR(": 3,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN hue DOUBLE PR": 2,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN area VARCHAR(": 1,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_waiting O": 2,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS quiet_garden ( arriva": 4,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS quiet_garden_hidden O": 3,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS quiet_garden_plot ON ": 1,
+    "creating table": 2,
+    "Waiting for table metadata lock: ALTER TABLE quiet_garden ADD COLUMN habit VARCHA": 1,
+    "Waiting for table metadata lock: ALTER TABLE cold_frame ADD COLUMN habit VARCHAR(": 1,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS cold_frame_plot ON co": 1,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS walk_offers ( offer B": 1,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN habit VARCHAR": 1,
+    "closing tables": 1
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 23.9
+  },
+  {
+   "kind": "read",
+   "level": 50,
+   "seconds": 20.5,
+   "requests": 3279,
+   "perSecond": 160.2,
+   "n": 3279,
+   "p50": 233.6,
+   "p95": 757.3,
+   "p99": 1269.2,
+   "max": 1585.1,
+   "errorShare": 0,
+   "statuses": {
+    "200": 3279
+   },
+   "routes": {
+    "/api/knot/plot/n": {
+     "n": 93,
+     "p50": 229.1,
+     "p95": 985.7,
+     "p99": 1295.6,
+     "max": 1295.6
+    },
+    "/api/wild/tile/n/n": {
+     "n": 1666,
+     "p50": 225.7,
+     "p95": 747.1,
+     "p99": 1216.8,
+     "max": 1572.9
+    },
+    "/api/glasshouse": {
+     "n": 27,
+     "p50": 249.4,
+     "p95": 761.3,
+     "p99": 1000.7,
+     "max": 1000.7
+    },
+    "/api/quiet/plot/n": {
+     "n": 92,
+     "p50": 250.9,
+     "p95": 754.5,
+     "p99": 1203,
+     "max": 1203
+    },
+    "/api/wild": {
+     "n": 323,
+     "p50": 227.7,
+     "p95": 738.9,
+     "p99": 934.9,
+     "max": 1415.5
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 103,
+     "p50": 214.1,
+     "p95": 599.4,
+     "p99": 990.8,
+     "max": 1524.7
+    },
+    "/api/coppice": {
+     "n": 31,
+     "p50": 199.7,
+     "p95": 696.7,
+     "p99": 712.8,
+     "max": 712.8
+    },
+    "/api/seedbed/plot/n": {
+     "n": 98,
+     "p50": 234.9,
+     "p95": 748.5,
+     "p99": 945.4,
+     "max": 945.4
+    },
+    "/api/ground/plot/n": {
+     "n": 110,
+     "p50": 285.3,
+     "p95": 712.5,
+     "p99": 802.1,
+     "max": 1314.7
+    },
+    "/api/frame": {
+     "n": 40,
+     "p50": 225.5,
+     "p95": 579.7,
+     "p99": 971.9,
+     "max": 971.9
+    },
+    "/api/walk/plot/n": {
+     "n": 93,
+     "p50": 237.9,
+     "p95": 957.3,
+     "p99": 1269.2,
+     "max": 1269.2
+    },
+    "/api/cross/plot/n": {
+     "n": 109,
+     "p50": 242.3,
+     "p95": 967,
+     "p99": 1450.6,
+     "max": 1585.1
+    },
+    "/api/frame/plot/n": {
+     "n": 77,
+     "p50": 258.5,
+     "p95": 735,
+     "p99": 1210.5,
+     "max": 1210.5
+    },
+    "/api/orchard": {
+     "n": 31,
+     "p50": 257.7,
+     "p95": 807.3,
+     "p99": 1191.6,
+     "max": 1191.6
+    },
+    "/api/seedbed": {
+     "n": 37,
+     "p50": 282.6,
+     "p95": 1297,
+     "p99": 1472.9,
+     "max": 1472.9
+    },
+    "/api/quiet": {
+     "n": 34,
+     "p50": 322.1,
+     "p95": 1056.5,
+     "p99": 1197.5,
+     "max": 1197.5
+    },
+    "/api/coppice/plot/n": {
+     "n": 88,
+     "p50": 237.9,
+     "p95": 852.1,
+     "p99": 1341.5,
+     "max": 1341.5
+    },
+    "/api/knot": {
+     "n": 35,
+     "p50": 214.1,
+     "p95": 667.7,
+     "p99": 706.4,
+     "max": 706.4
+    },
+    "/api/walk": {
+     "n": 28,
+     "p50": 249.6,
+     "p95": 749.9,
+     "p99": 1383.7,
+     "max": 1383.7
+    },
+    "/api/orchard/plot/n": {
+     "n": 95,
+     "p50": 247.5,
+     "p95": 942.1,
+     "p99": 1498.2,
+     "max": 1498.2
+    },
+    "/api/cross": {
+     "n": 35,
+     "p50": 222.4,
+     "p95": 578.3,
+     "p99": 1317.1,
+     "max": 1317.1
+    },
+    "/api/ground": {
+     "n": 34,
+     "p50": 286.4,
+     "p95": 798.3,
+     "p99": 984.7,
+     "max": 984.7
+    }
+   },
+   "top": [
+    {
+     "n": 3278,
+     "totalMs": 38761,
+     "avgUs": 11824,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 3279,
+     "totalMs": 27773,
+     "avgUs": 8470,
+     "text": "CREATE TABLE IF NOT EXISTS `walk_offers` ( `offer` INT8 PRIMARY KEY AUTO_INCREMENT , `seed"
+    },
+    {
+     "n": 3279,
+     "totalMs": 20636,
+     "avgUs": 6293,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_to` ON `walk_offers` ( `token_to` ) "
+    },
+    {
+     "n": 3279,
+     "totalMs": 19359,
+     "avgUs": 5904,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `habit` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 3279,
+     "totalMs": 19057,
+     "avgUs": 5812,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_waiting` ON `walk_offers` ( `state` , `offered_at`"
+    },
+    {
+     "n": 3279,
+     "totalMs": 18096,
+     "avgUs": 5519,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_from` ON `walk_offers` ( `token_from` ) "
+    }
+   ],
+   "threadStates": {
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_to ON wal": 14,
+    "Writing to net": 26,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_from ON w": 16,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN area VARCHAR(": 26,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN hue DOUBLE PR": 15,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN habit VARCHAR": 17,
+    "Sending data": 50,
+    "Creating sort index": 1,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_waiting O": 31,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS walk_offers ( offer B": 23,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN kind VARCHAR(": 29,
+    "Query end": 9,
+    "Opening tables": 7,
+    "closing tables": 2,
+    "starting": 7,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS long_walk ( arrival B": 2,
+    "Preparing": 2,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS quiet_garden ( arriva": 3,
+    "After create": 1,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS seedbed ( arrival BIG": 2,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS seedbed_plot ON seedb": 1,
+    "Waiting for table metadata lock: ALTER TABLE seedbed ADD COLUMN slot_span INTEGER": 4,
+    "Query": 3,
+    "creating table": 1,
+    "checking permissions": 2,
+    "Statistics": 1,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS cold_frame_plot ON co": 1,
+    "setup": 2
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 61.7
+  },
+  {
+   "kind": "read",
+   "level": 200,
+   "seconds": 21,
+   "requests": 6758,
+   "perSecond": 321.9,
+   "n": 6758,
+   "p50": 540.7,
+   "p95": 1100.8,
+   "p99": 1446.6,
+   "max": 1615.3,
+   "errorShare": 0,
+   "statuses": {
+    "200": 6758
+   },
+   "routes": {
+    "/api/frame": {
+     "n": 76,
+     "p50": 532.5,
+     "p95": 1167.8,
+     "p99": 1563.7,
+     "max": 1563.7
+    },
+    "/api/quiet": {
+     "n": 65,
+     "p50": 560.2,
+     "p95": 1100.8,
+     "p99": 1366.7,
+     "max": 1366.7
+    },
+    "/api/cross": {
+     "n": 72,
+     "p50": 514,
+     "p95": 1097.1,
+     "p99": 1505,
+     "max": 1505
+    },
+    "/api/coppice/plot/n": {
+     "n": 198,
+     "p50": 555.1,
+     "p95": 1156.6,
+     "p99": 1481.5,
+     "max": 1557.5
+    },
+    "/api/wild": {
+     "n": 663,
+     "p50": 538.8,
+     "p95": 1074.4,
+     "p99": 1406.1,
+     "max": 1583.1
+    },
+    "/api/knot/plot/n": {
+     "n": 231,
+     "p50": 537.8,
+     "p95": 1111.2,
+     "p99": 1452.9,
+     "max": 1563.1
+    },
+    "/api/orchard/plot/n": {
+     "n": 203,
+     "p50": 555.1,
+     "p95": 1112.5,
+     "p99": 1416,
+     "max": 1444.2
+    },
+    "/api/quiet/plot/n": {
+     "n": 206,
+     "p50": 528.5,
+     "p95": 1022.3,
+     "p99": 1432.5,
+     "max": 1512.3
+    },
+    "/api/ground/plot/n": {
+     "n": 187,
+     "p50": 530.1,
+     "p95": 1113.7,
+     "p99": 1423.5,
+     "max": 1544.8
+    },
+    "/api/wild/tile/n/n": {
+     "n": 3400,
+     "p50": 541.8,
+     "p95": 1110.7,
+     "p99": 1452.8,
+     "max": 1589.6
+    },
+    "/api/orchard": {
+     "n": 68,
+     "p50": 524.5,
+     "p95": 988,
+     "p99": 1440.2,
+     "max": 1440.2
+    },
+    "/api/cross/plot/n": {
+     "n": 196,
+     "p50": 553.3,
+     "p95": 1335.1,
+     "p99": 1568.2,
+     "max": 1572.7
+    },
+    "/api/frame/plot/n": {
+     "n": 202,
+     "p50": 539.4,
+     "p95": 1346.4,
+     "p99": 1451.6,
+     "max": 1570.6
+    },
+    "/api/seedbed/plot/n": {
+     "n": 206,
+     "p50": 547.7,
+     "p95": 1007.1,
+     "p99": 1440.1,
+     "max": 1455.8
+    },
+    "/api/walk": {
+     "n": 65,
+     "p50": 534.3,
+     "p95": 1065.5,
+     "p99": 1524.7,
+     "max": 1524.7
+    },
+    "/api/walk/plot/n": {
+     "n": 189,
+     "p50": 529.2,
+     "p95": 1024.1,
+     "p99": 1437,
+     "max": 1578
+    },
+    "/api/knot": {
+     "n": 63,
+     "p50": 568.9,
+     "p95": 1142.1,
+     "p99": 1549.2,
+     "max": 1549.2
+    },
+    "/api/ground": {
+     "n": 64,
+     "p50": 508,
+     "p95": 763.2,
+     "p99": 1434.1,
+     "max": 1434.1
+    },
+    "/api/coppice": {
+     "n": 81,
+     "p50": 529.8,
+     "p95": 1063.6,
+     "p99": 1428.5,
+     "max": 1428.5
+    },
+    "/api/glasshouse": {
+     "n": 55,
+     "p50": 574.3,
+     "p95": 1146,
+     "p99": 1440.1,
+     "max": 1440.1
+    },
+    "/api/glasshouse/plot/n": {
+     "n": 197,
+     "p50": 525.8,
+     "p95": 1325,
+     "p99": 1554.2,
+     "max": 1615.3
+    },
+    "/api/seedbed": {
+     "n": 71,
+     "p50": 540.1,
+     "p95": 1058.8,
+     "p99": 1399.2,
+     "max": 1399.2
+    }
+   },
+   "top": [
+    {
+     "n": 6757,
+     "totalMs": 47668,
+     "avgUs": 7055,
+     "text": "SELECT * FROM `walk_offers` WHERE `state` IN (...) AND `seed` NOT LIKE ? "
+    },
+    {
+     "n": 6758,
+     "totalMs": 23609,
+     "avgUs": 3494,
+     "text": "CREATE TABLE IF NOT EXISTS `walk_offers` ( `offer` INT8 PRIMARY KEY AUTO_INCREMENT , `seed"
+    },
+    {
+     "n": 6758,
+     "totalMs": 19450,
+     "avgUs": 2878,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `kind` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 6758,
+     "totalMs": 19342,
+     "avgUs": 2862,
+     "text": "CREATE INDEX IF NOT EXISTS `walk_offers_waiting` ON `walk_offers` ( `state` , `offered_at`"
+    },
+    {
+     "n": 6758,
+     "totalMs": 19060,
+     "avgUs": 2820,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `area` VARCHARACTER (?) NOT NULL DEFAULT ? "
+    },
+    {
+     "n": 6758,
+     "totalMs": 18700,
+     "avgUs": 2767,
+     "text": "ALTER TABLE `walk_offers` ADD COLUMN `hue` FLOAT8 PRECISION NULL "
+    }
+   ],
+   "threadStates": {
+    "starting": 18,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS walk_offers ( offer B": 33,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_to ON wal": 18,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN area VARCHAR(": 32,
+    "Query end": 12,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN hue DOUBLE PR": 18,
+    "Creating sort index": 1,
+    "Sending data": 60,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_waiting O": 31,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS seedbed_plot ON seedb": 6,
+    "setup": 6,
+    "Writing to net": 74,
+    "Reset for next command": 3,
+    "Statistics": 5,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS walk_offers_from ON w": 18,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN kind VARCHAR(": 30,
+    "Opening tables": 6,
+    "Waiting for table metadata lock: ALTER TABLE walk_offers ADD COLUMN habit VARCHAR": 21,
+    "Executing": 1,
+    "init": 3,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS seedbed ( arrival BIG": 5,
+    "Waiting for table metadata lock: ALTER TABLE seedbed ADD COLUMN habit VARCHAR(16)": 3,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS seedbed_hidden ON see": 4,
+    "Waiting for table metadata lock: ALTER TABLE seedbed ADD COLUMN slot_span INTEGER": 5,
+    "closing tables": 1,
+    "Preparing": 1,
+    "Query": 1,
+    "Waiting for table metadata lock: ALTER TABLE long_walk ADD COLUMN hidden INTEGER ": 2,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS long_walk_plot ON lon": 1,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS coppice_plot ON coppi": 3,
+    "Waiting for table metadata lock: CREATE TABLE IF NOT EXISTS coppice ( arrival BIG": 4,
+    "Optimizing": 2,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS long_walk_hidden ON l": 1,
+    "Waiting for table metadata lock: CREATE INDEX IF NOT EXISTS coppice_hidden ON cop": 3,
+    "After create": 1
+   },
+   "deadlocks": 0,
+   "metadataLockShare": 55
+  }
+ ]
+}

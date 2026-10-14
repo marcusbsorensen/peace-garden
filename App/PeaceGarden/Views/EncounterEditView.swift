@@ -34,7 +34,7 @@ struct EncounterEditView: View {
                             .chromeHeading(size: 17)
                             .foregroundStyle(Chrome.ink)
                         Text("What this plant says about the meeting. What it grows from stays as it is.")
-                            .font(.system(size: 13, weight: .light))
+                            .scaledFont(size: 13, weight: .light)
                             .foregroundStyle(Chrome.faint)
                             .lineSpacing(4)
                     }
@@ -48,19 +48,19 @@ struct EncounterEditView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             Toggle(isOn: $keepsCoordinate) {
                                 Text("Keep the coordinates")
-                                    .font(.system(size: 15, weight: .light))
+                                    .scaledFont(size: 15, weight: .light)
                                     .foregroundStyle(Chrome.ink)
                             }
                             .tint(Chrome.muted)
 
                             Text(verbatim: coordinate.written)
-                                .font(.system(size: 14, weight: .light).monospacedDigit())
+                                .scaledFont(size: 14, weight: .light, monospacedDigits: true)
                                 .foregroundStyle(keepsCoordinate ? Chrome.muted : Chrome.faint)
 
                             // Said plainly, because a switch that quietly keeps
                             // the data would make the whole consent worthless.
                             Text("Turning this off removes them from this phone for good.")
-                                .font(.system(size: 13, weight: .light))
+                                .scaledFont(size: 13, weight: .light)
                                 .foregroundStyle(Chrome.faint)
                                 .lineSpacing(4)
                         }
@@ -106,7 +106,7 @@ struct EncounterEditView: View {
                 .foregroundStyle(Chrome.faint)
             TextField(label, text: text, prompt: Text(prompt).foregroundStyle(Chrome.faint))
                 .labelsHidden()
-                .font(.system(size: 16, weight: .light, design: .serif))
+                .scaledFont(size: 16, weight: .light, design: .serif)
                 .foregroundStyle(Chrome.ink)
                 .autocorrectionDisabled()
             Hairline()

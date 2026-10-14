@@ -117,10 +117,11 @@ function replant(array $argv): int
         $config = configuration();
         $store = WalkStore::open($config['dsn'], $config['user'] ?? null, $config['password'] ?? null);
         $db = $store->connection();
-        // **Every area's store opened first, which runs its migration.** The
-        // replant writes columns a migration adds — the Seedbed's and the Cold
-        // Frame's `slot_span` and `habit`, since 25 September — and an area
-        // nobody has visited since the deploy would not have them yet.
+        // **Every area's table brought up to date first.** The replant writes
+        // columns a migration adds — the Seedbed's and the Cold Frame's
+        // `slot_span` and `habit`, since 25 September. Opening the store does
+        // that for every area at once since 14 October 2026 (`Schema.php`);
+        // each area is still asked for here, which costs nothing now.
         foreach (['room', 'cross', 'orchard', 'knot', 'seedbed', 'coldFrame', 'glasshouse', 'coppice',
                   'homeGround'] as $area) {
             $store->$area();
@@ -129,7 +130,7 @@ function replant(array $argv): int
             plan CHAR(64) NOT NULL PRIMARY KEY,
             replanted_at BIGINT NOT NULL,
             summary TEXT NOT NULL
-        )')->execute();
+        )' . Schema::options($db))->execute();
 
         if ($mode === '--verify') {
             $wrong = verify($db, $plan);

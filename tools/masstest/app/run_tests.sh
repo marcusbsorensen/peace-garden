@@ -10,6 +10,9 @@
 # handed over as PG_MASSTEST (stress) or PG_MT_OUT (the UI tests). The clock
 # file ends `rc=<code>` and `DONE`.
 #
+# `MT_LOCK`, if set, is a command every xcodebuild runs under — on a shared
+# Mac, the one-build-at-a-time lock (14 October): `MT_LOCK="sh <lock>.sh"`.
+#
 # Never point this at a simulator somebody uses: it installs the app over
 # whatever is there and writes the garden it is testing into it.
 set -u
@@ -19,11 +22,13 @@ mkdir -p "$OUT" build/results
 date > "$CLOCK"
 xcrun simctl boot "$SIM" 2>/dev/null
 xcrun simctl bootstatus "$SIM" > /dev/null 2>&1
-# Two switches a launch argument cannot reach: both are read as `Bool`s off
-# `object(forKey:)`, and `-key NO` on the command line arrives as the string
-# "NO". The Testing section (English on purpose, and only in Debug and
-# TestFlight copies) is folded, and the stage's plant held still so two
-# photographs of one screen differ only in what is being tested.
+# Two switches, written as stored values: the Testing section (English on
+# purpose, and only in Debug and TestFlight copies) is folded, and the stage's
+# plant held still so two photographs of one screen differ only in what is
+# being tested. Since 14 October `-developer.showsSection NO` works as a launch
+# argument too (it was read off `object(forKey:) as? Bool`, and `-key NO`
+# arrives as the string "NO"); the stored value is kept so a build from before
+# then is photographed the same way.
 xcrun simctl spawn "$SIM" defaults write app.peacegarden developer.showsSection -bool NO
 xcrun simctl spawn "$SIM" defaults write app.peacegarden stage.turntable.v1 -bool NO
 
@@ -32,7 +37,7 @@ export TEST_RUNNER_PG_MASSTEST="$OUT" TEST_RUNNER_PG_MT_OUT="$OUT"
 
 run() {
   local scheme=$1 only=$2 tag=$3
-  xcodebuild test-without-building \
+  ${=MT_LOCK:-} xcodebuild test-without-building -jobs 4 \
     -project PeaceGardenMassTest.xcodeproj -scheme "$scheme" \
     -derivedDataPath "${MT_DD:-build/DD-$scheme}" -destination "id=$SIM" \
     -only-testing:"$only" \

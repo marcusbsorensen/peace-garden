@@ -1,0 +1,92 @@
+{
+ "utf8mb4": [
+  {
+   "name": "Anna",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "Anna"
+  },
+  {
+   "name": "مريم",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "مريم"
+  },
+  {
+   "name": "Rose 🌹",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "Rose ?"
+  },
+  {
+   "name": "Zoë",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "Zoë"
+  }
+ ],
+ "utf8mb3": [
+  {
+   "name": "Anna",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "Anna"
+  },
+  {
+   "name": "مريم",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "مريم"
+  },
+  {
+   "name": "Rose 🌹",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "Rose ?"
+  },
+  {
+   "name": "Zoë",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "Zoë"
+  }
+ ],
+ "latin1": [
+  {
+   "name": "Anna",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "Anna"
+  },
+  {
+   "name": "مريم",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "مريم"
+  },
+  {
+   "name": "Rose 🌹",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "Rose ?"
+  },
+  {
+   "name": "Zoë",
+   "first": 201,
+   "standingAfterFirst": true,
+   "retry": 200,
+   "stored": "Zoë"
+  }
+ ]
+}

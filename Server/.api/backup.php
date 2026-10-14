@@ -100,6 +100,20 @@ const KEEP_DAYS = 30;
 /** The marker mysqldump writes last. Its absence is a dump cut short. */
 const COMPLETED = '-- Dump completed';
 
+/**
+ * The one statement a MariaDB copy carries ahead of the dump (14 October
+ * 2026): the schema's version, forgotten. A copy restored into the live
+ * database replaces the tables it holds and leaves the rest, and the rest
+ * includes `schema_version` — so without this, a restored older copy would be
+ * served as though it were already migrated, its claims on public places
+ * (`placed`) would describe the garden before the restore, and what it held
+ * that has since been erased would stay. Forgotten, the first request after
+ * the restore runs the whole migration (`Schema.php`), as it does on a
+ * database that never had one. Loaded into an empty database, it drops
+ * nothing.
+ */
+const FORGET_VERSION = "DROP TABLE IF EXISTS schema_version;\n";
+
 // Run directly, this takes a copy. Required from elsewhere, it is a set of
 // functions and takes none, which is how `tools/reference/check_backup.php`
 // gets at the reading-back and the pruning without a database to dump.
@@ -120,7 +134,7 @@ function main(array $argv): int
         return 0;
     }
     if (($argv[1] ?? '') === '--preamble') {
-        echo preamble(rowCounts($config));
+        echo preamble(rowCounts($config)) . FORGET_VERSION;
         return 0;
     }
 
@@ -239,7 +253,7 @@ function stream(string $command, string $path, array $counts): void
     if ($out === false) {
         throw new RuntimeException("cannot write $path");
     }
-    gzwrite($out, preamble($counts));
+    gzwrite($out, preamble($counts) . FORGET_VERSION);
 
     $pipe = popen($command, 'r');
     if ($pipe === false) {

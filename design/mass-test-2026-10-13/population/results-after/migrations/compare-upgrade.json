@@ -1,0 +1,103 @@
+{
+    "tables only after": [
+        "placed",
+        "schema_version"
+    ],
+    "tables lost": [],
+    "rows changed by the upgrade": {
+        "crossing": {
+            "rows before": 30,
+            "rows after": 30,
+            "changed or gone": 1,
+            "new or changed": 1,
+            "examples": [
+                {
+                    "arrival": 1,
+                    "seed": "withdrawn:000000000000000000000000000000000000000000000000000001",
+                    "parent_a": "",
+                    "parent_b": "",
+                    "encounter": "",
+                    "plot": 0,
+                    "quarter": 1,
+                    "slot_index": 0,
+                    "height": 0.18321503698826,
+                    "family": 0,
+                    "nudge_x": 0,
+                    "nudge_z": 0,
+                    "hidden": 1
+                }
+            ]
+        },
+        "walk_offers": {
+            "rows before": 589,
+            "rows after": 589,
+            "changed or gone": 3,
+            "new or changed": 3,
+            "examples": [
+                {
+                    "offer": 588,
+                    "seed": "he2c167b29fda6fb7dcbf92fd3c4f8d7ed4d377eaef4b655f770ceb4a07e8f0c",
+                    "token_to": "ha7c4911981d0d5cf32514519eafb259",
+                    "token_from": "h98b29026439c613f626f6d29559a838",
+                    "parent_a": null,
+                    "parent_b": null,
+                    "encounter": null,
+                    "height": null,
+                    "family": null,
+                    "state": "withdrawn",
+                    "offered_at": 1790000000,
+                    "answered_at": 1790000050,
+                    "area": "",
+                    "kind": "",
+                    "hue": null,
+                    "habit": ""
+                },
+                {
+                    "offer": 589,
+                    "seed": "hce46634c18c33efa7726db23f5bd3ab62e08d72d247aa09f0e547135ebe6175",
+                    "token_to": "hbcde0e824b085dda260b99c72be951d",
+                    "token_from": "h19022795fcdc265e4de574ee6c5813d",
+                    "parent_a": null,
+                    "parent_b": null,
+                    "encounter": null,
+                    "height": null,
+                    "family": null,
+                    "state": "declined",
+                    "offered_at": 1790000000,
+                    "answered_at": 1790000070,
+                    "area": "",
+                    "kind": "",
+                    "hue": null,
+                    "habit": ""
+                },
+                {
+                    "offer": 64,
+                    "seed": "ha17c664bf8e018bf9e80485f8a4423d1290a7312a9f8a7b6faee7fb739984ec",
+                    "token_to": "h52612f5a544641ad2dcd600511dd561",
+                    "token_from": "hbc279b93b2a49da79d0957d28a5404d",
+                    "parent_a": null,
+                    "parent_b": null,
+                    "encounter": null,
+                    "height": null,
+                    "family": null,
+                    "state": "withdrawn",
+                    "offered_at": 1786698332,
+                    "answered_at": 1786784794,
+                    "area": "",
+                    "kind": "",
+                    "hue": null,
+                    "habit": ""
+                }
+            ]
+        }
+    },
+    "placed rows after": 502,
+    "schema_version after": 1,
+    "upgraded schema differs from fresh": [],
+    "collations after": [
+        "utf8mb4_unicode_ci"
+    ],
+    "collations fresh": [
+        "utf8mb4_unicode_ci"
+    ]
+}

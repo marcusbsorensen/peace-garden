@@ -39,6 +39,8 @@ struct PlantDetailView: View {
     /// The screen saying what stands beside this plant in the Wild Fields,
     /// for a plant the other gardener let go.
     @State private var besideWild: WildPlant?
+    /// The plant's life again, in place (`TimeLapsePlayer`).
+    @State private var timeLapse = TimeLapsePlayer()
 
     var body: some View {
         ZStack {
@@ -48,9 +50,15 @@ struct PlantDetailView: View {
             )
                 .ignoresSafeArea()
 
+            if timeLapse.isShowing {
+                TimeLapseSkyLayer(player: timeLapse)
+                    .ignoresSafeArea()
+            }
+
             PlantSceneView(
                 genome: live.genome,
                 growth: live.growth(now: model.now),
+                timeLapse: timeLapse,
                 onTap: { withAnimation(Chrome.fadeIn) { detailsVisible.toggle() } }
             )
             .ignoresSafeArea()
@@ -89,7 +97,29 @@ struct PlantDetailView: View {
                 .allowsHitTesting(detailsVisible && !releasing)
                 .animation(Chrome.fadeIn, value: detailsVisible)
                 .animation(.easeOut(duration: 0.3), value: releasing)
+
+            if timeLapse.isPlaying {
+                TimeLapseStopCatcher { timeLapse.stop() }
+                    .ignoresSafeArea()
+            }
         }
+        .overlay(alignment: .topLeading) {
+            TimeLapseButton(isPlaying: timeLapse.isPlaying) {
+                if timeLapse.isPlaying {
+                    timeLapse.stop()
+                } else {
+                    withAnimation(Chrome.fadeIn) { detailsVisible = false }
+                    timeLapse.play(live, now: model.now, reduceMotion: reduceMotion)
+                }
+            }
+            .padding(.leading, 12)
+            .padding(.top, 12)
+            .opacity(releasing ? 0 : 1)
+            .allowsHitTesting(!releasing)
+            .animation(.easeOut(duration: 0.3), value: releasing)
+        }
+        .onChange(of: live.id) { timeLapse.cancel() }
+        .onDisappear { timeLapse.cancel() }
         .overlay {
             if releasing {
                 ReleaseFlight(progress: flight, tint: lightColour)
@@ -98,6 +128,16 @@ struct PlantDetailView: View {
         .overlay(alignment: .topTrailing) {
             CloseButton { dismiss() }
                 .padding(.trailing, 12)
+                .padding(.top, 12)
+                .opacity(releasing ? 0 : 1)
+                .allowsHitTesting(!releasing)
+                .animation(.easeOut(duration: 0.3), value: releasing)
+        }
+        // Share, beside Close: the plant as it is now, as a picture, a turn or
+        // a wallpaper. Everything it does is in `Views/Share/`.
+        .overlay(alignment: .topTrailing) {
+            PlantShareButton(record: live, growth: live.growth(now: model.now), now: model.now)
+                .padding(.trailing, PlantShareButton.besideClose)
                 .padding(.top, 12)
                 .opacity(releasing ? 0 : 1)
                 .allowsHitTesting(!releasing)
@@ -167,7 +207,7 @@ struct PlantDetailView: View {
                     if let note = encounter.note {
                         // Somebody's own sentence about their own meeting.
                         Text(verbatim: note)
-                            .font(.system(size: 16, weight: .light, design: .serif))
+                            .scaledFont(size: 16, weight: .light, design: .serif)
                             .italic()
                             .foregroundStyle(Chrome.ink)
                             .multilineTextAlignment(.center)
@@ -176,7 +216,7 @@ struct PlantDetailView: View {
 
                     VStack(spacing: 4) {
                         Text("with \(encounter.peerDisplayName)")
-                            .font(.system(size: 13, weight: .light))
+                            .scaledFont(size: 13, weight: .light)
                             .foregroundStyle(Chrome.muted)
                         if let place = encounter.place {
                             // Typed, or accepted from what `Places` offered —
@@ -234,7 +274,7 @@ struct PlantDetailView: View {
             // out, and the hold comes after it has been read.
             if expandedMark == "release" {
                 Text(sending ? Self.releaseSending : releaseTrouble ?? Self.releaseConsequence)
-                    .font(.system(size: 13, weight: .light))
+                    .scaledFont(size: 13, weight: .light)
                     .foregroundStyle(Chrome.muted)
                     .lineSpacing(4)
                     .multilineTextAlignment(.center)
@@ -255,7 +295,7 @@ struct PlantDetailView: View {
                                         hasName: !(model.identity?.displayName ?? "").isEmpty,
                                         hasPlace: encounter.place != nil)
                         Text("Shown beside it only if you choose. Where and when also need \(encounter.peerDisplayName) to choose them.")
-                            .font(.system(size: 11, weight: .light))
+                            .scaledFont(size: 11, weight: .light)
                             .foregroundStyle(Chrome.faint)
                             .multilineTextAlignment(.center)
                             .fixedSize(horizontal: false, vertical: true)
@@ -273,6 +313,11 @@ struct PlantDetailView: View {
                 .padding(.bottom, 30)
 
         }
+        // **The words on a plant's screen grow as far as AX2** (14 October).
+        // They stand above and below the plant, which cannot move out of
+        // their way (see the veil), and with the release sentence out the
+        // foot of an SE is full at AX2.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
     }
 
     /// This plant as the garden holds it now.

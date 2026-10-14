@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/Schema.php';
+require_once __DIR__ . '/Placed.php';
 require_once __DIR__ . '/Ambassadors.php';
 require_once __DIR__ . '/TakenBack.php';
 require_once __DIR__ . '/Crossing.php';
@@ -34,7 +36,7 @@ final class CrossStore
 
     public function __construct(private PDO $db)
     {
-        $this->migrate();
+        Schema::ensure($db);
     }
 
     private function run(string $sql): void
@@ -42,11 +44,16 @@ final class CrossStore
         $this->db->prepare($sql)->execute();
     }
 
-    private function migrate(): void
+    /**
+     * The tables, made or brought up to date. Run by `Schema` when the
+     * database is older than the code (14 October 2026), never per request.
+     */
+    public static function migrate(PDO $db): void
     {
-        $sqlite = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
+        $run = static fn (string $sql): bool => $db->prepare($sql)->execute();
+        $sqlite = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
         $id = $sqlite ? 'INTEGER PRIMARY KEY AUTOINCREMENT' : 'BIGINT PRIMARY KEY AUTO_INCREMENT';
-        $this->run("CREATE TABLE IF NOT EXISTS crossing (
+        $run("CREATE TABLE IF NOT EXISTS crossing (
             arrival $id,
             seed CHAR(64) NOT NULL UNIQUE,
             parent_a CHAR(64) NOT NULL,
@@ -60,15 +67,15 @@ final class CrossStore
             nudge_x DOUBLE PRECISION NOT NULL,
             nudge_z DOUBLE PRECISION NOT NULL,
             hidden INTEGER NOT NULL DEFAULT 0
-        )");
-        $this->run('CREATE INDEX IF NOT EXISTS crossing_plot ON crossing (plot)');
-        $this->run('CREATE TABLE IF NOT EXISTS crossing_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
-        $this->run('INSERT INTO crossing_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM crossing_lock)');
+        )" . Schema::options($db));
+        $run('CREATE INDEX IF NOT EXISTS crossing_plot ON crossing (plot)');
+        $run('CREATE TABLE IF NOT EXISTS crossing_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)' . Schema::options($db));
+        $run('INSERT INTO crossing_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM crossing_lock)');
         // Added on 24 September, when taking back began to delete: a row hidden
         // before then still holds the seed, the parents and the meeting, and
-        // this erases it. Every request, and nothing to do once it has run.
-        $this->run('CREATE INDEX IF NOT EXISTS crossing_hidden ON crossing (hidden)');
-        TakenBack::sweep($this->db, 'crossing', self::TAKEN_BACK);
+        // this erases it. Every migration, and nothing to do once it has run.
+        $run('CREATE INDEX IF NOT EXISTS crossing_hidden ON crossing (hidden)');
+        TakenBack::sweep($db, 'crossing', self::TAKEN_BACK);
     }
 
     /**
@@ -107,6 +114,11 @@ final class CrossStore
                 array_map([self::class, 'forRule'], $all->fetchAll())
             );
             $p = Crossing::plant($ways, $seed, $height, $family);
+            // One public place, claimed with the planting (`Placed.php`, `WalkStore::plant`).
+            if (!Placed::claim($this->db, $seed, 'crossing')) {
+                $this->db->rollBack();
+                return [null, false];
+            }
             $insert = $this->db->prepare('INSERT INTO crossing
                 (seed, parent_a, parent_b, encounter, plot, quarter, slot_index, height, family, nudge_x, nudge_z)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');

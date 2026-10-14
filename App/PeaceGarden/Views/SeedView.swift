@@ -54,6 +54,12 @@ struct SeedView: View {
                 .chromeLabel()
                 .foregroundStyle(Chrome.faint)
 
+            // How the plant is drawn, here as well as in Settings (Marcus,
+            // 13 October: "the user may not think to look under Settings").
+            // The sheet opens half way, so the plant it changes is standing
+            // just above it.
+            PlantDrawingToggle()
+                .padding(.top, 6)
         }
     }
 
@@ -102,6 +108,41 @@ struct SeedView: View {
     }
 }
 
+/// How the plant is drawn — its own colours, one colour, or its wireframe — on
+/// the seed screen.
+///
+/// **One setting, two doors.** Settings' *How the plant is drawn* and this read
+/// and write the same `Chrome.plantStyleKey`, so changing it here is changing
+/// it there, and neither can show an answer the other does not. Settings keeps
+/// its control, and the colour a tinted plant is drawn in stays there alone.
+///
+/// **Marks, not words**: the system's palette, drop and transparent cube
+/// (`StagePlantStyle.symbol`), at the light weight the X in the corner is
+/// drawn at. VoiceOver reads the question and each answer in the words
+/// Settings already uses, so there is nothing new to translate.
+///
+/// **All three answers, though the ask was colour or wireframe.** The setting
+/// has three, and a two-mark switch would have nothing true to show when
+/// Settings is on *One colour*.
+struct PlantDrawingToggle: View {
+    @AppStorage(Chrome.plantStyleKey) private var styleRaw = StagePlantStyle.full.rawValue
+
+    var body: some View {
+        MarkChooser(
+            options: StagePlantStyle.allCases,
+            selection: StagePlantStyle(rawValue: styleRaw) ?? .full,
+            label: Text("How the plant is drawn"),
+            optionLabel: { Text($0.label) },
+            mark: { style, chosen in
+                Image(systemName: style.symbol)
+                    .font(.system(size: 17, weight: .light))
+                    .foregroundStyle(chosen ? Chrome.ink : Chrome.faint)
+            },
+            choose: { styleRaw = $0.rawValue }
+        )
+    }
+}
+
 /// A mark, a label, and a value.
 ///
 /// The marks are here because this is the one screen in the app that is a
@@ -115,24 +156,43 @@ struct SeedView: View {
 ///
 /// Out of `SeedView` so the name sheet can say where a plant stands in the same
 /// row the seed screen says everything else in.
+///
+/// **The value goes under its label once the two no longer fit side by side**
+/// (14 October): with the type following Dynamic Type, *FIRST BLOOM* and
+/// *When 9 days old* together are wider than an SE from about XXXL, and side
+/// by side each was cut to an ellipsis.
 @MainActor
 private func factRow(_ glyph: AnyShape, _ label: LocalizedStringKey, value: Text) -> some View {
-    HStack(alignment: .firstTextBaseline, spacing: 10) {
-        glyph
-            .stroke(Chrome.faint, style: Chrome.monoline)
-            .frame(width: 15, height: 15)
-            // Uppercase text carries descender room it never uses, so its box
-            // sits below the letters. A point up puts the mark on the cap
-            // height rather than on the line.
-            .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 1 }
-        Text(label)
-            .chromeLabel()
-            .foregroundStyle(Chrome.faint)
-        Spacer()
-        value
-            .font(.system(size: 15, weight: .light))
-            .foregroundStyle(Chrome.ink)
+    let mark = glyph
+        .stroke(Chrome.faint, style: Chrome.monoline)
+        .frame(width: 15, height: 15)
+        // Uppercase text carries descender room it never uses, so its box
+        // sits below the letters. A point up puts the mark on the cap
+        // height rather than on the line.
+        .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 1 }
+    let name = Text(label)
+        .chromeLabel()
+        .foregroundStyle(Chrome.faint)
+    let said = value
+        .scaledFont(size: 15, weight: .light)
+        .foregroundStyle(Chrome.ink)
+    return ViewThatFits(in: .horizontal) {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            mark
+            name.fixedSize()
+            Spacer()
+            said.fixedSize()
+        }
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            mark
+            VStack(alignment: .leading, spacing: 4) {
+                name
+                said
+            }
+            Spacer(minLength: 0)
+        }
     }
+    .accessibilityElement(children: .combine)
 }
 
 /// What a plant's name says about it.
@@ -228,7 +288,7 @@ struct NameMeaningView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text(theme.headword)
-                        .font(.system(size: 28, weight: .light))
+                        .scaledFont(size: 28, weight: .light)
                         .foregroundStyle(Chrome.ink)
                     Spacer(minLength: 0)
                     Text(verbatim: "\(head)-")
@@ -237,7 +297,7 @@ struct NameMeaningView: View {
                         .accessibilityHidden(true)
                 }
                 Text(theme.definition)
-                    .font(.system(size: 17, weight: .light))
+                    .scaledFont(size: 17, weight: .light)
                     .foregroundStyle(Chrome.ink.opacity(0.84))
                     .lineSpacing(5)
                     .fixedSize(horizontal: false, vertical: true)
@@ -261,7 +321,7 @@ struct NameMeaningView: View {
                 let isChosen = part == chosen
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text(part.label)
-                        .font(.system(size: 15, weight: .light))
+                        .scaledFont(size: 15, weight: .light)
                         .foregroundStyle(isChosen ? Chrome.ink : Chrome.faint)
                     Spacer(minLength: 0)
                     if isChosen {

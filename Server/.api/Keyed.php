@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/Schema.php';
+
 /**
  * The service's one key for fingerprints, and the fingerprints made under it.
  *
@@ -25,8 +27,9 @@ final class Keyed
     /** The key, minted once and kept in `offer_key`. */
     public static function key(PDO $db): string
     {
-        $db->prepare('CREATE TABLE IF NOT EXISTS offer_key (id INTEGER PRIMARY KEY, hmac_key CHAR(64) NOT NULL)')
-           ->execute();
+        // The table is the migration's (`Offers::migrate`); until 14 October
+        // 2026 this made it on every call.
+        Schema::ensure($db);
         $query = $db->prepare('SELECT hmac_key FROM offer_key WHERE id = 1');
         $query->execute();
         if ($key = $query->fetchColumn()) return (string) $key;

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/Schema.php';
 /**
  * Paths that visitors wear in the Wild Fields: a number per ground cell, and
  * nothing else (`docs/WEB-GARDENS.md` §*Paths that visitors wear*, proposed by
@@ -83,7 +84,7 @@ final class WildWear
 
     public function __construct(private PDO $db)
     {
-        $this->migrate();
+        Schema::ensure($db);
     }
 
     private function run(string $sql): void
@@ -91,25 +92,29 @@ final class WildWear
         $this->db->prepare($sql)->execute();
     }
 
-    private function migrate(): void
+    /**
+     * The tables, made or brought up to date. Run by `Schema` when the
+     * database is older than the code (14 October 2026), never per request.
+     */
+    public static function migrate(PDO $db): void
     {
-        $sqlite = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
-        $order = $sqlite ? ' WITHOUT ROWID' : '';
+        $run = static fn (string $sql): bool => $db->prepare($sql)->execute();
+        $sqlite = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
         // DOUBLE, because wear fades by a fraction a day and has to come back
         // the number it went in as.
-        $this->run("CREATE TABLE IF NOT EXISTS wild_wear (
+        $run("CREATE TABLE IF NOT EXISTS wild_wear (
             cell_x INTEGER NOT NULL,
             cell_z INTEGER NOT NULL,
             wear DOUBLE PRECISION NOT NULL,
             today INTEGER NOT NULL,
             PRIMARY KEY (cell_x, cell_z)
-        )$order");
+        )" . Schema::options($db, ' WITHOUT ROWID'));
         // One row: the day the field was last faded to, counted in whole days
         // from 1970 in UTC.
-        $this->run('CREATE TABLE IF NOT EXISTS wild_wear_day (
+        $run('CREATE TABLE IF NOT EXISTS wild_wear_day (
             id INTEGER NOT NULL PRIMARY KEY,
             day INTEGER NOT NULL
-        )');
+        )' . Schema::options($db));
     }
 
     /**

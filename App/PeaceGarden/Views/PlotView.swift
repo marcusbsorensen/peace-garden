@@ -221,6 +221,7 @@ struct PlotView: View {
                 ZStack(alignment: .topLeading) {
                     GardenSky(light: light, date: model.now, view: view,
                               keepClear: [headingFrame, closeFrame, askingFrame, model.hybrids.isEmpty ? helpFrame : .null])
+                        .accessibilityHidden(true)
 
                     ZStack(alignment: .topLeading) {
                         plot(world: world, side: side, in: view, shift: shift,
@@ -279,8 +280,17 @@ struct PlotView: View {
                         }
                         .equatable()
                     }
+                    // Pictures, to VoiceOver; it finds the layer below instead.
+                    .accessibilityHidden(true)
                     .modifier(PlotCamera(
                         zoom: zoom, pan: pan, size: proxy.size,
+                        // What VoiceOver finds on the plot (`PlotVoiceOver`),
+                        // moved exactly as the plot is moved.
+                        moved: memo.kept(VoiceOverKey(standings: memo.revision, lamps: lamps, held: held,
+                                                      heldLamp: heldLamp, world: world, side: side,
+                                                      view: view)) {
+                            voiceOver(standings, lamps: lamps, world: world, side: side, in: view)
+                        },
                         looking: { pinching, turning in
                             looking(in: proxy.size, pinching: pinching, turning: turning)
                         },
@@ -329,6 +339,11 @@ struct PlotView: View {
                     }
             }
             .padding(.horizontal, 26)
+            // **The words here grow as far as AX1** (14 October). The plot is
+            // framed in the sky between the heading and the foot, so every
+            // line the heading or the asking gains is taken off the garden;
+            // past AX1 the heading alone came down over the plot.
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .frame(maxWidth: .infinity, alignment: .leading)
             .allowsHitTesting(true)
         }
@@ -621,6 +636,17 @@ struct PlotView: View {
                   glow: Int((GardenLamps.glow(in: light) * 255).rounded()),
                   turn: turn, season: season, world: world, side: side, view: view,
                   zoom: zoom, pan: pan, screen: screen, scale: displayScale, longWalk: isLongWalk)
+    }
+
+    /// What VoiceOver's layer is built from: where everything stands.
+    private struct VoiceOverKey: Equatable {
+        let standings: Int
+        let lamps: [Lamp]
+        let held: Held?
+        let heldLamp: Held?
+        let world: Int
+        let side: Double
+        let view: Isometric
     }
 
     /// What the shadows are drawn from.
@@ -1181,14 +1207,20 @@ struct PlotView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
+            // The Garden mark from the foot of the stage, which opened this.
             Text("Peace garden")
                 .chromeHeading(size: 18)
+                .lineLimit(2)
+                .minimumScaleFactor(0.7)
+                .titleGlyph(GardenGlyph(), size: 18)
                 .foregroundStyle(Chrome.ink)
             Text(model.hybrids.isEmpty
                  ? "Nothing has been crossed yet"
                  : "\(model.hybrids.count) grown from meetings")
                 .chromeLabel()
-                .foregroundStyle(Chrome.faint)
+                // `muted`, not `faint`: this line stands on the sky, and the
+                // day sky's blue takes `faint` under 4 : 1 (finding 8).
+                .foregroundStyle(Chrome.muted)
         }
         .padding(.top, 44)
         .allowsHitTesting(false)
@@ -1377,13 +1409,16 @@ struct PlotView: View {
     /// it. They are how the plot is seen, so they stand beside the plus with
     /// the tray shut, and stay where they are when it opens.
     ///
-    /// **One way round in every language.** The row is pinned left to right,
-    /// as the web garden's pad and map are (`docs/WEBSITE.md`, *Nothing
-    /// mirrors under a right-to-left language*): a turn's direction is the
-    /// screen's, not the reading's, so anticlockwise stays on the left of
-    /// clockwise, and the pair stays where Marcus put it. Mirrored, the pair
-    /// would swap ends with the plus and swap round in itself, and a hand that
-    /// has learnt the corner would find the plus there.
+    /// **The foot mirrors as one row; the turns keep their own order.** Until
+    /// 14 October the row was pinned left to right, as the web garden's pad
+    /// is, while *Reset view* and the light in the tray just above it
+    /// mirrored — a foot half one way round and half the other (mass test,
+    /// 13 October, finding 6; Marcus, 14 October: 15A). Now the plus and the
+    /// turns trade corners under right to left with the rest of the chrome,
+    /// and the pair itself stays pinned: a turn's direction is the screen's,
+    /// not the reading's, so anticlockwise is still on the left of clockwise,
+    /// and each arrow still goes the way the plot does. The plot itself does
+    /// not mirror at all (see `body`).
     private var controls: some View {
         HStack(spacing: 0) {
             TrayToggle(isOpen: trayOpen) {
@@ -1393,8 +1428,8 @@ struct PlotView: View {
             .accessibilityIdentifier(PlotControls.tray)
             Spacer(minLength: 12)
             turns
+                .environment(\.layoutDirection, .leftToRight)
         }
-        .environment(\.layoutDirection, .leftToRight)
     }
 
     /// What the tray holds, in the order Marcus asked for on 1 October: **the
@@ -1452,6 +1487,8 @@ struct PlotView: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    // Said, never drawn: see `LampKind.label`.
+                    .accessibilityLabel(Text(kind.label))
                 }
             }
             // Room above for that halo inside the scrolling row, which clips
@@ -1484,7 +1521,12 @@ struct PlotView: View {
                         }
                         .buttonStyle(.plain)
                         // Which one is chosen is drawn, and said: VoiceOver
-                        // reads *selected* on it.
+                        // reads *selected* on it. A ground is still unnamed
+                        // on the screen; VoiceOver counts it, *Ground 3*,
+                        // which is one string however many worlds there are
+                        // (mass test finding 3: these were unlabelled).
+                        .accessibilityLabel(Text("Ground \(world + 1)",
+                                                 comment: "Spoken by VoiceOver, never drawn: one of the grounds the garden can stand on, in the garden's tray. They have no names; the number is its place in the row, counted from 1."))
                         .accessibilityAddTraits(world == chosen ? .isSelected : [])
                     }
                 }
@@ -1567,6 +1609,10 @@ struct PlotView: View {
                     withAnimation(.spring(duration: 0.3)) { model.changeLamp(lamp.id, edit) }
                 }
                 .fixedSize()
+                // VoiceOver's way out, where a finger touches anywhere else.
+                .accessibilityAction(.escape) {
+                    withAnimation(.easeOut(duration: 0.2)) { tending = nil }
+                }
                 .position(x: min(max(top.x, 130), size.width - 130),
                           y: above > roomAbove ? above : bottom.y + 34)
                 .transition(.opacity)
@@ -1577,7 +1623,7 @@ struct PlotView: View {
 
     private var empty: some View {
         Text("Every plant here came from meeting someone. Open Meet with another person and touch the tops of your phones together.")
-            .font(.system(size: 14, weight: .light))
+            .scaledFont(size: 14, weight: .light)
             .foregroundStyle(Chrome.muted)
             .lineSpacing(5)
             .frame(maxWidth: Chrome.readableWidth, alignment: .leading)
@@ -1787,6 +1833,9 @@ private struct PlotCamera<Looking: Gesture, Panning: Gesture, Above: View>: View
     let zoom: CGFloat
     let pan: CGSize
     let size: CGSize
+    /// What VoiceOver finds on the plot, moved with it: built by `PlotView`
+    /// and handed over whole, so a gesture moves it and does not rebuild it.
+    let moved: PlotVoiceOver
     let looking: (GestureState<CGFloat>, Binding<Angle>) -> Looking
     let panning: (GestureState<CGSize>) -> Panning
     /// What stands over the plot in the screen's own space — the threads and
@@ -1808,6 +1857,11 @@ private struct PlotCamera<Looking: Gesture, Panning: Gesture, Above: View>: View
             content
                 .compositingGroup()
                 .coordinateSpace(name: "plot")
+                .scaleEffect(scale)
+                .offset(offset)
+                .rotationEffect(turning)
+            moved
+                .equatable()
                 .scaleEffect(scale)
                 .offset(offset)
                 .rotationEffect(turning)
@@ -2049,5 +2103,54 @@ private struct GroundMark: View {
             image = await GardenTerrain.shared.image(world: world, plotSide: plotSide,
                                                      view: view, size: Self.size, detail: 26)
         }
+    }
+}
+
+// MARK: - What VoiceOver finds
+
+extension PlotView {
+    /// The plants and lights on the plot, where they stand, for
+    /// `PlotVoiceOver`: read off the standings and lights the plot is drawn
+    /// from, in the plot's own coordinates, and nothing taken from the
+    /// drawing. Something in hand is where it is held.
+    ///
+    /// A plant's box is its stem's height at this stage, near enough: the
+    /// picture's own size is the sprite's, which this layer does not wait for.
+    private func voiceOver(_ standings: [Standing], lamps: [Lamp], world: Int, side: Double,
+                           in view: Isometric) -> PlotVoiceOver {
+        let metre = view.pointsPerMetre
+        let plants = standings.map { standing in
+            let resting = view.point(standing.spot, y: standsAt(standing.spot, world: world, side: side))
+            return PlotVoiceOver.Plant(
+                record: standing.record,
+                stage: standing.growth.stage,
+                isAsked: standing.record.standingOrHere.state == .invited,
+                foot: held?.id == standing.id ? (held?.foot ?? resting) : resting,
+                height: max(24, (0.25 + 1.2 * standing.growth.heightScale) * metre),
+                width: max(24, 0.45 * metre)
+            )
+        }
+        let lights = lamps.compactMap { lamp -> PlotVoiceOver.Light? in
+            guard let kind = lamp.known else { return nil }
+            let resting = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
+            let grip = GardenLamps.grip(of: kind)
+            let scale = metre * lamp.drawnScale
+            return PlotVoiceOver.Light(
+                id: lamp.id, kind: kind,
+                foot: heldLamp?.id == lamp.id ? (heldLamp?.foot ?? resting) : resting,
+                height: max(24, grip.height * scale), width: max(24, grip.width * scale)
+            )
+        }
+        return PlotVoiceOver(
+            plants: plants,
+            lights: lights,
+            open: { record in
+                visits.seen(record, growth: record.growth(now: model.now))
+                selected = record
+            },
+            tend: { id in
+                withAnimation(.spring(duration: 0.25)) { tending = id }
+            }
+        )
     }
 }

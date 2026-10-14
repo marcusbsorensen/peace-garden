@@ -1,0 +1,178 @@
+{
+ "db": "pgmt_main",
+ "tag": "once-writes",
+ "seconds": 5,
+ "plots": {
+  "travel": 16,
+  "peace": 37,
+  "meeting": 24,
+  "kinship": 20,
+  "pattern": 13,
+  "beginnings": 25,
+  "waiting": 10,
+  "light": 18,
+  "renewal": 13,
+  "ground": 9
+ },
+ "databaseMB": 67.3,
+ "results": [
+  {
+   "kind": "write",
+   "level": 50,
+   "seconds": 5.1,
+   "requests": 14269,
+   "perSecond": 2802.6,
+   "n": 14269,
+   "p50": 14.1,
+   "p95": 31.3,
+   "p99": 81.2,
+   "max": 272.2,
+   "errorShare": 0,
+   "statuses": {
+    "201": 14268,
+    "500": 1
+   },
+   "routes": {
+    "/api/walk/offer": {
+     "n": 7141,
+     "p50": 13.9,
+     "p95": 30.9,
+     "p99": 81.8,
+     "max": 267.8
+    },
+    "/api/wild/release": {
+     "n": 7128,
+     "p50": 14.4,
+     "p95": 31.7,
+     "p99": 80.5,
+     "max": 272.2
+    }
+   },
+   "top": [
+    {
+     "n": 35639,
+     "totalMs": 4056,
+     "avgUs": 114,
+     "text": "SELECT `f` . * , `n` . `name_a` , `n` . `name_b` , `n` . `place` , `n` . `month` FROM `wil"
+    },
+    {
+     "n": 14265,
+     "totalMs": 3784,
+     "avgUs": 265,
+     "text": "COMMIT "
+    },
+    {
+     "n": 21402,
+     "totalMs": 2909,
+     "avgUs": 136,
+     "text": "SELECT * FROM `walk_offers` WHERE `seed` IN (...) "
+    },
+    {
+     "n": 14262,
+     "totalMs": 2389,
+     "avgUs": 167,
+     "text": "DELETE FROM `rate_limits` WHERE `started_at` <= ? "
+    },
+    {
+     "n": 7139,
+     "totalMs": 1886,
+     "avgUs": 264,
+     "text": "INSERT INTO `walk_offers` ( `seed` , `token_to` , `token_from` , `parent_a` , `parent_b` ,"
+    },
+    {
+     "n": 7126,
+     "totalMs": 1827,
+     "avgUs": 256,
+     "text": "INSERT INTO `wild_fields` ( `seed` , `parent_a` , `parent_b` , `tile_x` , `tile_z` ) VALUE"
+    }
+   ],
+   "threadStates": {
+    "Writing to net": 22,
+    "init for update": 2,
+    "Updating": 1,
+    "Statistics": 3,
+    "starting": 1,
+    "Updating status": 6,
+    "Commit": 2,
+    "Update": 1,
+    "Query": 1
+   }
+  },
+  {
+   "kind": "write",
+   "level": 200,
+   "seconds": 0.6,
+   "requests": 3083,
+   "perSecond": 4826.8,
+   "n": 3083,
+   "p50": 36.8,
+   "p95": 63,
+   "p99": 70.6,
+   "max": 76.1,
+   "errorShare": 0,
+   "statuses": {
+    "201": 3083
+   },
+   "routes": {
+    "/api/wild/release": {
+     "n": 1510,
+     "p50": 37.2,
+     "p95": 65.2,
+     "p99": 71,
+     "max": 73.7
+    },
+    "/api/walk/offer": {
+     "n": 1573,
+     "p50": 36.1,
+     "p95": 62.1,
+     "p99": 68.9,
+     "max": 76.1
+    }
+   },
+   "top": [
+    {
+     "n": 7608,
+     "totalMs": 852,
+     "avgUs": 112,
+     "text": "SELECT `f` . * , `n` . `name_a` , `n` . `name_b` , `n` . `place` , `n` . `month` FROM `wil"
+    },
+    {
+     "n": 4652,
+     "totalMs": 629,
+     "avgUs": 135,
+     "text": "SELECT * FROM `walk_offers` WHERE `seed` IN (...) "
+    },
+    {
+     "n": 4593,
+     "totalMs": 316,
+     "avgUs": 69,
+     "text": "SELECT `hmac_key` FROM `offer_key` WHERE ID = ? "
+    },
+    {
+     "n": 3083,
+     "totalMs": 273,
+     "avgUs": 89,
+     "text": "DELETE FROM `rate_limits` WHERE `started_at` <= ? "
+    },
+    {
+     "n": 3080,
+     "totalMs": 263,
+     "avgUs": 85,
+     "text": "SELECT `salt` FROM `rate_salt` WHERE ID = ? "
+    },
+    {
+     "n": 1573,
+     "totalMs": 256,
+     "avgUs": 163,
+     "text": "INSERT INTO `walk_offers` ( `seed` , `token_to` , `token_from` , `parent_a` , `parent_b` ,"
+    }
+   ],
+   "threadStates": {
+    "Writing to net": 8,
+    "Sending data": 1,
+    "init": 1,
+    "Opening tables": 1
+   }
+  }
+ ]
+}

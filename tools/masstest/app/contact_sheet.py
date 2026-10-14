@@ -11,7 +11,7 @@ shows as a gap. Written as a JPEG at quality 70.
 import argparse, os
 from PIL import Image, ImageDraw, ImageFont
 
-ORDER = ["launch", "firstlight", "stage", "seed", "meet", "settings", "settings-end", "garden", "plant"]
+ORDER = ["launch", "firstlight", "stage", "seed", "meet", "settings", "settings-end", "about", "about-end", "garden", "plant"]
 
 
 def main():

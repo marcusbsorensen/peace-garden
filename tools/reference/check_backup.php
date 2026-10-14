@@ -111,16 +111,18 @@ $store->plantInto('renewal', str_repeat('5', 64), str_repeat('a', 64), str_repea
 // The Home Ground's carries a crop, which claims a bed. A copy that dropped it
 // would restore beds nothing says are sown, and the next arrival would claim
 // one already standing full of another crop — silently, as the others would.
-$store->plantInto('ground', str_repeat('4', 64), str_repeat('a', 64), str_repeat('b', 64),
+// Its own seed, and so the field's below: a plant stands in one public place
+// (`Placed.php`, 14 October 2026), and the walk's four above hold 1 to 4.
+$store->plantInto('ground', str_repeat('0', 64), str_repeat('a', 64), str_repeat('b', 64),
                   str_repeat('c', 64), 0.2, 3, '', null, 'succulent');
 // And one plant let go into the Wild Fields. It has no lock and no order, so
 // nothing about it could be replayed; what a copy that left the table out
 // would lose is the plant itself, released and then nowhere.
-$store->wild()->release(str_repeat('3', 64), str_repeat('a', 64), str_repeat('b', 64));
+$store->wild()->release(str_repeat('b', 64), str_repeat('a', 64), str_repeat('c', 64));
 // With a name its releaser chose to show beside it (since 1 October 2026). A
 // copy without `wild_names` would restore the plant with nobody beside it, and
 // with no way left for either gardener to withdraw what they had shown.
-$store->wild()->beside(str_repeat('3', 64), str_repeat('5', 32), str_repeat('6', 32),
+$store->wild()->beside(str_repeat('b', 64), str_repeat('5', 32), str_repeat('6', 32),
                        ['name' => 'Ash', 'place' => null, 'month' => null]);
 // And a path somebody wore across the field (since 2 October 2026), twice
 // over one cell. A copy without `wild_wear` would restore the field as grass;
@@ -244,7 +246,7 @@ check('a restored Home Ground row still knows its crop, and the bed it claimed',
 // A released plant is grown from its parents, so a row that came back without
 // them would be a plant nobody could draw.
 check('a restored Wild Fields row still knows both its parents',
-      $restoredWild === [str_repeat('a', 64), str_repeat('b', 64)]);
+      $restoredWild === [str_repeat('a', 64), str_repeat('c', 64)]);
 check('and the name its releaser chose to show', $restoredName === 'Ash');
 check('a restored worn cell is the same cell, as worn', $restoredWear === [12, 34, 2.0]);
 
@@ -261,6 +263,9 @@ $bare = scratch();
 $bareFile = "$bare/walk.sqlite";
 $opened = WalkStore::open("sqlite:$bareFile");
 $opened->connection()->prepare('DROP TABLE IF EXISTS wild_names')->execute();
+// A deploy that adds a table raises the schema's version with it, so the
+// database it finds is one version behind (`Schema.php`, 14 October 2026).
+$opened->connection()->prepare('UPDATE schema_version SET version = version - 1')->execute();
 unset($opened);
 $bareInto = scratch();
 $running = proc_open(['php', dirname(__DIR__, 2) . '/Server/.api/backup.php', $bareInto],

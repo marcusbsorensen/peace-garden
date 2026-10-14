@@ -1,0 +1,195 @@
+{
+    "db": "pgmt_upgrade",
+    "checked_at": "2026-10-14T09:07:06+00:00",
+    "violations": [],
+    "facts": {
+        "rows": {
+            "long_walk": 32,
+            "quiet_garden": 15,
+            "crossing": 30,
+            "orchard": 17,
+            "knot_garden": 24,
+            "seedbed": 52,
+            "cold_frame": 42,
+            "glasshouse": 36,
+            "coppice": 22,
+            "home_ground": 33,
+            "wild_fields": 228,
+            "wild_hidden": 64,
+            "wild_names": 167
+        },
+        "forged_tried": 0,
+        "wild": {
+            "standing": 164,
+            "hidden": 64,
+            "tiles_with_plants": 59,
+            "tile_bytes_max": 3402,
+            "tile_bytes_median": 773,
+            "tile_ms_median": 2.3,
+            "tile_ms_max": 5,
+            "plantings_with_shown": 93,
+            "wild_json_bytes": 519
+        },
+        "offers": {
+            "accepted": 274,
+            "declined": 107,
+            "withdrawn": 208,
+            "lapsed_at_exactly_30_days": 166
+        },
+        "areas": {
+            "travel": {
+                "rows": 32,
+                "plots": 2,
+                "plot_bytes_max": 10163,
+                "plot_ms_median": 1.9,
+                "plot_ms_max": 1.9,
+                "plantings_per_plot_max": 29,
+                "closest_pair_m": 0.258,
+                "reach_m_max": 2.82,
+                "count_json_bytes": 11
+            },
+            "peace": {
+                "rows": 15,
+                "plots": 2,
+                "plot_bytes_max": 3037,
+                "plot_ms_median": 2,
+                "plot_ms_max": 2,
+                "plantings_per_plot_max": 9,
+                "closest_pair_m": 0.409,
+                "reach_m_max": 2.53,
+                "count_json_bytes": 11
+            },
+            "meeting": {
+                "rows": 30,
+                "plots": 2,
+                "plot_bytes_max": 5894,
+                "plot_ms_median": 2.9,
+                "plot_ms_max": 2.9,
+                "plantings_per_plot_max": 17,
+                "closest_pair_m": 0.401,
+                "reach_m_max": 2.79,
+                "count_json_bytes": 11
+            },
+            "kinship": {
+                "rows": 17,
+                "plots": 1,
+                "plot_bytes_max": 5892,
+                "plot_ms_median": 4.2,
+                "plot_ms_max": 4.2,
+                "plantings_per_plot_max": 17,
+                "closest_pair_m": 0.372,
+                "reach_m_max": 2.43,
+                "count_json_bytes": 11
+            },
+            "pattern": {
+                "rows": 24,
+                "plots": 2,
+                "plot_bytes_max": 5488,
+                "plot_ms_median": 3.6,
+                "plot_ms_max": 3.6,
+                "plantings_per_plot_max": 16,
+                "closest_pair_m": 0.442,
+                "reach_m_max": 2.2,
+                "count_json_bytes": 11
+            },
+            "beginnings": {
+                "rows": 52,
+                "plots": 5,
+                "plot_bytes_max": 4773,
+                "plot_ms_median": 2.8,
+                "plot_ms_max": 3.8,
+                "plantings_per_plot_max": 12,
+                "closest_pair_m": 0.453,
+                "reach_m_max": 2.46,
+                "count_json_bytes": 11
+            },
+            "waiting": {
+                "rows": 42,
+                "plots": 4,
+                "plot_bytes_max": 10165,
+                "plot_ms_median": 4.1,
+                "plot_ms_max": 6.7,
+                "plantings_per_plot_max": 29,
+                "closest_pair_m": 0.212,
+                "reach_m_max": 2.75,
+                "count_json_bytes": 11
+            },
+            "light": {
+                "rows": 36,
+                "plots": 2,
+                "plot_bytes_max": 8674,
+                "plot_ms_median": 2,
+                "plot_ms_max": 2,
+                "plantings_per_plot_max": 24,
+                "closest_pair_m": 0.406,
+                "reach_m_max": 1.81,
+                "count_json_bytes": 11
+            },
+            "renewal": {
+                "rows": 22,
+                "plots": 1,
+                "plot_bytes_max": 7932,
+                "plot_ms_median": 2.2,
+                "plot_ms_max": 2.2,
+                "plantings_per_plot_max": 22,
+                "closest_pair_m": 0.433,
+                "reach_m_max": 2.61,
+                "count_json_bytes": 11
+            },
+            "ground": {
+                "rows": 33,
+                "plots": 1,
+                "plot_bytes_max": 11233,
+                "plot_ms_median": 3.3,
+                "plot_ms_max": 3.3,
+                "plantings_per_plot_max": 32,
+                "closest_pair_m": 0.32,
+                "reach_m_max": 2.81,
+                "count_json_bytes": 11
+            }
+        },
+        "database_bytes": 1720320,
+        "tables": [
+            {
+                "table_name": "walk_offers",
+                "table_rows": 589,
+                "bytes": 376832
+            },
+            {
+                "table_name": "wild_names",
+                "table_rows": 167,
+                "bytes": 163840
+            },
+            {
+                "table_name": "wild_fields",
+                "table_rows": 228,
+                "bytes": 131072
+            },
+            {
+                "table_name": "seedbed",
+                "table_rows": 52,
+                "bytes": 98304
+            },
+            {
+                "table_name": "placed",
+                "table_rows": 502,
+                "bytes": 81920
+            },
+            {
+                "table_name": "quiet_garden",
+                "table_rows": 15,
+                "bytes": 65536
+            },
+            {
+                "table_name": "long_walk",
+                "table_rows": 32,
+                "bytes": 65536
+            },
+            {
+                "table_name": "crossing",
+                "table_rows": 30,
+                "bytes": 65536
+            }
+        ]
+    }
+}

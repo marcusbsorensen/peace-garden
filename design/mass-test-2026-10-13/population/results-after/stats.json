@@ -1,0 +1,222 @@
+{
+ "requests": 59123,
+ "routes": {
+  "/api/walk/offer": {
+   "n": 9262,
+   "status": {
+    "201": 8995,
+    "410": 267
+   },
+   "retried": 0
+  },
+  "/api/wild/release": {
+   "n": 5236,
+   "status": {
+    "200": 1005,
+    "201": 3910,
+    "410": 321
+   },
+   "retried": 0
+  },
+  "/api/walk/pending": {
+   "n": 36705,
+   "status": {
+    "200": 36705
+   },
+   "retried": 0
+  },
+  "/api/wild/answer": {
+   "n": 1019,
+   "status": {
+    "200": 1019
+   },
+   "retried": 0
+  },
+  "/api/walk/answer": {
+   "n": 6505,
+   "status": {
+    "200": 6505
+   },
+   "retried": 0
+  },
+  "/api/walk/withdraw": {
+   "n": 396,
+   "status": {
+    "200": 396
+   },
+   "retried": 0
+  }
+ },
+ "unexpected": 0,
+ "festival": {
+  "requests": 588,
+  "limited": 0
+ },
+ "sweeps": [],
+ "curated": 268,
+ "clockSeconds": 21.566970708999957,
+ "started": "2026-10-14T09:10:08.554Z",
+ "checks": {
+  "30": {
+   "violations": [],
+   "wild": {
+    "standing": 947,
+    "hidden": 59,
+    "tiles_with_plants": 64,
+    "tile_bytes_max": 9032,
+    "tile_bytes_median": 4829,
+    "tile_ms_median": 2.9,
+    "tile_ms_max": 10.9,
+    "plantings_with_shown": 545,
+    "wild_json_bytes": 616
+   },
+   "offers": {
+    "withdrawn": 107,
+    "accepted": 993,
+    "declined": 341,
+    "offered": 1004,
+    "lapsed_at_exactly_30_days": 28
+   }
+  },
+  "60": {
+   "violations": [],
+   "wild": {
+    "standing": 1863,
+    "hidden": 118,
+    "tiles_with_plants": 64,
+    "tile_bytes_max": 13439,
+    "tile_bytes_median": 9493,
+    "tile_ms_median": 3.6,
+    "tile_ms_max": 29.9,
+    "plantings_with_shown": 1070,
+    "wild_json_bytes": 623
+   },
+   "offers": {
+    "withdrawn": 964,
+    "accepted": 2135,
+    "declined": 672,
+    "offered": 839,
+    "lapsed_at_exactly_30_days": 708
+   }
+  },
+  "90": {
+   "violations": [],
+   "wild": {
+    "standing": 2760,
+    "hidden": 176,
+    "tiles_with_plants": 64,
+    "tile_bytes_max": 19483,
+    "tile_bytes_median": 13916,
+    "tile_ms_median": 2.5,
+    "tile_ms_max": 6.5,
+    "plantings_with_shown": 1582,
+    "wild_json_bytes": 623
+   },
+   "offers": {
+    "withdrawn": 1703,
+    "accepted": 3209,
+    "declined": 1000,
+    "offered": 945,
+    "lapsed_at_exactly_30_days": 1294
+   }
+  },
+  "120": {
+   "violations": [],
+   "wild": {
+    "standing": 3626,
+    "hidden": 235,
+    "tiles_with_plants": 64,
+    "tile_bytes_max": 25758,
+    "tile_bytes_median": 18509,
+    "tile_ms_median": 2.5,
+    "tile_ms_max": 11.4,
+    "plantings_with_shown": 2100,
+    "wild_json_bytes": 623
+   },
+   "offers": {
+    "withdrawn": 2480,
+    "accepted": 4364,
+    "declined": 1350,
+    "offered": 801,
+    "lapsed_at_exactly_30_days": 1917
+   }
+  },
+  "154": {
+   "violations": [],
+   "wild": {
+    "standing": 3642,
+    "hidden": 268,
+    "tiles_with_plants": 64,
+    "tile_bytes_max": 26019,
+    "tile_bytes_median": 18878,
+    "tile_ms_median": 3.8,
+    "tile_ms_max": 22,
+    "plantings_with_shown": 2126,
+    "wild_json_bytes": 623
+   },
+   "offers": {
+    "withdrawn": 3164,
+    "accepted": 4459,
+    "declined": 1372,
+    "lapsed_at_exactly_30_days": 2495
+   }
+  }
+ },
+ "seconds": 150,
+ "latency": {
+  "/api/walk/offer": {
+   "n": 9262,
+   "p50": 29.7,
+   "p95": 115.4,
+   "p99": 294,
+   "max": 883.9
+  },
+  "/api/wild/release": {
+   "n": 5236,
+   "p50": 28.5,
+   "p95": 118.7,
+   "p99": 274.9,
+   "max": 890.2
+  },
+  "/api/walk/pending": {
+   "n": 36705,
+   "p50": 22.3,
+   "p95": 112.8,
+   "p99": 235.7,
+   "max": 857.6
+  },
+  "/api/walk/answer": {
+   "n": 6505,
+   "p50": 27.5,
+   "p95": 127.3,
+   "p99": 259.6,
+   "max": 483.3
+  },
+  "/api/wild/answer": {
+   "n": 1019,
+   "p50": 25.3,
+   "p95": 127,
+   "p99": 263.7,
+   "max": 461.2
+  },
+  "/api/walk/withdraw": {
+   "n": 396,
+   "p50": 22.5,
+   "p95": 124.1,
+   "p99": 357.4,
+   "max": 524.2
+  }
+ },
+ "states": {
+  "withdrawn": 389,
+  "accepted": 4459,
+  "released": 3642,
+  "offered": 2226,
+  "declined": 1320,
+  "hidden": 268,
+  "lapsed": 245
+ },
+ "gardeners": 5000,
+ "meetings": 29901,
+ "days": 155
+}

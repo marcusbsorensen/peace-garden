@@ -72,7 +72,7 @@ struct IncomingSeedView: View {
             }
 
             Text("\(outcome.peerDisplayName) cannot grow this plant without a seed from you. Show them this, or send it.")
-                .font(.system(size: 13, weight: .light))
+                .scaledFont(size: 13, weight: .light)
                 .foregroundStyle(Chrome.muted)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -88,6 +88,7 @@ struct IncomingSeedView: View {
         }
         .frame(maxWidth: Chrome.readableWidth)
         .frame(maxWidth: .infinity)
+        .scrollsWhenTooTall()
     }
 
     private func finish() {
