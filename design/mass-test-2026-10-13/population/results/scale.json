@@ -1,0 +1,173 @@
+{
+ "area": "beginnings",
+ "table": "seedbed",
+ "areaSteps": [
+  {
+   "plantings": 259,
+   "plots": 13,
+   "answerYes": {
+    "n": 20,
+    "p50": 9,
+    "p95": 14,
+    "p99": 14.9,
+    "max": 14.9
+   },
+   "plotRead": {
+    "n": 20,
+    "p50": 7.9,
+    "p95": 10.4,
+    "p99": 11.1,
+    "max": 11.1
+   },
+   "countRead": {
+    "n": 20,
+    "p50": 7.1,
+    "p95": 11.2,
+    "p99": 12,
+    "max": 12
+   },
+   "rowsReadPerArrival": 249,
+   "arrivalScanUs": 919
+  },
+  {
+   "plantings": 1007,
+   "plots": 35,
+   "answerYes": {
+    "n": 20,
+    "p50": 12.4,
+    "p95": 17,
+    "p99": 18.3,
+    "max": 18.3
+   },
+   "plotRead": {
+    "n": 20,
+    "p50": 6.9,
+    "p95": 10.9,
+    "p99": 13.6,
+    "max": 13.6
+   },
+   "countRead": {
+    "n": 20,
+    "p50": 6.4,
+    "p95": 7.5,
+    "p99": 9.9,
+    "max": 9.9
+   },
+   "rowsReadPerArrival": 997,
+   "arrivalScanUs": 3306
+  },
+  {
+   "plantings": 2007,
+   "plots": 62,
+   "answerYes": {
+    "n": 20,
+    "p50": 16.2,
+    "p95": 28.6,
+    "p99": 33,
+    "max": 33
+   },
+   "plotRead": {
+    "n": 20,
+    "p50": 10.9,
+    "p95": 14.6,
+    "p99": 14.8,
+    "max": 14.8
+   },
+   "countRead": {
+    "n": 20,
+    "p50": 9,
+    "p95": 15.2,
+    "p99": 15.7,
+    "max": 15.7
+   },
+   "rowsReadPerArrival": 1997,
+   "arrivalScanUs": 6335
+  },
+  {
+   "plantings": 3007,
+   "plots": 88,
+   "answerYes": {
+    "n": 20,
+    "p50": 17.6,
+    "p95": 22.8,
+    "p99": 33.5,
+    "max": 33.5
+   },
+   "plotRead": {
+    "n": 20,
+    "p50": 7.7,
+    "p95": 14.4,
+    "p99": 28,
+    "max": 28
+   },
+   "countRead": {
+    "n": 20,
+    "p50": 8.2,
+    "p95": 13.5,
+    "p99": 13.6,
+    "max": 13.6
+   },
+   "rowsReadPerArrival": 2997,
+   "arrivalScanUs": 8015
+  }
+ ],
+ "wildSteps": [
+  {
+   "released": 1000,
+   "fieldCount": {
+    "n": 20,
+    "p50": 6.9,
+    "p95": 11.6,
+    "p99": 12,
+    "max": 12
+   },
+   "tile": {
+    "n": 20,
+    "p50": 5.8,
+    "p95": 8.2,
+    "p99": 9,
+    "max": 9
+   },
+   "tileBytesMax": 7660,
+   "bytesPerPlanting": 490
+  },
+  {
+   "released": 4000,
+   "fieldCount": {
+    "n": 20,
+    "p50": 8,
+    "p95": 12.3,
+    "p99": 14.5,
+    "max": 14.5
+   },
+   "tile": {
+    "n": 20,
+    "p50": 5.4,
+    "p95": 7.8,
+    "p99": 7.8,
+    "max": 7.8
+   },
+   "tileBytesMax": 24514,
+   "bytesPerPlanting": 392
+  },
+  {
+   "released": 10000,
+   "fieldCount": {
+    "n": 20,
+    "p50": 20.1,
+    "p95": 24.4,
+    "p99": 50.7,
+    "max": 50.7
+   },
+   "tile": {
+    "n": 20,
+    "p50": 9.3,
+    "p95": 13.9,
+    "p99": 17.2,
+    "max": 17.2
+   },
+   "tileBytesMax": 57904,
+   "bytesPerPlanting": 371
+  }
+ ]
+}

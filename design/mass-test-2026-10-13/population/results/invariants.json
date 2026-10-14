@@ -1,0 +1,195 @@
+{
+    "db": "pgmt_main",
+    "checked_at": "2026-10-13T21:57:28+00:00",
+    "violations": [],
+    "facts": {
+        "rows": {
+            "long_walk": 692,
+            "quiet_garden": 359,
+            "crossing": 519,
+            "orchard": 379,
+            "knot_garden": 347,
+            "seedbed": 647,
+            "cold_frame": 506,
+            "glasshouse": 554,
+            "coppice": 384,
+            "home_ground": 500,
+            "wild_fields": 34888,
+            "wild_hidden": 268,
+            "wild_names": 33955
+        },
+        "forged_tried": 2,
+        "wild": {
+            "standing": 34620,
+            "hidden": 268,
+            "tiles_with_plants": 64,
+            "tile_bytes_max": 187677,
+            "tile_bytes_median": 174003,
+            "tile_ms_median": 38.1,
+            "tile_ms_max": 134.5,
+            "plantings_with_shown": 33072,
+            "wild_json_bytes": 687
+        },
+        "offers": {
+            "accepted": 4459,
+            "withdrawn": 33866,
+            "declined": 1372,
+            "lapsed_at_exactly_30_days": 33196
+        },
+        "areas": {
+            "travel": {
+                "rows": 692,
+                "plots": 16,
+                "plot_bytes_max": 16829,
+                "plot_ms_median": 36.9,
+                "plot_ms_max": 106.8,
+                "plantings_per_plot_max": 47,
+                "closest_pair_m": 0.246,
+                "reach_m_max": 3,
+                "count_json_bytes": 12
+            },
+            "peace": {
+                "rows": 359,
+                "plots": 37,
+                "plot_bytes_max": 3602,
+                "plot_ms_median": 42.8,
+                "plot_ms_max": 272.3,
+                "plantings_per_plot_max": 10,
+                "closest_pair_m": 0.35,
+                "reach_m_max": 2.69,
+                "count_json_bytes": 12
+            },
+            "meeting": {
+                "rows": 519,
+                "plots": 24,
+                "plot_bytes_max": 8589,
+                "plot_ms_median": 36.5,
+                "plot_ms_max": 71.2,
+                "plantings_per_plot_max": 24,
+                "closest_pair_m": 0.37,
+                "reach_m_max": 2.9,
+                "count_json_bytes": 12
+            },
+            "kinship": {
+                "rows": 379,
+                "plots": 20,
+                "plot_bytes_max": 7159,
+                "plot_ms_median": 30.3,
+                "plot_ms_max": 47.9,
+                "plantings_per_plot_max": 20,
+                "closest_pair_m": 0.307,
+                "reach_m_max": 2.53,
+                "count_json_bytes": 12
+            },
+            "pattern": {
+                "rows": 347,
+                "plots": 13,
+                "plot_bytes_max": 11046,
+                "plot_ms_median": 33.7,
+                "plot_ms_max": 61.4,
+                "plantings_per_plot_max": 31,
+                "closest_pair_m": 0.233,
+                "reach_m_max": 2.25,
+                "count_json_bytes": 12
+            },
+            "beginnings": {
+                "rows": 647,
+                "plots": 25,
+                "plot_bytes_max": 15868,
+                "plot_ms_median": 27.4,
+                "plot_ms_max": 40.2,
+                "plantings_per_plot_max": 40,
+                "closest_pair_m": 0.41,
+                "reach_m_max": 2.48,
+                "count_json_bytes": 12
+            },
+            "waiting": {
+                "rows": 506,
+                "plots": 10,
+                "plot_bytes_max": 20693,
+                "plot_ms_median": 34.9,
+                "plot_ms_max": 38,
+                "plantings_per_plot_max": 58,
+                "closest_pair_m": 0.214,
+                "reach_m_max": 2.77,
+                "count_json_bytes": 12
+            },
+            "light": {
+                "rows": 554,
+                "plots": 18,
+                "plot_bytes_max": 11464,
+                "plot_ms_median": 26.7,
+                "plot_ms_max": 36.5,
+                "plantings_per_plot_max": 31,
+                "closest_pair_m": 0.369,
+                "reach_m_max": 1.82,
+                "count_json_bytes": 12
+            },
+            "renewal": {
+                "rows": 384,
+                "plots": 13,
+                "plot_bytes_max": 11802,
+                "plot_ms_median": 20.4,
+                "plot_ms_max": 31.3,
+                "plantings_per_plot_max": 32,
+                "closest_pair_m": 0.379,
+                "reach_m_max": 2.79,
+                "count_json_bytes": 12
+            },
+            "ground": {
+                "rows": 500,
+                "plots": 9,
+                "plot_bytes_max": 22837,
+                "plot_ms_median": 20.8,
+                "plot_ms_max": 28.3,
+                "plantings_per_plot_max": 64,
+                "closest_pair_m": 0.264,
+                "reach_m_max": 2.78,
+                "count_json_bytes": 11
+            }
+        },
+        "database_bytes": 92209152,
+        "tables": [
+            {
+                "table_name": "walk_offers",
+                "table_rows": 39164,
+                "bytes": 36782080
+            },
+            {
+                "table_name": "wild_names",
+                "table_rows": 34924,
+                "bytes": 25706496
+            },
+            {
+                "table_name": "wild_fields",
+                "table_rows": 35597,
+                "bytes": 19005440
+            },
+            {
+                "table_name": "rate_limits",
+                "table_rows": 35005,
+                "bytes": 7372800
+            },
+            {
+                "table_name": "long_walk",
+                "table_rows": 692,
+                "bytes": 393216
+            },
+            {
+                "table_name": "seedbed",
+                "table_rows": 647,
+                "bytes": 393216
+            },
+            {
+                "table_name": "glasshouse",
+                "table_rows": 554,
+                "bytes": 344064
+            },
+            {
+                "table_name": "cold_frame",
+                "table_rows": 506,
+                "bytes": 327680
+            }
+        ]
+    }
+}

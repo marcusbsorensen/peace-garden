@@ -1,0 +1,106 @@
+{
+ "db": "pgmt_main",
+ "perRoute": {
+  "/api/garden": {
+   "n": 20,
+   "p50": 1.8,
+   "p95": 2.5,
+   "p99": 2.6,
+   "max": 2.6
+  },
+  "/api/wild": {
+   "n": 20,
+   "p50": 18.1,
+   "p95": 22.8,
+   "p99": 24.2,
+   "max": 24.2
+  },
+  "/api/wild/tile/3/4": {
+   "n": 20,
+   "p50": 6.9,
+   "p95": 13.2,
+   "p99": 17,
+   "max": 17
+  },
+  "/api/walk": {
+   "n": 20,
+   "p50": 3.7,
+   "p95": 7,
+   "p99": 9,
+   "max": 9
+  },
+  "/api/glasshouse/plot/0": {
+   "n": 20,
+   "p50": 5.3,
+   "p95": 14.8,
+   "p99": 16.2,
+   "max": 16.2
+  },
+  "/api/coppice/plot/0": {
+   "n": 20,
+   "p50": 3.1,
+   "p95": 5.9,
+   "p99": 6.1,
+   "max": 6.1
+  },
+  "/api/ground": {
+   "n": 20,
+   "p50": 2.7,
+   "p95": 10.7,
+   "p99": 12.1,
+   "max": 12.1
+  }
+ },
+ "statementsPerRequest": 1,
+ "dbMsPerRequest": 3,
+ "top": [
+  {
+   "n": 20,
+   "totalMs": 300.7,
+   "avgUs": 15034,
+   "text": "SELECT `tile_x` , `tile_z` , COUNT ( * ) AS `plants` FROM `wild_fields"
+  },
+  {
+   "n": 20,
+   "totalMs": 40.9,
+   "avgUs": 2046,
+   "text": "SELECT `f` . `seed` , `f` . `parent_a` , `f` . `parent_b` , `n` . `nam"
+  },
+  {
+   "n": 20,
+   "totalMs": 18.5,
+   "avgUs": 924,
+   "text": "SELECT * FROM `glasshouse` WHERE `plot` = ? AND `hidden` = ? ORDER BY "
+  },
+  {
+   "n": 20,
+   "totalMs": 10.5,
+   "avgUs": 527,
+   "text": "SELECT * FROM `coppice` WHERE `plot` = ? AND `hidden` = ? ORDER BY `ar"
+  },
+  {
+   "n": 20,
+   "totalMs": 7.3,
+   "avgUs": 364,
+   "text": "SELECT COALESCE ( MAX ( `plot` ) + ?, ... ) FROM `long_walk` "
+  },
+  {
+   "n": 20,
+   "totalMs": 3.8,
+   "avgUs": 190,
+   "text": "SELECT COALESCE ( MAX ( `plot` ) + ?, ... ) FROM `home_ground` "
+  },
+  {
+   "n": 1,
+   "totalMs": 2.1,
+   "avgUs": 2131,
+   "text": "TRUNCATE `performance_schema` . `events_statements_summary_by_digest` "
+  },
+  {
+   "n": 1,
+   "totalMs": 0.6,
+   "avgUs": 613,
+   "text": "SELECT SUM ( `COUNT_STAR` ) , `ROUND` ( SUM ( `SUM_TIMER_WAIT` ) / ? )"
+  }
+ ]
+}
