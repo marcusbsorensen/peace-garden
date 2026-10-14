@@ -26,22 +26,29 @@ Previous notes: `git show c83bc6e:.claude/HANDOVER.md` covers build 8 (12 Octobe
 
   The full suite was last run at the integration (280 tests); the performance branch ran 307 after its merge.
 
-## Running when this was written
-- `claude/app-polish-2026-10-14`:
-  - 24A, the foot row stays left to right in every language;
-  - 27A, the seed sheet opens half way on the SE;
-  - 26A, renders of two fixes for the thin small capitals, for Marcus to choose;
+## Running when this was written (14 October, evening)
+- `claude/app-polish-2026-10-14`, the only agent still running. It covers:
+  - 24A, the foot row left to right in every language;
+  - 27A, the seed sheet opening half way on the SE;
+  - 26A, renders of two fixes for the thin small capitals (`design/app-polish-2026-10-14/small-caps-AB.png`), for Marcus to choose; neither is the default yet;
   - 28C, the VoiceOver garden layer built in slices.
-- The translation round (19A), five agents:
-  - `claude/translate-app-2026-10-14`: catalogue sync; app languages; Danish final; 25B "Landskab %lld"; 20A Greenlandic hidden from the chooser;
-  - `claude/translate-site-g1…g4-2026-10-14`: the site's 44 missing keys and privacy10 in 40 languages.
 
-  Records go in `tools/strings/commissions/2026-10-14/`, with Danish tables `DANISH-app.md` and `DANISH-site.md` for Marcus to read.
+  When it reports, or once its branch is pushed and finished, merge it, show Marcus `small-caps-AB.png`, and apply his choice.
+- **The translation round (19A) is done, merged and deployed** (site, 14 October evening):
+  - the app has all seven languages for every sentence in use (Danish final; "Landskab %lld");
+  - the site has 146 of 146 keys in all 40 offered languages, privacy10 included;
+  - Greenlandic is out of the chooser (`offered: false`) but reachable with `?l=kl`;
+  - Dutch says "hij" except `meaningLight`, which must change together with the app's `theme.light.definition`.
+
+  Records are in `tools/strings/commissions/2026-10-14/`. Marcus has `DANISH-app.md` and `DANISH-site.md` to read.
+- **English copy questions found by the translators:**
+  - `walkBody` says the Long Walk is "the one area with real plants", which is stale and isn't shown;
+  - `downloadBody` says the plant "is nobody else's", while `growBody` says "you both have it". Marcus hasn't answered this yet.
 
 ## Next steps
-1. Merge the polish and translation branches. Show Marcus the small-capitals renders (26A) and the Danish tables.
+1. Merge app polish and show Marcus the small-capitals renders (26A).
 2. **Build 9:** set `CURRENT_PROJECT_VERSION` to 9, `xcodegen generate`, run the full suite through the lock, then archive and export with the system PATH. Marcus uploads with `sh tools/upload-build.sh 9`, or from the Organizer if the Xcode sign-in has lapsed.
-3. **Site deploy for the translations:** Marcus runs `tools/backup.sh`, `tools/deploy.sh --dry-run; echo "exit=$?"`, then `tools/deploy.sh`.
+3. ~~Site deploy for the translations~~ done 14 October evening, with every check ok.
 4. Marcus checks on a real phone:
    - the moving wallpaper: does iOS let a Live Photo made by the app move?
    - time-lapse and Share speed;
