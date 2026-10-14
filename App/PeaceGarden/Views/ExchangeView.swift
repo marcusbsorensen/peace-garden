@@ -46,15 +46,12 @@ struct ExchangeView: View {
                 phases
             }
         }
-        // The X in a ring, as the seed, the garden and Settings close (Marcus,
-        // 13 October: "consistency"). It was the word *Cancel*, or *Not this
-        // time* over a plant just made. Closing still stops the search
-        // (`onDisappear`) and still leaves a new plant unkept; VoiceOver still
-        // says which of the two it is, where the system symbol alone would say
-        // only *Close*.
+        // The X in a ring, as the seed, the garden and Settings close, and the
+        // words *Not this time* over a plant just made. See `MeetCloseControl`.
+        // Closing still stops the search (`onDisappear`) and still leaves a
+        // new plant unkept.
         .overlay(alignment: .topTrailing) {
-            CloseButton { dismiss() }
-                .accessibilityLabel(Text(closeTitle))
+            MeetCloseControl(overAPlantJustMade: isOverAPlantJustMade) { dismiss() }
                 .padding(.trailing, 12)
                 .padding(.top, 12)
         }
@@ -112,10 +109,10 @@ struct ExchangeView: View {
         }
     }
 
-    /// What the X in the corner is read aloud as.
-    private var closeTitle: LocalizedStringKey {
-        if case .grown = service.phase { return "Not this time" }
-        return "Cancel"
+    /// Whether a plant has just been made here and is waiting to be kept.
+    private var isOverAPlantJustMade: Bool {
+        if case .grown = service.phase { return true }
+        return false
     }
 
     /// The place offer sits between the name and the search, so that the only
@@ -383,4 +380,31 @@ struct ExchangeView: View {
         .frame(maxWidth: .infinity)
     }
 
+}
+
+/// The way out of Meet, in the top corner.
+///
+/// **The circled X, as every screen behind the row closes** (Marcus, 13
+/// October: *consistency*), read aloud as *Cancel*, because the system symbol
+/// alone would say only *Close* and closing here also stops the search.
+///
+/// **Over a plant just made, the words *Not this time*** in their capsule
+/// (Marcus, 14 October: 3A). It is the one moment closing means more than
+/// closing — it leaves the new plant unkept — and an X would not say so.
+struct MeetCloseControl: View {
+    /// Whether a plant has just been made and is waiting to be kept.
+    let overAPlantJustMade: Bool
+    let close: () -> Void
+
+    var body: some View {
+        if overAPlantJustMade {
+            QuietButton(title: "Not this time", action: close)
+                // Read as written, not in the capsule's capitals: a string,
+                // because a `Text` label takes them too.
+                .accessibilityLabel(String(localized: "Not this time"))
+        } else {
+            CloseButton(action: close)
+                .accessibilityLabel(Text("Cancel"))
+        }
+    }
 }

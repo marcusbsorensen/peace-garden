@@ -27,6 +27,9 @@ struct PlantPortrait: Sendable {
     /// its foot.
     var band: Band
     var ground: ShareGround = .recommended
+    /// The hour on this phone's clock, `0..<24`, for a ground that follows it
+    /// (`ShareGround.byTheHour`); nil draws the night. See `ShareSky`.
+    var hour: Double?
     /// Which way the plant faces in the still, in radians about its stem. A
     /// turn starts and ends here.
     ///
@@ -43,19 +46,19 @@ struct PlantPortrait: Sendable {
     /// The shared still: four by five, which a message, a mail and a feed all
     /// show whole, and which suits a plant, being taller than it is wide.
     static func picture(genome: Genome, growth: GrowthModel.State,
-                        ground: ShareGround = .recommended) -> PlantPortrait {
+                        ground: ShareGround = .recommended, hour: Double? = nil) -> PlantPortrait {
         PlantPortrait(genome: genome, growth: growth,
                       pixels: CGSize(width: 1440, height: 1800), pixelsPerPoint: 3,
-                      band: Band(top: 0.10, foot: 0.90), ground: ground)
+                      band: Band(top: 0.10, foot: 0.90), ground: ground, hour: hour)
     }
 
     /// The turning video: the same composition as the still at 1080 wide, the
     /// width a phone plays a video at.
     static func turning(genome: Genome, growth: GrowthModel.State,
-                        ground: ShareGround = .recommended) -> PlantPortrait {
+                        ground: ShareGround = .recommended, hour: Double? = nil) -> PlantPortrait {
         PlantPortrait(genome: genome, growth: growth,
                       pixels: CGSize(width: 1080, height: 1350), pixelsPerPoint: 2.25,
-                      band: Band(top: 0.10, foot: 0.90), ground: ground)
+                      band: Band(top: 0.10, foot: 0.90), ground: ground, hour: hour)
     }
 
     /// A wallpaper: the phone's own screen, pixel for pixel, with the plant
@@ -73,10 +76,10 @@ struct PlantPortrait: Sendable {
     /// `scale` its `nativeScale`.
     static func wallpaper(genome: Genome, growth: GrowthModel.State,
                           nativePixels: CGSize, scale: CGFloat,
-                          ground: ShareGround = .recommended) -> PlantPortrait {
+                          ground: ShareGround = .recommended, hour: Double? = nil) -> PlantPortrait {
         PlantPortrait(genome: genome, growth: growth,
                       pixels: wallpaperPixels(native: nativePixels), pixelsPerPoint: max(1, scale),
-                      band: Band(top: 0.37, foot: 0.86), ground: ground)
+                      band: Band(top: 0.37, foot: 0.86), ground: ground, hour: hour)
     }
 
     /// A screen's own pixels, upright.
@@ -109,9 +112,10 @@ struct PlantPortrait: Sendable {
 
 /// What a shared plant stands on.
 ///
-/// Three, drawn for Marcus to choose from in
-/// `design/share-plant-2026-10-13/backgrounds-ABC.png`. The letters there are
-/// the order here.
+/// The first three were drawn for Marcus to choose from in
+/// `design/share-plant-2026-10-13/backgrounds-ABC.png`, and the letters there
+/// are the order here. He answered with a fourth (14 October 2026): *"can we
+/// follow the time of day/night on the user's phone? Otherwise night sky"*.
 enum ShareGround: String, CaseIterable, Sendable {
     /// A: the garden's night sky, with the plant's own pool of light behind it.
     case nightSky
@@ -120,9 +124,13 @@ enum ShareGround: String, CaseIterable, Sendable {
     /// C: the plant's own stage as a dark phone shows it — black, and the pool
     /// of light.
     case stage
+    /// The garden's sky for the hour on this phone's clock — day, dusk or
+    /// night — over the fixed stars, and the night when there is no hour
+    /// (`ShareSky`). The portrait carries the hour.
+    case byTheHour
 
-    /// What is drawn until Marcus says otherwise.
-    static let recommended: ShareGround = .nightSky
+    /// What is drawn: Marcus's answer of 14 October.
+    static let recommended: ShareGround = .byTheHour
 }
 
 // MARK: - Drawing

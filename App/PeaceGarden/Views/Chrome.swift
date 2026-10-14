@@ -1528,12 +1528,19 @@ extension View {
 
 /// A few answers to one question, as marks in one capsule.
 ///
-/// **The same control as Settings' Light row** (`LightToggle`): the chosen mark
-/// has a capsule of its own, a faint wash inside the prominent edge, and lifts
-/// from `faint` to `ink`; the others stand faint. Lifted out generic so the
-/// seed screen's plant drawing is that control and not one that looks like it.
-/// `LightToggle` is drawn the same way and can move onto this once
-/// `SettingsView.swift` is free to change.
+/// **The capsule of Settings' Light row** (`LightToggle`): the hairline round
+/// the whole, and round the chosen answer a capsule of its own, a faint wash
+/// inside the prominent edge, which slides between answers. Lifted out generic
+/// so the seed screen's plant drawing is that control and not one that looks
+/// like it.
+///
+/// **How a chosen mark is drawn is the caller's**, because `mark` is handed
+/// whether its answer is chosen. The seed screen lifts its mark from `faint` to
+/// `ink`. The Light row no longer does: since 13 October its chosen sun is
+/// orange and its moon yellow (`Chrome.sunOrange`, `Chrome.moonYellow`), so
+/// the two controls share the capsule and differ in the chosen mark's colour.
+/// `LightToggle` could still move onto this, drawing its colours in `mark`;
+/// its answers are 58 points wide to this one's 52.
 ///
 /// Each answer is read aloud by its own label and the whole by `label`, so a
 /// VoiceOver user hears the question and which answer is selected.

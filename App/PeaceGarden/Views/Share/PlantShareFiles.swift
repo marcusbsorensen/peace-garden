@@ -6,7 +6,7 @@ import UIKit
 import UniformTypeIdentifiers
 
 /// What the Share mark makes, as files: a picture, a turning video, a
-/// wallpaper, and a moving wallpaper.
+/// time-lapse, a wallpaper, and a moving wallpaper.
 ///
 /// **The files say nothing about the plant but its picture.** No seed, no
 /// name, no other gardener, no meeting, no place and no date: not in the
@@ -59,7 +59,7 @@ enum PlantShareFiles {
         }
     }
 
-    // MARK: The four
+    // MARK: The five
 
     /// The plant as it is now, as a picture to send.
     static func picture(_ portrait: PlantPortrait, backdrop: SharedImage) throws -> URL {
@@ -87,6 +87,38 @@ enum PlantShareFiles {
             renderer.draw(yaw: plan.yaw(ofFrame: index, facing: portrait.facing), in: context)
         }
         return url
+    }
+
+    /// The plant's life from its first sprouting to now, as a film to send:
+    /// the time-lapse its screen plays (`TimeLapseFilm`), twelve seconds,
+    /// starting on the sprout and ending on the plant as it is, under the sky
+    /// of this phone's hour. Like the turning video, it carries no metadata.
+    ///
+    /// On the main actor, because the film is drawn there, a frame at a time.
+    @MainActor
+    static func timeLapse(_ record: PlantRecord, now: Date,
+                          options: TimeLapseFilm.Options = timeLapseOptions(),
+                          progress: (Double) -> Void = { _ in }) async throws -> URL {
+        let url = try freshFolder().appendingPathComponent("\(fileStem).mp4")
+        try await TimeLapseFilm.writeMovie(record, now: now, options: options, to: url, progress: progress)
+        return url
+    }
+
+    /// How the shared time-lapse is filmed. **The sky of the phone's hour**, as
+    /// a shared picture's is (`ShareSky`): the time-lapse's own sky drifts
+    /// from first light to the sky of the hour on this phone's clock, read by
+    /// the phone's calendar and nothing else (`SkyDrift.towardsNow`). Dark,
+    /// whatever the appearance, as the shared picture's ground is, and
+    /// starting on the sprout rather than on the plant as it is: a film is
+    /// watched cold, and the sprout is its beginning.
+    @MainActor
+    static func timeLapseOptions() -> TimeLapseFilm.Options {
+        var options = TimeLapseFilm.Options()
+        options.drift = .towardsNow
+        options.scheme = .dark
+        options.opensOnThePlant = false
+        options.calendar = .current
+        return options
     }
 
     /// The plant as a wallpaper-sized still, ready for Photos.
