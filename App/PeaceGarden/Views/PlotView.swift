@@ -119,11 +119,17 @@ struct PlotView: View {
 
     /// What is worked out from the garden, kept between frames: see `PlotMemo`.
     @State private var memo = PlotMemo()
-    /// Whether VoiceOver or Switch Control is running, and so whether the plot
-    /// has a layer of elements for it (`PlotVoiceOver`). A garden of five
-    /// hundred is five hundred elements, built when its plants arrive: a
+    /// Whether VoiceOver or Switch Control is running, and so whether a big
+    /// garden has a layer of elements for it (`PlotVoiceOver`). A garden of
+    /// five hundred is five hundred elements, built when its plants arrive: a
     /// third of a second of main thread, for nobody, when neither is on.
     @State private var assistive = PlotView.assistiveTechnologyRunning
+
+    /// Up to this many plants, the layer is there whatever is running — for
+    /// Voice Control and Full Keyboard Access, which read the same elements
+    /// and which iOS gives no way to ask about. A hundred elements cost about
+    /// 70 ms of main thread, once, as the plants arrive.
+    private static let alwaysSaid = 100
 
     private static var assistiveTechnologyRunning: Bool {
         UIAccessibility.isVoiceOverRunning || UIAccessibility.isSwitchControlRunning
@@ -294,10 +300,11 @@ struct PlotView: View {
                     .modifier(PlotCamera(
                         zoom: zoom, pan: pan, size: proxy.size,
                         // What VoiceOver finds on the plot (`PlotVoiceOver`),
-                        // moved exactly as the plot is moved: while VoiceOver or
-                        // Switch Control is running, and worked out again only
-                        // when where things stand changes.
-                        moved: assistive ? voiceOver(memo.kept(VoiceOverKey(
+                        // moved exactly as the plot is moved, and worked out
+                        // again only when where things stand changes: always in
+                        // a garden of up to a hundred, and in a bigger one while
+                        // VoiceOver or Switch Control is running.
+                        moved: assistive || standings.count <= Self.alwaysSaid ? voiceOver(memo.kept(VoiceOverKey(
                             standings: memo.revision, lamps: lamps, held: held, heldLamp: heldLamp,
                             world: world, side: side, view: view
                         )) {

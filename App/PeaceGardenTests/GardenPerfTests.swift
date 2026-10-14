@@ -135,6 +135,69 @@ final class GardenPerfTests: XCTestCase {
         }
     }
 
+    /// **A big garden opened, filled in and closed**, skipped unless
+    /// `PG_PERF_BIG` names a size (2,000 for the mass test's largest) and
+    /// `PG_PERF_RENDERS` a folder: the first frame, the longest frame until
+    /// every plant has its pictures, how long that took, the footprint's peak
+    /// sampled every half second, and what is left a few seconds after
+    /// closing. The mass test's own harness waits for the plot to hold still,
+    /// which a garden this size with a drift of fireflies in it never quite
+    /// does; this waits only for the pictures.
+    func testOpenABigGarden() async throws {
+        let environment = ProcessInfo.processInfo.environment
+        guard let folder = environment["PG_PERF_RENDERS"], !folder.isEmpty,
+              let size = environment["PG_PERF_BIG"].flatMap({ Int($0) }) else {
+            throw XCTSkip("PG_PERF_BIG and PG_PERF_RENDERS are not set")
+        }
+        try FileManager.default.createDirectory(atPath: folder, withIntermediateDirectories: true)
+        let defaults = UserDefaults.standard
+        let daylightBefore = defaults.string(forKey: Chrome.daylightKey)
+        defer { defaults.set(daylightBefore, forKey: Chrome.daylightKey) }
+        defaults.set(GardenDaylight.always.rawValue, forKey: Chrome.daylightKey)
+        defaults.set(0, forKey: Chrome.plotTurnKey)
+
+        let model = Self.model(size: size, now: Date())
+        try await Task.sleep(for: .milliseconds(500))
+        let before = Self.footprintMB()
+        let counter = FrameCounter()
+        counter.start()
+        let opened = CACurrentMediaTime()
+        var window: UIWindow? = try Self.window(showing: PlotView().environment(model))
+        window?.rootViewController?.view.layoutIfNeeded()
+        CATransaction.flush()
+        let firstFrameMs = (CACurrentMediaTime() - opened) * 1000
+
+        var peak = Self.footprintMB()
+        var filled: Double?
+        while CACurrentMediaTime() - opened < 300 {
+            try await Task.sleep(for: .milliseconds(500))
+            peak = max(peak, Self.footprintMB())
+            let elapsed = CACurrentMediaTime() - opened
+            if elapsed > 2, GardenSprites.shared.outstanding == 0 {
+                filled = elapsed
+                break
+            }
+        }
+        let intervals = counter.stop()
+        try await Task.sleep(for: .seconds(3))
+        peak = max(peak, Self.footprintMB())
+        let open = Self.footprintMB()
+
+        window?.isHidden = true
+        window?.rootViewController = nil
+        window = nil
+        try await Task.sleep(for: .seconds(3))
+        let result: [String: Any] = [
+            "plants": size, "firstFrameMs": firstFrameMs,
+            "longestFrameMs": max(firstFrameMs, intervals.max() ?? 0),
+            "framesOver100ms": intervals.filter { $0 > 100 }.count,
+            "filledSeconds": filled ?? -1, "footprintBeforeMB": before, "footprintPeakMB": peak,
+            "footprintOpenMB": open, "footprintAfterCloseMB": Self.footprintMB(),
+        ]
+        let data = try JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys])
+        try data.write(to: URL(fileURLWithPath: folder).appendingPathComponent("big-\(size).json"))
+    }
+
     /// Until the plot holds still: two seconds in which no frame took longer
     /// than 50 ms and the main thread was busy less than 60% of the time — the
     /// mass test's own measure.
