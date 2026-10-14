@@ -1032,6 +1032,10 @@ struct GroundShadows: View {
     var season: Season = .orbit
     let date: Date
     let size: CGSize
+    /// The plant or light in hand, whose shadow follows the hand rather than
+    /// standing where its cast says: drawn by `Moving`, which alone reads the
+    /// hand, so a drag moves one shadow and not every one (14 October 2026).
+    var moving: (id: UUID, hand: PlotHand, isLamp: Bool)?
 
     /// Bumped when worked-out shadows arrive, so they are drawn.
     @State private var arrived = 0
@@ -1052,7 +1056,7 @@ struct GroundShadows: View {
         // and a garden lit from one side with nothing casting would be wrong in
         // a way nobody could name.
         let moon = 0.2 + 0.8 * MoonPhase.lit(on: date)
-        let laid = casts.flatMap { cast in
+        let laid = casts.filter { $0.id != moving?.id }.flatMap { cast in
             [lay(cast, step: between.before, weight: 1 - between.blend, moon: moon),
              lay(cast, step: between.after, weight: between.blend, moon: moon)].compactMap { $0 }
         }
@@ -1060,13 +1064,11 @@ struct GroundShadows: View {
         // Each sheet is placed by its own transform: see `PlotStack`.
         PlotStack {
             ForEach(laid) { sheet in
-                Image(decorative: sheet.image, scale: 1)
-                    .resizable()
-                    .interpolation(.high)
-                    .frame(width: CGFloat(sheet.image.width), height: CGFloat(sheet.image.height))
-                    .colorMultiply(sheet.tint)
-                    .opacity(sheet.opacity)
-                    .transformEffect(sheet.transform)
+                Self.draw(sheet)
+            }
+            if let moving, let cast = casts.first(where: { $0.id == moving.id }) {
+                Moving(shadows: self, cast: cast, hand: moving.hand, isLamp: moving.isLamp,
+                       between: between, moon: moon)
             }
         }
         .frame(width: size.width, height: size.height, alignment: .topLeading)
@@ -1078,6 +1080,40 @@ struct GroundShadows: View {
         // shadow arriving does not cancel the work on the next.
         .task(id: wanted(between)) {
             await workOut(missing(between))
+        }
+    }
+
+    private static func draw(_ sheet: Laid) -> some View {
+        Image(decorative: sheet.image, scale: 1)
+            .resizable()
+            .interpolation(.high)
+            .frame(width: CGFloat(sheet.image.width), height: CGFloat(sheet.image.height))
+            .colorMultiply(sheet.tint)
+            .opacity(sheet.opacity)
+            .transformEffect(sheet.transform)
+    }
+
+    /// The shadow of what is in hand, laid where the hand is.
+    private struct Moving: View {
+        let shadows: GroundShadows
+        let cast: ShadowCast
+        let hand: PlotHand
+        let isLamp: Bool
+        let between: (before: Int, after: Int, blend: Double)
+        let moon: Double
+
+        var body: some View {
+            let held = ShadowCast(id: cast.id, thing: cast.thing, spot: cast.spot,
+                                  foot: isLamp ? hand.lampFoot : hand.plantFoot,
+                                  turn: cast.turn, scale: cast.scale)
+            let laid = [shadows.lay(held, step: between.before, weight: 1 - between.blend, moon: moon),
+                        shadows.lay(held, step: between.after, weight: between.blend, moon: moon)]
+                .compactMap { $0 }
+            PlotStack {
+                ForEach(laid) { sheet in
+                    GroundShadows.draw(sheet)
+                }
+            }
         }
     }
 

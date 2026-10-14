@@ -1,3 +1,4 @@
+import CoreGraphics
 import Foundation
 import SeedCore
 
@@ -12,6 +13,23 @@ struct PlotStanding: Identifiable {
     var announces: Bool
 
     var id: UUID { record.id }
+}
+
+/// Where the plant or the light in hand is, moved on every frame of a drag
+/// (14 October 2026).
+///
+/// **Read only by what is in hand.** The foot used to be in `PlotView`'s own
+/// state, so every frame of a carried plant worked the screen out again, and
+/// with it every plant and every shadow: 20 ms a frame at five hundred plants
+/// even with everything else kept. Here only the plant or light in hand, and
+/// its shadow, read it, so a drag moves those and nothing else.
+@Observable
+@MainActor
+final class PlotHand {
+    /// Where the foot of the plant in hand is, in the plot's own unzoomed points.
+    var plantFoot: CGPoint = .zero
+    /// The same for a light.
+    var lampFoot: CGPoint = .zero
 }
 
 /// What the plot works out from the garden, kept from one frame to the next

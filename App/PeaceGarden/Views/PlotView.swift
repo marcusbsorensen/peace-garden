@@ -58,24 +58,23 @@ struct PlotView: View {
     /// Kept between visits, so a favourite side is the side the garden opens
     /// on: `Chrome.plotTurnKey` says why on the phone and not on the bed.
     @AppStorage(Chrome.plotTurnKey) private var turn = 0
-    /// How far the plot is turned while two fingers are still on it. Shown as a
-    /// slight lean so the gesture is felt, then snapped to a quarter on release.
-    @State private var turning: Angle = .zero
-
+    /// How far the plot is turned while two fingers are still on it, how far it
+    /// is pinched and how far it is dragged are the camera's own: see
+    /// `PlotCamera`, which holds them so a gesture redraws nothing but itself.
     @State private var zoom: CGFloat = 1
-    @GestureState private var pinching: CGFloat = 1
     @State private var pan: CGSize = .zero
-    @GestureState private var panning: CGSize = .zero
 
     // MARK: Moving a plant
 
-    /// A plant in hand: which one, and where its foot is being held, in the
-    /// plot's own unzoomed coordinates.
+    /// A plant in hand: which one, and where its foot was when it was lifted,
+    /// in the plot's own unzoomed coordinates. Where it is now is `hand`'s.
     private struct Held: Equatable {
         let id: UUID
         var foot: CGPoint
     }
     @State private var held: Held?
+    /// Where what is in hand is, frame by frame: see `PlotHand`.
+    @State private var hand = PlotHand()
 
     /// A light in hand, the same way.
     @State private var heldLamp: Held?
@@ -213,6 +212,8 @@ struct PlotView: View {
                 // read inside the kept layers, the clock would have them drawn
                 // again on its every tick, whatever they were compared on.
                 let seen = Seen(hour: hour, season: season, turn: turn, now: model.now)
+                // Which shadow follows the hand, if any.
+                let inHand = held.map { (id: $0.id, isLamp: false) } ?? heldLamp.map { (id: $0.id, isLamp: true) }
                 // Worked out once a frame and read by both the shadows and
                 // what stands on them.
                 let standings = standing(plotSide: side, in: view)
@@ -243,7 +244,8 @@ struct PlotView: View {
                                 GroundShadows(casts: casts(standings, plotSide: side, world: world, lamps: lamps,
                                                            turn: seen.turn, in: view),
                                               view: view, world: world, plotSide: side, hour: seen.hour,
-                                              season: light.season, date: seen.now, size: proxy.size)
+                                              season: light.season, date: seen.now, size: proxy.size,
+                                              moving: inHand.map { (id: $0.id, hand: hand, isLamp: $0.isLamp) })
                             }
                             .equatable()
                         }
@@ -277,24 +279,27 @@ struct PlotView: View {
                         }
                         .equatable()
                     }
-                    .coordinateSpace(name: "plot")
-                    .scaleEffect(zoom * pinching)
-                    .offset(x: pan.width + panning.width, y: pan.height + panning.height)
-                    .rotationEffect(turning)
+                    .modifier(PlotCamera(
+                        zoom: zoom, pan: pan, size: proxy.size,
+                        looking: { pinching, turning in
+                            looking(in: proxy.size, pinching: pinching, turning: turning)
+                        },
+                        panning: { panning in panGesture(in: proxy.size, panning: panning) },
+                        above: { scale, offset in
+                            // Over the plot and under the words, because a thread
+                            // joins one to the other and has to be in both their
+                            // spaces.
+                            threads(world: world, side: side, in: view,
+                                    screen: proxy.size, glass: glass, scale: scale, offset: offset)
 
-                    // Over the plot and under the words, because a thread joins
-                    // one to the other and has to be in both their spaces.
-                    threads(world: world, side: side, in: view,
-                            screen: proxy.size, glass: glass)
-
-                    panel(lamps: lamps, world: world, side: side, in: view, screen: proxy.size)
+                            panel(lamps: lamps, world: world, side: side, in: view, screen: proxy.size,
+                                  scale: scale, offset: offset)
+                        }
+                    ))
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height)
                 .onAppear { screen = proxy.size }
                 .onChange(of: proxy.size) { _, size in screen = size }
-                .contentShape(Rectangle())
-                .gesture(looking(in: proxy.size))
-                .simultaneousGesture(panGesture(in: proxy.size))
             }
             // **The garden is a map, and a map reads one way round** — the web
             // garden's rule (`docs/WEBSITE.md`). Under a right-to-left layout
@@ -361,9 +366,10 @@ struct PlotView: View {
 
     /// Pinch and turn, together, because two fingers do both at once and people
     /// expect them to.
-    private func looking(in size: CGSize) -> some Gesture {
+    private func looking(in size: CGSize, pinching: GestureState<CGFloat>,
+                         turning: Binding<Angle>) -> some Gesture {
         let pinch = MagnifyGesture()
-            .updating($pinching) { value, state, _ in
+            .updating(pinching) { value, state, _ in
                 state = min(max(value.magnification, 1 / zoom), 3 / zoom)
             }
             .onEnded { value in
@@ -381,11 +387,11 @@ struct PlotView: View {
         let rotate = RotateGesture()
             .onChanged { value in
                 let degrees = min(max(value.rotation.degrees, -24), 24)
-                turning = .degrees(degrees)
+                turning.wrappedValue = .degrees(degrees)
             }
             .onEnded { value in
                 let degrees = value.rotation.degrees
-                withAnimation(.easeOut(duration: 0.2)) { turning = .zero }
+                withAnimation(.easeOut(duration: 0.2)) { turning.wrappedValue = .zero }
                 if degrees > 28 { turnPlot(by: -1) } else if degrees < -28 { turnPlot(by: 1) }
             }
 
@@ -395,9 +401,9 @@ struct PlotView: View {
     /// One finger on the ground moves the view, once there is somewhere to move
     /// it to. At the fitted size the whole plot is already on screen, so there
     /// is nothing to pan and a stray swipe does nothing.
-    private func panGesture(in size: CGSize) -> some Gesture {
+    private func panGesture(in size: CGSize, panning: GestureState<CGSize>) -> some Gesture {
         DragGesture(minimumDistance: 12)
-            .updating($panning) { value, state, _ in
+            .updating(panning) { value, state, _ in
                 guard zoom > 1.001, held == nil else { return }
                 state = value.translation
             }
@@ -525,10 +531,14 @@ struct PlotView: View {
                 let shift = CGSize(width: -(pan.width - before.width) / zoom,
                                    height: -(pan.height - before.height) / zoom)
                 if shift == .zero { continue }
-                held?.foot.x += shift.width
-                held?.foot.y += shift.height
-                heldLamp?.foot.x += shift.width
-                heldLamp?.foot.y += shift.height
+                if held != nil {
+                    hand.plantFoot.x += shift.width
+                    hand.plantFoot.y += shift.height
+                }
+                if heldLamp != nil {
+                    hand.lampFoot.x += shift.width
+                    hand.lampFoot.y += shift.height
+                }
             }
         }
     }
@@ -551,17 +561,6 @@ struct PlotView: View {
 
     // MARK: Drawn again only when it changes
 
-    /// Everything the plants, the lights and their shadows are drawn from,
-    /// apart from where the plot is being pinched or panned to.
-    ///
-    /// **A gesture moves the plot and nothing on it** (14 October 2026). A
-    /// pinch or a pan changes this view's gesture state, so its whole body was
-    /// worked out again on every frame of one, and with it every plant and
-    /// every shadow: 19 ms a frame at 14 plants and 590 at 500 (mass test,
-    /// finding 2). The layers on the plot are now kept (`Unchanged`) until
-    /// something they are drawn from changes — and the light only in steps an
-    /// eight-bit screen can show, so a clock that moves a second redraws
-    /// nothing either.
     /// The hour, season, turn and moment the plot is drawn at, read once a
     /// frame.
     private struct Seen {
@@ -571,6 +570,17 @@ struct PlotView: View {
         let now: Date
     }
 
+    // **Everything on the plot was drawn again whenever this view was**
+    // (14 October 2026): on every frame of a pinch, a pan or a carried plant,
+    // and every tick of the clock, every plant and every shadow — 19 ms a frame
+    // at 14 plants and 590 at 500 (mass test, finding 2). The layers on the plot
+    // are now kept (`Unchanged`) until one of the things below changes; the
+    // fingers are the camera's (`PlotCamera`) and the hand's (`PlotHand`); and
+    // the light counts only in steps an eight-bit screen can show, so a clock
+    // that moves a second redraws nothing.
+
+    /// The light's two steps either side of the hour, and how far between, to
+    /// the 255th.
     private struct Shade: Equatable {
         let before: Int
         let after: Int
@@ -583,6 +593,7 @@ struct PlotView: View {
         }
     }
 
+    /// What the plants and the lights are drawn from.
     private struct ThingsKey: Equatable {
         let standings: Int
         let lamps: [Lamp]
@@ -612,6 +623,7 @@ struct PlotView: View {
                   zoom: zoom, pan: pan, screen: screen, scale: displayScale, longWalk: isLongWalk)
     }
 
+    /// What the shadows are drawn from.
     private struct ShadowsKey: Equatable {
         let standings: Int
         let lamps: [Lamp]
@@ -731,7 +743,7 @@ struct PlotView: View {
                 id: standing.id,
                 thing: .plant(standing.record, standing.growth),
                 spot: standing.spot,
-                foot: held?.id == standing.id ? (held?.foot ?? resting) : resting,
+                foot: resting,
                 turn: Double(GardenSprites.turn(for: standing.record.seed)),
                 scale: 1
             )
@@ -747,7 +759,7 @@ struct PlotView: View {
                 id: lamp.id,
                 thing: .figure(kind),
                 spot: lamp.spot,
-                foot: heldLamp?.id == lamp.id ? (heldLamp?.foot ?? resting) : resting,
+                foot: resting,
                 turn: pivot - quarter * .pi / 2,
                 scale: lamp.drawnScale
             )
@@ -787,7 +799,7 @@ struct PlotView: View {
         return GardenPlantSprite(
             genome: standing.genome,
             growth: standing.growth,
-            foot: inHand ? (held?.foot ?? resting) : resting,
+            foot: resting,
             pointsPerMetre: view.pointsPerMetre,
             hour: seen.hour,
             season: seen.season,
@@ -796,8 +808,8 @@ struct PlotView: View {
             world: world,
             side: side,
             isHeld: inHand,
-            isLeaving: inHand && Isometric.isOff(view.ground(at: held?.foot ?? resting),
-                                                 plotSide: side),
+            hand: inHand ? hand : nil,
+            view: view,
             lamplight: GardenLamps.lift(at: standing.spot, from: lamps),
             glow: glow,
             onTap: {
@@ -805,6 +817,7 @@ struct PlotView: View {
                 selected = standing.record
             },
             onLift: {
+                hand.plantFoot = resting
                 held = Held(id: standing.id, foot: resting)
                 lifts += 1
             },
@@ -812,15 +825,15 @@ struct PlotView: View {
                 comeIn(on: CGPoint(x: resting.x, y: resting.y - 0.45 * view.pointsPerMetre))
             },
             onMove: { travel, finger in
-                held?.foot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                hand.plantFoot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
                 if let finger { nudge(finger: finger) }
             },
             onDrop: { travel in
                 edgePush = .zero
                 // Where it is held, not where the last drag said: the plot may
                 // have panned under a finger that has not moved since.
-                let foot = held?.foot
-                    ?? CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                let foot = held != nil ? hand.plantFoot
+                    : CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
                 put(standing.record, at: foot, world: world, side: side, in: view)
             }
         )
@@ -891,7 +904,7 @@ struct PlotView: View {
         if let kind = lamp.known {
             let colour = GardenLamps.swiftUIColour(GardenLamps.colour(of: kind))
             let resting = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
-            let centre = heldLamp?.id == lamp.id ? (heldLamp?.foot ?? resting) : resting
+            let centre = heldLamp?.id == lamp.id ? hand.lampFoot : resting
             // A larger light throws a larger pool: the pool is the light, as
             // far as the ground can tell.
             let axes = view.ellipse(radius: GardenLamps.reach(of: kind) * 0.72 * lamp.drawnScale)
@@ -926,7 +939,6 @@ struct PlotView: View {
             let resting = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
             let inHand = heldLamp?.id == lamp.id
             let lifted = inHand || tending == lamp.id
-            let foot = inHand ? (heldLamp?.foot ?? resting) : resting
 
             LampFigure(kind: kind, glow: glow, pointsPerMetre: metre, seed: Self.seed(of: lamp),
                        hour: seen.hour, turn: seen.turn, season: seen.season,
@@ -944,8 +956,8 @@ struct PlotView: View {
                 }
                 .scaleEffect(lifted ? 1.06 : 1, anchor: .bottom)
                 .offset(y: lifted ? -8 : 0)
-                .opacity(inHand && Isometric.isOff(view.ground(at: foot), plotSide: side) ? 0.4 : 1)
-                .position(x: foot.x, y: foot.y - 0.6 * metre)
+                .modifier(Placed(resting: resting, above: 0.6 * metre, hand: inHand ? hand : nil,
+                                 view: view, side: side))
         }
     }
 
@@ -975,8 +987,9 @@ struct PlotView: View {
                 }
                 // Further than a finger wanders while it is held still.
                 if hypot(travel.width, travel.height) > 6 { lampTravelled = true }
-                heldLamp = Held(id: lamp.id, foot: CGPoint(x: resting.x + travel.width,
-                                                           y: resting.y + travel.height))
+                // Lifted once; after that only the hand moves.
+                hand.lampFoot = CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                if heldLamp?.id != lamp.id { heldLamp = Held(id: lamp.id, foot: resting) }
                 if let finger = drag?.location { nudge(finger: finger) }
             }
             .onEnded { value in
@@ -994,8 +1007,8 @@ struct PlotView: View {
                     return
                 }
                 let travel = drag?.translation ?? .zero
-                let foot = heldLamp?.foot
-                    ?? CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
+                let foot = heldLamp != nil ? hand.lampFoot
+                    : CGPoint(x: resting.x + travel.width, y: resting.y + travel.height)
                 let found = view.ground(at: foot)
 
                 withAnimation(.spring(duration: 0.3)) {
@@ -1083,7 +1096,7 @@ struct PlotView: View {
     /// `nudge(finger:)` uses rather than read back from SwiftUI.
     @ViewBuilder
     private func threads(world: Int, side: Double, in view: Isometric,
-                         screen size: CGSize, glass: CGRect) -> some View {
+                         screen size: CGSize, glass: CGRect, scale: CGFloat, offset: CGSize) -> some View {
         let waiting = model.invited
         if !waiting.isEmpty, !askingFrame.isNull, size.width > 0 {
             let top = askingFrame.minY - glass.minY - 6
@@ -1092,7 +1105,7 @@ struct PlotView: View {
                 guard let spot = standings.first(where: { $0.record.id == record.id })?.spot
                 else { return nil }
                 let at = view.point(spot, y: standsAt(spot, world: world, side: side))
-                return onTheGlass(at, in: size)
+                return onTheGlass(at, in: size, scale: scale, offset: offset)
             }
 
             Canvas { context, _ in
@@ -1119,13 +1132,13 @@ struct PlotView: View {
     }
 
     /// A point in the plot's own coordinates, where it actually lands on the
-    /// glass once the plot has been zoomed and panned.
-    private func onTheGlass(_ point: CGPoint, in size: CGSize) -> CGPoint {
-        let scale = zoom * pinching
+    /// glass once the plot has been zoomed and panned: `scale` and `offset`
+    /// are the camera's, fingers and all.
+    private func onTheGlass(_ point: CGPoint, in size: CGSize, scale: CGFloat, offset: CGSize) -> CGPoint {
         let middle = CGPoint(x: size.width / 2, y: size.height / 2)
         return CGPoint(
-            x: middle.x + (point.x - middle.x) * scale + pan.width + panning.width,
-            y: middle.y + (point.y - middle.y) * scale + pan.height + panning.height
+            x: middle.x + (point.x - middle.x) * scale + offset.width,
+            y: middle.y + (point.y - middle.y) * scale + offset.height
         )
     }
 
@@ -1532,14 +1545,14 @@ struct PlotView: View {
     /// would be under the heading.
     @ViewBuilder
     private func panel(lamps: [Lamp], world: Int, side: Double, in view: Isometric,
-                       screen size: CGSize) -> some View {
+                       screen size: CGSize, scale: CGFloat, offset: CGSize) -> some View {
         if let id = tending, let lamp = lamps.first(where: { $0.id == id }), let kind = lamp.known {
             let metre = view.pointsPerMetre * lamp.drawnScale
             let footAt = view.point(lamp.spot, y: standsAt(lamp.spot, world: world, side: side))
             let top = onTheGlass(CGPoint(x: footAt.x,
                                          y: footAt.y - GardenLamps.grip(of: kind).height * metre - 8),
-                                 in: size)
-            let bottom = onTheGlass(footAt, in: size)
+                                 in: size, scale: scale, offset: offset)
+            let bottom = onTheGlass(footAt, in: size, scale: scale, offset: offset)
             let above = top.y - 30
             let roomAbove = headingFrame.isNull ? 120 : headingFrame.maxY + 30
 
@@ -1602,9 +1615,12 @@ private struct GardenPlantSprite: View, Equatable {
     let world: Int
     let side: Double
     let isHeld: Bool
-    /// Held off the edge of the plot, where letting go sends it home. Faded, so
-    /// the plant says what letting go will do before it is done.
-    let isLeaving: Bool
+    /// Where it is while it is in hand, read here and nowhere else in the plot,
+    /// so a drag moves this plant and nothing else. Nil when it is not in hand.
+    let hand: PlotHand?
+    /// What the hand's place is measured against: off the edge of the plot,
+    /// letting go sends it home.
+    let view: Isometric
     /// How much the lights nearby lift this plant, and in what colour.
     let lamplight: (amount: Double, colour: SIMD3<Double>)
     let glow: Double
@@ -1638,13 +1654,17 @@ private struct GardenPlantSprite: View, Equatable {
                 && shade(one.blend) == shade(other.blend)
                 && a.season == b.season && a.turn == b.turn && a.pixelsPerMetre == b.pixelsPerMetre
                 && a.world == b.world && a.side == b.side
-                && a.isHeld == b.isHeld && a.isLeaving == b.isLeaving
+                && a.isHeld == b.isHeld
                 && shade(a.lamplight.amount * a.glow) == shade(b.lamplight.amount * b.glow)
                 && a.lamplight.colour == b.lamplight.colour
         }
     }
 
     var body: some View {
+        let foot = hand?.plantFoot ?? self.foot
+        // Held off the edge of the plot, where letting go sends it home. Faded,
+        // so the plant says what letting go will do before it is done.
+        let isLeaving = hand.map { Isometric.isOff(view.ground(at: $0.plantFoot), plotSide: side) } ?? false
         ZStack(alignment: .topLeading) {
             if let sprite = before ?? after {
                 let size = GardenSprites.drawnSize(metres: sprite.metres,
@@ -1746,6 +1766,77 @@ private struct GardenPlantSprite: View, Equatable {
                 .frame(width: size.width, height: size.height)
                 .opacity(opacity)
         }
+    }
+}
+
+/// The plot as it is being looked at: pinched, dragged and leant by fingers
+/// still on the glass, and the gestures that do it (14 October 2026).
+///
+/// **A modifier, so a gesture redraws only itself.** The fingers' state lived
+/// in `PlotView`, so every frame of a pinch or a pan worked out the whole
+/// screen again — the sky, the keys of every layer — and SwiftUI then walked
+/// every plant to find nothing had changed: 20 ms a frame at five hundred
+/// plants with everything else kept. A modifier's content is the view it is
+/// applied to, mounted rather than rebuilt, so here a gesture changes this
+/// body and the transform, and not the plot.
+///
+/// **And one layer, moved whole.** Without `compositingGroup` SwiftUI moved
+/// every plant's picture, every shadow and every pool on the plot by itself,
+/// a thousand-odd layers each frame of a pinch; grouped, it moves one.
+private struct PlotCamera<Looking: Gesture, Panning: Gesture, Above: View>: ViewModifier {
+    let zoom: CGFloat
+    let pan: CGSize
+    let size: CGSize
+    let looking: (GestureState<CGFloat>, Binding<Angle>) -> Looking
+    let panning: (GestureState<CGSize>) -> Panning
+    /// What stands over the plot in the screen's own space — the threads and
+    /// a light's panel — given the scale and offset the plot is drawn at.
+    @ViewBuilder let above: (CGFloat, CGSize) -> Above
+
+    /// How far the plot is pinched while two fingers are on it.
+    @GestureState private var pinching: CGFloat = 1
+    /// How far it is dragged while one finger is on it.
+    @GestureState private var dragging: CGSize = .zero
+    /// How far it is turned while two fingers are still on it. Shown as a
+    /// slight lean so the gesture is felt, then snapped to a quarter on release.
+    @State private var turning: Angle = .zero
+
+    func body(content: Content) -> some View {
+        let scale = zoom * pinching
+        let offset = CGSize(width: pan.width + dragging.width, height: pan.height + dragging.height)
+        ZStack(alignment: .topLeading) {
+            content
+                .compositingGroup()
+                .coordinateSpace(name: "plot")
+                .scaleEffect(scale)
+                .offset(offset)
+                .rotationEffect(turning)
+            above(scale, offset)
+        }
+        .frame(width: size.width, height: size.height)
+        .contentShape(Rectangle())
+        .gesture(looking($pinching, $turning))
+        .simultaneousGesture(panning($dragging))
+    }
+}
+
+/// A light placed at its foot, or — in hand — where the hand is: read here, in
+/// a body of its own, so a drag moves this light and nothing else. The same
+/// modifier in hand and out of it, so the gesture carrying it is not lost when
+/// it is picked up.
+private struct Placed: ViewModifier {
+    let resting: CGPoint
+    /// How far above the foot the middle of what is placed stands.
+    let above: CGFloat
+    let hand: PlotHand?
+    let view: Isometric
+    let side: Double
+
+    func body(content: Content) -> some View {
+        let foot = hand?.lampFoot ?? resting
+        content
+            .opacity(hand != nil && Isometric.isOff(view.ground(at: foot), plotSide: side) ? 0.4 : 1)
+            .position(x: foot.x, y: foot.y - above)
     }
 }
 

@@ -135,69 +135,6 @@ final class GardenPerfTests: XCTestCase {
         }
     }
 
-    /// PROFILE (temporary): marks phases in files so `sample` can be pointed at them.
-    func testProfileTheGarden() async throws {
-        let environment = ProcessInfo.processInfo.environment
-        guard let folder = environment["PG_PERF_PROFILE"], !folder.isEmpty else {
-            throw XCTSkip("PG_PERF_PROFILE is not set")
-        }
-        let size = Int(environment["PG_PERF_SIZE"] ?? "100") ?? 100
-        try FileManager.default.createDirectory(atPath: folder, withIntermediateDirectories: true)
-        func mark(_ name: String) {
-            try? "\(CACurrentMediaTime())".write(toFile: folder + "/" + name, atomically: true, encoding: .utf8)
-        }
-        UserDefaults.standard.set(GardenDaylight.always.rawValue, forKey: Chrome.daylightKey)
-        UserDefaults.standard.set(0, forKey: Chrome.plotTurnKey)
-        let model = Self.model(size: size, now: Date())
-        mark("ready")
-        try await Task.sleep(for: .seconds(Double(environment["PG_PERF_WAIT"] ?? "3") ?? 3))
-        mark("open-start")
-        let counter = FrameCounter()
-        counter.start()
-        let opened = CACurrentMediaTime()
-        let window = try Self.window(showing: PlotView().environment(model))
-        try await settle(limit: 600)
-        mark("open-end")
-        let long = counter.stamped().filter { $0.interval > 50 }
-            .map { String(format: "%.2f s: %.0f ms", $0.at - opened, $0.interval) }
-        try long.joined(separator: "\n").write(toFile: folder + "/long-frames.txt", atomically: true, encoding: .utf8)
-        try await Task.sleep(for: .seconds(4))
-        // What a frame costs, four ways: nothing changed; the garden's clock
-        // read again (now moves by the frame); the developer clock moved a
-        // second and not read; both, as the mass test does.
-        var ways: [String] = []
-        for way in (environment["PG_PERF_WAYS"] ?? "idle,refresh,advance,both").split(separator: ",").map(String.init) {
-            let cpuBefore = Self.threadCPU()
-            let began = CACurrentMediaTime()
-            var count = 0
-            while CACurrentMediaTime() - began < 5 {
-                if way == "advance" || way == "both" { Developer.shared.advance(by: 1) }
-                if way == "refresh" || way == "both" { model.refreshNow() }
-                count += 1
-                try await Task.sleep(for: .milliseconds(16))
-            }
-            ways.append(String(format: "%@: %.2f ms CPU a frame over %d", way,
-                               (Self.threadCPU() - cpuBefore) * 1000 / Double(count), count))
-        }
-        try ways.joined(separator: "\n").write(toFile: folder + "/ways.txt", atomically: true, encoding: .utf8)
-        mark("redraw-start")
-        let start = CACurrentMediaTime()
-        var frames = 0
-        let cpu = Self.threadCPU()
-        let mode = environment["PG_PERF_MODE"] ?? "both"
-        while CACurrentMediaTime() - start < 40 {
-            if mode != "refresh" { Developer.shared.advance(by: 1) }
-            model.refreshNow()
-            frames += 1
-            try await Task.sleep(for: .milliseconds(16))
-        }
-        mark("redraw-end")
-        try "frames \(frames), cpu/frame \((Self.threadCPU() - cpu) * 1000 / Double(frames)) ms"
-            .write(toFile: folder + "/redraw.txt", atomically: true, encoding: .utf8)
-        Developer.shared.backToNow()
-        window.isHidden = true
-    }
-
     /// Until the plot holds still: two seconds in which no frame took longer
     /// than 50 ms and the main thread was busy less than 60% of the time — the
     /// mass test's own measure.
@@ -308,12 +245,6 @@ final class GardenPerfTests: XCTestCase {
             link?.invalidate()
             link = nil
             return stamps.map(\.interval)
-        }
-
-        func stamped() -> [(at: CFTimeInterval, interval: Double)] {
-            link?.invalidate()
-            link = nil
-            return stamps
         }
 
         /// The longest frame in the last `seconds`, counting the one still
