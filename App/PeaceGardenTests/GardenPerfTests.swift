@@ -142,7 +142,9 @@ final class GardenPerfTests: XCTestCase {
     /// sampled every half second, and what is left a few seconds after
     /// closing. The mass test's own harness waits for the plot to hold still,
     /// which a garden this size with a drift of fireflies in it never quite
-    /// does; this waits only for the pictures.
+    /// does; this waits only for the pictures. Then VoiceOver's layer, made a
+    /// slice a frame once the garden has filled in: every frame of it, its
+    /// interval and the main thread's own time, and two seconds at rest after.
     func testOpenABigGarden() async throws {
         let environment = ProcessInfo.processInfo.environment
         guard let folder = environment["PG_PERF_RENDERS"], !folder.isEmpty,
@@ -179,7 +181,34 @@ final class GardenPerfTests: XCTestCase {
             }
         }
         let intervals = counter.stop()
-        try await Task.sleep(for: .seconds(3))
+
+        // VoiceOver's layer, made a slice a frame once the garden has filled
+        // in (Marcus, 14 October: 28C): every frame from the first slice to
+        // the last, its interval and the main thread's own time in it; then
+        // two seconds at rest after, to compare.
+        let layer = FrameCounter()
+        layer.start()
+        var layerStarted: Double?
+        var layerBuilt: Double?
+        while CACurrentMediaTime() - opened < 400 {
+            try await Task.sleep(for: .milliseconds(5))
+            let progress = PlotVoiceOver.progress
+            guard progress.of == size else { continue }
+            if layerStarted == nil, progress.said > 0 { layerStarted = CACurrentMediaTime() - opened }
+            if progress.said == size {
+                layerBuilt = CACurrentMediaTime() - opened
+                break
+            }
+        }
+        // The last slice's own frame.
+        try await Task.sleep(for: .milliseconds(50))
+        let building = layer.stopWithCPU()
+        let rest = FrameCounter()
+        rest.start()
+        try await Task.sleep(for: .seconds(2))
+        let resting = rest.stopWithCPU()
+
+        try await Task.sleep(for: .seconds(1))
         peak = max(peak, Self.footprintMB())
         let open = Self.footprintMB()
 
@@ -193,6 +222,15 @@ final class GardenPerfTests: XCTestCase {
             "framesOver100ms": intervals.filter { $0 > 100 }.count,
             "filledSeconds": filled ?? -1, "footprintBeforeMB": before, "footprintPeakMB": peak,
             "footprintOpenMB": open, "footprintAfterCloseMB": Self.footprintMB(),
+            "voiceOverPerFrame": PlotVoiceOver.perFrame,
+            "voiceOverStartedSeconds": layerStarted ?? -1, "voiceOverBuiltSeconds": layerBuilt ?? -1,
+            "voiceOverFrames": building.count,
+            "voiceOverLongestFrameMs": building.map(\.interval).max() ?? -1,
+            "voiceOverLongestMainCPUMs": building.map(\.cpu).max() ?? -1,
+            "voiceOverFramesOver16ms": building.filter { $0.interval > 16.7 + 2 }.count,
+            "voiceOverMainCPUOver16ms": building.filter { $0.cpu > 16 }.count,
+            "restLongestFrameMs": resting.map(\.interval).max() ?? -1,
+            "restLongestMainCPUMs": resting.map(\.cpu).max() ?? -1,
         ]
         let data = try JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys])
         try data.write(to: URL(fileURLWithPath: folder).appendingPathComponent("big-\(size).json"))
@@ -261,7 +299,7 @@ final class GardenPerfTests: XCTestCase {
 
     // MARK: Measuring
 
-    private static func threadCPU() -> Double {
+    nonisolated private static func threadCPU() -> Double {
         var time = timespec()
         clock_gettime(CLOCK_THREAD_CPUTIME_ID, &time)
         return Double(time.tv_sec) + Double(time.tv_nsec) / 1e9
@@ -294,20 +332,28 @@ final class GardenPerfTests: XCTestCase {
     private final class FrameCounter: NSObject {
         private var link: CADisplayLink?
         private var last: CFTimeInterval = 0
-        private var stamps: [(at: CFTimeInterval, interval: Double)] = []
+        private var lastCPU: Double = 0
+        private var stamps: [(at: CFTimeInterval, interval: Double, cpu: Double)] = []
 
         func start() {
             stamps = []
             last = CACurrentMediaTime()
+            lastCPU = GardenPerfTests.threadCPU()
             let link = CADisplayLink(target: self, selector: #selector(tick(_:)))
             link.add(to: .main, forMode: .common)
             self.link = link
         }
 
         func stop() -> [Double] {
+            stopWithCPU().map(\.interval)
+        }
+
+        /// Each frame's interval and the main thread's own time in it, both
+        /// in milliseconds.
+        func stopWithCPU() -> [(interval: Double, cpu: Double)] {
             link?.invalidate()
             link = nil
-            return stamps.map(\.interval)
+            return stamps.map { ($0.interval, $0.cpu) }
         }
 
         /// The longest frame in the last `seconds`, counting the one still
@@ -319,8 +365,10 @@ final class GardenPerfTests: XCTestCase {
         }
 
         @objc private func tick(_ link: CADisplayLink) {
-            stamps.append((link.timestamp, (link.timestamp - last) * 1000))
+            let cpu = GardenPerfTests.threadCPU()
+            stamps.append((link.timestamp, (link.timestamp - last) * 1000, (cpu - lastCPU) * 1000))
             last = link.timestamp
+            lastCPU = cpu
         }
     }
 }
