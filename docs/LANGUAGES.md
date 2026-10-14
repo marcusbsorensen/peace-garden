@@ -559,6 +559,22 @@ are clear, but *Sinnattugaq*, the first Greenlandic novel, does not clear until
 2027 — so its bank leans on oral tradition and word-building, and its brief has
 to say so.
 
+**Held back from the site's chooser, from 14 October 2026** (Marcus, 20A),
+until a native reader finishes it. Its bank was written and its site prose and
+area names were not, so choosing *Kalaallisut* gave English labels over a bank
+nobody who reads the language had confirmed. `UNFINISHED` in
+`tools/site/export.py` is where it is held: `Server/languages.json` keeps the
+row with `"offered": false`, and its bank, its `Server/strings/kl.json` and its
+tester at `/t` all stay. `languages.js` leaves it out of the chooser, and
+negotiation treats it as a language the site does not have: a browser asking
+for `kl` reads the next language on its own list — Danish, for a Greenlandic
+browser that lists Danish — and English if there is none, with the line under
+the passage saying the passage is borrowed. Nothing maps `kl` to Danish: the two
+are unrelated languages, and answering one with the other would be a decision
+nobody has taken, as it is for Nynorsk. `?l=kl`, or standing in its tester,
+still reaches it, which is how a reader finishes it. Taking `kl` off
+`UNFINISHED` and regenerating offers it again.
+
 ### The waves
 
 Twenty-five banks is fifty agents, so they go out in waves rather than at once —
