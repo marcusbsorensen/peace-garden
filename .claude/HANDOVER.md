@@ -1,4 +1,12 @@
-# Peace Garden: build 9 being assembled, site and server deployed — handover 14 October 2026
+# Peace Garden: build 9 assembled, 32B merged for build 10 — handover 14 October 2026
+
+## Paused here (14 October, late evening)
+Marcus paused development because the work account's (hello@uncubed.app) credit is running out. He'll carry on from his personal account. Nothing is running, and there are no worktrees or agent branches left except main.
+- **Local main is at the HANDOVER commit after `7dd470f`** and is ahead of GitHub (last pushed `84194c8`). The unpushed commits are 29B/30A, build 9, 32B and these notes. **Marcus pushes main first.** A cloud routine can't see anything unpushed.
+- **Build 9:** the upload script failed with "Failed to Use Accounts", so the Organizer was opened on `build/PeaceGarden-1.0-9.xcarchive`. Ask Marcus whether the upload went through.
+- **The disk was almost full** (424 MB free and falling) while an UnCubed session archived outside the shared lock. Check `df -h /System/Volumes/Data` before any Xcode work. The large consumers belong to other projects: CoreSimulator devices (21 GB) and `/private/tmp/claude-501/*-rubiks-solving` (3.9 GB).
+- **The next session starts here:** build 10 = build 32B (`CountLineShadow.shipping = .B` in `PlotView.swift`, not yet compiled on main). Bump to 10, run the full suite through the lock, archive, export.
+- The lock script is in the repo: `sh tools/xcode-lock.sh xcodebuild … -jobs 4 …`. Its lock is the shared `/private/tmp/claude-501/xcode.lock`, which other projects' sessions use too.
 
 Previous notes: `git show c83bc6e:.claude/HANDOVER.md` covers build 8 (12 October), and `a553669` covers build 7 and the logo. This session ran on Marcus's work account (hello@uncubed.app). Memory lives in the personal account's folder, `~/.claude/projects/-Users-marcus-Projects-peace-garden/memory/`.
 
