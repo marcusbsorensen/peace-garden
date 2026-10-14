@@ -1,0 +1,18 @@
+watching 3AE1CF36-2959-4CE0-A304-95AA4333C925, ceiling 5000 MB (footprint), 15:01:07
+15:01:14 pid 19685 peak 36 MB
+15:01:18 pid 19685 peak 255 MB
+15:01:22 pid 19685 peak 278 MB
+15:01:25 pid 19685 peak 297 MB
+15:01:29 pid 19685 peak 311 MB
+15:01:32 pid 19685 peak 324 MB
+15:01:36 pid 19685 peak 343 MB
+15:01:39 pid 19685 peak 349 MB
+15:01:43 pid 19685 peak 359 MB
+15:01:47 pid 19685 peak 369 MB
+15:01:50 pid 19685 382 MB
+15:01:50 pid 19685 peak 382 MB
+15:01:54 pid 19685 peak 389 MB
+15:01:58 pid 19685 peak 402 MB
+15:02:01 pid 19685 446 MB
+15:02:01 pid 19685 peak 446 MB
+stopped 15:02:06, peak 446 MB

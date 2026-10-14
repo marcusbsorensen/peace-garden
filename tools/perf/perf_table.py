@@ -8,8 +8,9 @@ Every number comes from `stress-<size>.json` (`MassTestStressTests`):
 - **Longest block opening**: the longest the main thread went without a frame
   while the garden opened — the first frame itself, or the longest
   display-link interval until the plot held still, whichever is longer.
-- **Filled in**: until every plant had its pictures and the plot held still
-  (before 14 October that was the same moment as the main thread coming free).
+- **Filled in**: from the window's making until every plant had its pictures
+  and the plot held still (before 14 October the first frame itself held
+  every picture, so that is the first frame and the settling after it).
 - **Redraw**: a frame with the clock moved a second and nothing new to make,
   the main thread's own CPU, mean (and median where recorded).
 - **Turn**: a quarter-turn, the longest block and until it was filled in
@@ -52,7 +53,9 @@ def cell(d):
     median = r.get("cpuMsP50")
     return {
         "block": f"{opening_block(d) / 1000:.2f} s" if opening_block(d) >= 1000 else f"{opening_block(d):.0f} ms",
-        "filled": f"{o.get('seconds', 0):.1f} s",
+        # From the window's making: the first frame, then the settling after it
+        # (before 14 October the first frame held every picture).
+        "filled": f"{d.get('firstFrameMs', 0) / 1000 + o.get('seconds', 0):.1f} s",
         "redraw": f"{r.get('cpuMsPerFrame', 0):.1f}" + (f" ({median:.1f})" if median is not None else "") + " ms",
         "turn": f"{turn.get('worstMs', 0):.0f} ms / {turn.get('seconds', 0):.1f} s",
         "month": f"{month.get('worstMs', 0):.0f} ms / {month.get('seconds', 0):.1f} s",

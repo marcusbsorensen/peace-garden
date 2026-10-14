@@ -1,0 +1,10 @@
+idle+0: 4.68 ms CPU a frame over 290; display link p50 16.7 p95 16.7 max 16.7 ms
+pinch+0: 9.66 ms CPU a frame over 291; display link p50 16.7 p95 16.7 max 16.7 ms
+pinch+2: 6.44 ms CPU a frame over 276; display link p50 16.7 p95 34.4 max 59.7 ms
+pinch+0: 9.74 ms CPU a frame over 289; display link p50 16.7 p95 16.7 max 16.7 ms
+pinch+2: 7.24 ms CPU a frame over 274; display link p50 16.7 p95 33.6 max 54.4 ms
+pinch+0: 10.14 ms CPU a frame over 288; display link p50 16.7 p95 16.7 max 16.7 ms
+pinch+2: 6.31 ms CPU a frame over 272; display link p50 16.7 p95 26.5 max 62.4 ms
+pinch+0: 8.62 ms CPU a frame over 291; display link p50 16.7 p95 16.7 max 16.7 ms
+pinch+2: 7.54 ms CPU a frame over 283; display link p50 16.7 p95 16.7 max 47.3 ms
+idle+2: 2.00 ms CPU a frame over 281; display link p50 16.7 p95 16.7 max 44.7 ms
