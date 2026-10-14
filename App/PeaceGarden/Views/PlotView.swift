@@ -120,16 +120,10 @@ struct PlotView: View {
     /// What is worked out from the garden, kept between frames: see `PlotMemo`.
     @State private var memo = PlotMemo()
     /// Whether VoiceOver or Switch Control is running, and so whether a big
-    /// garden has a layer of elements for it (`PlotVoiceOver`). A garden of
-    /// five hundred is five hundred elements, built when its plants arrive: a
-    /// third of a second of main thread, for nobody, when neither is on.
+    /// garden's layer of elements (`PlotVoiceOver`) is made without waiting
+    /// for the garden to fill in. The layer is there either way, for Voice
+    /// Control and Full Keyboard Access, which iOS gives no way to ask about.
     @State private var assistive = PlotView.assistiveTechnologyRunning
-
-    /// Up to this many plants, the layer is there whatever is running — for
-    /// Voice Control and Full Keyboard Access, which read the same elements
-    /// and which iOS gives no way to ask about. A hundred elements cost about
-    /// 70 ms of main thread, once, as the plants arrive.
-    private static let alwaysSaid = 100
 
     private static var assistiveTechnologyRunning: Bool {
         UIAccessibility.isVoiceOverRunning || UIAccessibility.isSwitchControlRunning
@@ -301,15 +295,14 @@ struct PlotView: View {
                         zoom: zoom, pan: pan, size: proxy.size,
                         // What VoiceOver finds on the plot (`PlotVoiceOver`),
                         // moved exactly as the plot is moved, and worked out
-                        // again only when where things stand changes: always in
-                        // a garden of up to a hundred, and in a bigger one while
-                        // VoiceOver or Switch Control is running.
-                        moved: assistive || standings.count <= Self.alwaysSaid ? voiceOver(memo.kept(VoiceOverKey(
+                        // again only when where things stand changes. A big
+                        // garden's is made a slice a frame once it has filled in.
+                        moved: voiceOver(memo.kept(VoiceOverKey(
                             standings: memo.revision, lamps: lamps, held: held, heldLamp: heldLamp,
                             world: world, side: side, view: view
                         )) {
                             voiceOverPlaces(standings, lamps: lamps, world: world, side: side, in: view)
-                        }) : nil,
+                        }),
                         looking: { pinching, turning in
                             looking(in: proxy.size, pinching: pinching, turning: turning)
                         },
@@ -1432,16 +1425,15 @@ struct PlotView: View {
     /// it. They are how the plot is seen, so they stand beside the plus with
     /// the tray shut, and stay where they are when it opens.
     ///
-    /// **The foot mirrors as one row; the turns keep their own order.** Until
-    /// 14 October the row was pinned left to right, as the web garden's pad
-    /// is, while *Reset view* and the light in the tray just above it
-    /// mirrored — a foot half one way round and half the other (mass test,
-    /// 13 October, finding 6; Marcus, 14 October: 15A). Now the plus and the
-    /// turns trade corners under right to left with the rest of the chrome,
-    /// and the pair itself stays pinned: a turn's direction is the screen's,
-    /// not the reading's, so anticlockwise is still on the left of clockwise,
-    /// and each arrow still goes the way the plot does. The plot itself does
-    /// not mirror at all (see `body`).
+    /// **One way round in every language.** The row is pinned left to right,
+    /// as the web garden's pad and map are (`docs/WEBSITE.md`, *Nothing
+    /// mirrors under a right-to-left language*), and as the plot above it is:
+    /// a turn's direction is the screen's, not the reading's, so anticlockwise
+    /// stays on the left of clockwise, and the pair stays where Marcus put it.
+    /// Mirrored, the pair would swap ends with the plus, and a hand that has
+    /// learnt the corner would find the plus there. The accessibility round
+    /// mirrored the row as one for a morning; Marcus put the pinning back the
+    /// same day (14 October: 24A), because the garden itself does not mirror.
     private var controls: some View {
         HStack(spacing: 0) {
             TrayToggle(isOpen: trayOpen) {
@@ -1451,8 +1443,8 @@ struct PlotView: View {
             .accessibilityIdentifier(PlotControls.tray)
             Spacer(minLength: 12)
             turns
-                .environment(\.layoutDirection, .leftToRight)
         }
+        .environment(\.layoutDirection, .leftToRight)
     }
 
     /// What the tray holds, in the order Marcus asked for on 1 October: **the
@@ -1887,16 +1879,18 @@ private struct PlotCamera<Looking: Gesture, Panning: Gesture, Above: View>: View
         ZStack(alignment: .topLeading) {
             content
                 .coordinateSpace(name: "plot")
+                // An overlay rather than a sibling in the stack: what is in an
+                // overlay is laid out in the plot's frame and never lays the
+                // plot out again, so a slice of VoiceOver's layer arriving
+                // (`PlotVoiceOver`) leaves the plot's thousand-odd views alone.
+                .overlay(alignment: .topLeading) {
+                    if let moved {
+                        moved.equatable()
+                    }
+                }
                 .scaleEffect(scale)
                 .offset(offset)
                 .rotationEffect(turning)
-            if let moved {
-                moved
-                    .equatable()
-                    .scaleEffect(scale)
-                    .offset(offset)
-                    .rotationEffect(turning)
-            }
             above(scale, offset)
         }
         .frame(width: size.width, height: size.height)
@@ -2148,19 +2142,29 @@ extension PlotView {
     ///
     /// A plant's box is its stem's height at this stage, near enough: the
     /// picture's own size is the sprite's, which this layer does not wait for.
+    ///
+    /// Newest first whichever way the plot is turned, so a turn moves each
+    /// element rather than reordering them (see `PlotVoiceOver`); VoiceOver
+    /// reads them far to near, by `reading`, with the plant in hand last.
     private func voiceOverPlaces(_ standings: [Standing], lamps: [Lamp], world: Int, side: Double,
                                  in view: Isometric) -> VoiceOverPlaces {
         let metre = view.pointsPerMetre
-        let plants = standings.map { standing in
+        let newestFirst = standings.sorted { a, b in
+            a.record.savedAt != b.record.savedAt ? a.record.savedAt > b.record.savedAt
+                : a.id.uuidString < b.id.uuidString
+        }
+        let plants = newestFirst.map { standing in
             let resting = view.point(standing.spot, y: standsAt(standing.spot, world: world, side: side))
+            let inHand = held?.id == standing.id
             return PlotVoiceOver.Plant(
                 record: standing.record,
                 name: standing.genome.name.full,
                 stage: standing.growth.stage,
                 isAsked: standing.record.standingOrHere.state == .invited,
-                foot: held?.id == standing.id ? (held?.foot ?? resting) : resting,
+                foot: inHand ? (held?.foot ?? resting) : resting,
                 height: max(24, (0.25 + 1.2 * standing.growth.heightScale) * metre),
-                width: max(24, 0.45 * metre)
+                width: max(24, 0.45 * metre),
+                reading: inHand ? -1e9 : -view.depth(standing.spot)
             )
         }
         let lights = lamps.compactMap { lamp -> PlotVoiceOver.Light? in
@@ -2189,6 +2193,7 @@ extension PlotView {
         PlotVoiceOver(
             plants: places.plants,
             lights: places.lights,
+            assistive: assistive,
             open: { record in
                 visits.seen(record, growth: record.growth(now: model.now))
                 selected = record

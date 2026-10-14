@@ -33,15 +33,15 @@ struct PlantStageView: View {
     @State private var showingExchange = false
     @State private var showingGarden = false
     @State private var showingSeed = false
-    /// Where the seed sheet stands: half way, so the plant its drawing marks
-    /// change is standing just above it — **or the whole way, where half way
-    /// leaves its rows below the fold**: a phone the height of an SE, or type
-    /// set larger than the phone's default (mass test, 13 October, finding
-    /// 12; on an Air at XXXL the last row was already under the fold). Either
-    /// way it can be dragged to the other. See `openSeed()`.
+    /// Where the seed sheet stands: **half way on every phone, at every type
+    /// size** (Marcus, 14 October: 27A), so the plant its drawing marks change
+    /// is standing just above it. What does not fit scrolls within the half
+    /// sheet — the last rows on a phone the height of an SE, more of it at the
+    /// larger sizes of type — and it can still be dragged the whole way up.
+    /// The accessibility round had opened it the whole way on an SE and above
+    /// the default type size (mass test finding 12), which put the plant
+    /// behind it. See `openSeed()`.
     @State private var seedDetent: PresentationDetent = .medium
-    @State private var stageHeight: CGFloat = 0
-    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var showingSettings = false
     /// Whether the Share mark is making something or saying what it made, so
     /// it stays up after the row has gone. See `share(identity:growth:)`.
@@ -163,9 +163,12 @@ struct PlantStageView: View {
                 .environment(model)
                 .environment(place)
                 .presentationDetents([.medium, .large], selection: $seedDetent)
+                // A swipe on the rows scrolls them within the half sheet
+                // rather than lifting it over the plant; the bar at its top
+                // still drags it up.
+                .presentationContentInteraction(.scrolls)
                 .presentationBackground(Chrome.ground)
         }
-        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { stageHeight = $0 }
         .onPreferenceChange(BandTopKey.self) { bandTop = $0 }
         .onAppear { model.refreshNow() }
 #if DEBUG
@@ -384,11 +387,10 @@ struct PlantStageView: View {
         reduceMotion ? .opacity : .move(edge: .bottom)
     }
 
-    /// The seed sheet, at the height `seedDetent` says why. 700 points is
-    /// between an SE (647 inside its status bar) and every other phone.
+    /// The seed sheet, half way every time it opens, however it was left:
+    /// `seedDetent` says why.
     private func openSeed() {
-        let compact = stageHeight > 0 && stageHeight < 700
-        seedDetent = compact || typeSize > .large ? .large : .medium
+        seedDetent = .medium
         showingSeed = true
     }
 

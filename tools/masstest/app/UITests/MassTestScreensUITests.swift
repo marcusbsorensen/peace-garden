@@ -16,8 +16,12 @@ import XCTest
 ///   catalogue language, `pseudo` (English, every string doubled) or `rtl`
 ///   (English, forced right to left); size is `L`, `XXXL`, `AX3` or `AX5`;
 ///   appearance `light` (with the garden by day) or `dark` (by night).
-/// - `PG_MT_SCREENS`: any of `stage,seed,meet,settings,garden,plant,firstlight,about`.
+/// - `PG_MT_SCREENS`: any of `stage,seed,meet,settings,garden,plant,firstlight,about`,
+///   and `seed-scrolled`, the seed sheet with its rows drawn up a little.
 /// - `PG_MT_AUDIT`: locales to run `performAccessibilityAudit` on, or `all`.
+/// - `PG_MT_ARGS`: more launch arguments for every screen, separated by
+///   spaces — a trial of something not yet chosen, rendered beside the
+///   current look (14 October, 26A).
 @MainActor
 final class MassTestScreensUITests: XCTestCase {
 
@@ -75,7 +79,7 @@ final class MassTestScreensUITests: XCTestCase {
         try MassTest.install(garden: screen == "firstlight" ? nil : garden)
         var arguments = Self.arguments(locale: locale, size: size, appearance: appearance)
         switch screen {
-        case "seed": arguments += ["-pgOpen", "seed"]
+        case "seed", "seed-scrolled": arguments += ["-pgOpen", "seed"]
         case "meet": arguments += ["-pgOpen", "meet"]
         case "settings": arguments += ["-pgOpen", "settings"]
         // The About sheet (14 October), opened from its row at the foot of
@@ -118,6 +122,13 @@ final class MassTestScreensUITests: XCTestCase {
             let row = app.buttons["settings.about"]
             if row.waitForExistence(timeout: 5) { row.tap() } else { note["error"] = "no About row" }
             MassTest.pause(2.5)
+        // The seed sheet with a finger drawn up its rows (14 October, 27A):
+        // they scroll within the half sheet rather than lifting it.
+        case "seed-scrolled":
+            MassTest.pause(3)
+            let from = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.9))
+            from.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.62)))
+            MassTest.pause(1.5)
         default:
             MassTest.pause(3)
         }
@@ -253,6 +264,7 @@ final class MassTestScreensUITests: XCTestCase {
         arguments += appearance == "light"
             ? ["-stage.appearance.v1", "light", "-garden.daylight.v1", "always"]
             : ["-stage.appearance.v1", "dark", "-garden.daylight.v1", "alwaysNight"]
+        arguments += (MassTest.environment["PG_MT_ARGS"] ?? "").split(separator: " ").map(String.init)
         return arguments
     }
 

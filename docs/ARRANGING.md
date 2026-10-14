@@ -1012,15 +1012,19 @@ appearance, so it is unchanged; what is presented from the garden — a plant's
 own screen, and from there the answer to an asking — stands on its own ground and follows the
 appearance, as every other screen does.
 
-**Superseded 14 October: the foot mirrors as one row** (mass test finding 6;
-Marcus, 15A). Pinned, the plus and the turns stayed put under right to left
-while *Reset view* and the light just above them swapped sides, so the foot was
-half one way round and half the other; and the tray's fade and » stood over the
-first figure, at the right, while the row ran off the left edge unfaded. Now the
-plus and the turns trade corners with the rest of the chrome, the turn pair
-keeps its own order and its arrows (a turn is the plot's direction), and each
-tray row fades and points on the side of the glass it actually runs on past.
-The plot itself still does not mirror.
+**Superseded 14 October: each tray row fades on the side it runs on past**
+(mass test finding 6; Marcus, 15A). Under right to left the tray's fade and »
+stood over the first figure, at the right, while the row ran off the left edge
+unfaded. Now each tray row fades and points on the side of the glass it
+actually runs on past.
+
+**Answered 14 October: the foot stays left to right** (Marcus, 24A). The same
+round had mirrored the foot as one row, so that the plus and the turns traded
+corners with *Reset view* and the light just above them. Marcus put the 11
+October pinning back: the plus bottom left and the turns bottom right in every
+language, anticlockwise left of clockwise, matching the plot itself, which
+does not mirror. *Reset view* and the light in the tray still follow the
+reading direction, as the tray's rows do.
 
 **The turn is remembered, on the phone.** Marcus wants to choose a favourite
 side and have the garden open on it. It is kept in the phone's own settings
