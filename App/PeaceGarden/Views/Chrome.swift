@@ -55,25 +55,6 @@ enum Chrome {
     /// the ground itself becoming the brightest or darkest thing on screen.
     static let ground = adaptive(dark: .black, light: UIColor(white: 0.965, alpha: 1))
 
-    // TEMPORARY, for rendering Marcus's choice 26A only; taken out again in
-    // the next commit. `-pgSmallCaps A`: the label voice one weight up;
-    // `-pgSmallCaps B`: `muted` for the thin small capitals' lines.
-    static func trialWeight(_ weight: Font.Weight) -> Font.Weight {
-        #if DEBUG
-        if UserDefaults.standard.string(forKey: "pgSmallCaps") == "A" {
-            return weight == .regular || weight == .light ? .medium : weight
-        }
-        #endif
-        return weight
-    }
-
-    static var faintOrTrial: Color {
-        #if DEBUG
-        if UserDefaults.standard.string(forKey: "pgSmallCaps") == "B" { return muted }
-        #endif
-        return faint
-    }
-
     private static func adaptive(dark: UIColor, light: UIColor) -> Color {
         Color(uiColor: UIColor { $0.userInterfaceStyle == .light ? light : dark })
     }
@@ -647,7 +628,7 @@ extension View {
     /// make long words — no longer fits an SE's column past AX3, where it
     /// breaks in the middle.
     func chromeLabel(size: CGFloat = 11, weight: Font.Weight = .light) -> some View {
-        scaledFont(size: size, weight: Chrome.trialWeight(size < 12 && weight == .light ? .regular : weight))
+        scaledFont(size: size, weight: size < 12 && weight == .light ? .regular : weight)
             .modifier(ChromeTracking(2.4))
             .modifier(ChromeLetterCase())
             .dynamicTypeSize(...DynamicTypeSize.accessibility3)

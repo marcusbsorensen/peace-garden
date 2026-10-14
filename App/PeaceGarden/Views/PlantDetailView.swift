@@ -224,12 +224,12 @@ struct PlantDetailView: View {
                             // language when it was written down.
                             Text(verbatim: place)
                                 .chromeLabel(size: 10)
-                                .foregroundStyle(Chrome.faintOrTrial)
+                                .foregroundStyle(Chrome.faint)
                         }
                         if encounter.showsDateTime {
                             Text(encounter.happenedAt.formatted(date: .long, time: .shortened))
                                 .chromeLabel(size: 10)
-                                .foregroundStyle(Chrome.faintOrTrial)
+                                .foregroundStyle(Chrome.faint)
                         }
                         // Numbers rather than a place name, and a tap to let a
                         // map say the name if anybody wants it. See
@@ -246,7 +246,7 @@ struct PlantDetailView: View {
                             } else {
                                 Text(verbatim: coordinate.written)
                                     .chromeLabel(size: 10)
-                                    .foregroundStyle(Chrome.faintOrTrial)
+                                    .foregroundStyle(Chrome.faint)
                             }
                         }
                     }

@@ -52,7 +52,7 @@ struct SeedView: View {
 
             Text(identity.genome.form.archetype.label)
                 .chromeLabel()
-                .foregroundStyle(Chrome.faintOrTrial)
+                .foregroundStyle(Chrome.faint)
 
             // How the plant is drawn, here as well as in Settings (Marcus,
             // 13 October: "the user may not think to look under Settings").
@@ -172,7 +172,7 @@ private func factRow(_ glyph: AnyShape, _ label: LocalizedStringKey, value: Text
         .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 1 }
     let name = Text(label)
         .chromeLabel()
-        .foregroundStyle(Chrome.faintOrTrial)
+        .foregroundStyle(Chrome.faint)
     let said = value
         .scaledFont(size: 15, weight: .light)
         .foregroundStyle(Chrome.ink)
