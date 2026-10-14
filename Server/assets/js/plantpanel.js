@@ -231,11 +231,13 @@ export function plantPanel({ theme, engine, cover = null, place = null, beside =
     fillAmbassador(plant);
     fillBeside(plant);
     fillMeaning(named, meaningTheme, part);
-    for (const [selector, key] of [['.plant-panel__send', 'plantPostcard'], ['.plant-panel__close', 'plantClose']]) {
-      const button = dialog.querySelector(selector);
-      button.textContent = strings.t(key);
-      strings.dress(button, key);
-    }
+    const sender = dialog.querySelector('.plant-panel__send');
+    sender.textContent = strings.t('plantPostcard');
+    strings.dress(sender, 'plantPostcard');
+    // The way out is a glyph, and its word is its name (`build` says why).
+    const closer = dialog.querySelector('.plant-panel__close');
+    closer.setAttribute('aria-label', strings.t('plantClose'));
+    strings.dress(closer, 'plantClose');
 
     const figure = dialog.querySelector('.plant-panel__passage');
     figure.hidden = true;
@@ -416,8 +418,23 @@ export function plantPanel({ theme, engine, cover = null, place = null, beside =
     const top = make('div', 'plant-panel__top');
     const name = latin(make('p', 'plant-name plant-panel__name'));
     name.id = 'plant-panel-name';
+    // **An X in a ring, and no word**, as the app's `CloseButton` is
+    // (Chrome.swift): the one control everybody already knows by its shape.
+    // It was the word "Close", which no language had yet, so it read in
+    // English on the panel in all forty-two. The word stays as the button's
+    // name (`plantClose`, written in `render`), so a screen reader and the `?`
+    // sheet still say it, in the reader's language once there is one.
     const closer = make('button', 'quiet-button plant-panel__close');
     closer.type = 'button';
+    const cross = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    cross.setAttribute('class', 'plant-panel__cross');
+    cross.setAttribute('viewBox', '0 0 20 20');
+    cross.setAttribute('aria-hidden', 'true');
+    cross.setAttribute('focusable', 'false');
+    const strokes = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    strokes.setAttribute('d', 'M5.5 5.5L14.5 14.5M14.5 5.5L5.5 14.5');
+    cross.append(strokes);
+    closer.append(cross);
     closer.addEventListener('click', () => close());
     top.append(name, closer);
 

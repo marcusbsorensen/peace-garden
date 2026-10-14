@@ -1923,8 +1923,33 @@ a.minimap__cell:focus-visible::before {
   color: var(--faint);
 }
 
+/* The way out: an X in a ring, as the app's `CloseButton` draws it — the
+   X light and at three quarters of the ink, the ring a hairline, forty-two
+   across with the X in the middle. Its word is its name, not its face. */
 .plant-panel__close {
   flex: none;
+  display: grid;
+  place-items: center;
+  inline-size: 42px;
+  block-size: 42px;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--ink);
+}
+
+.plant-panel__cross {
+  inline-size: 18px;
+  block-size: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+
+.plant-panel__close:hover .plant-panel__cross,
+.plant-panel__close:focus-visible .plant-panel__cross {
+  opacity: 1;
 }
 
 /* A sentence rather than a label: two lines of tracked capitals under the
