@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/Schema.php';
+require_once __DIR__ . '/Placed.php';
 require_once __DIR__ . '/Ambassadors.php';
 require_once __DIR__ . '/TakenBack.php';
 require_once __DIR__ . '/Coppice.php';
@@ -43,7 +45,7 @@ final class CoppiceStore
 
     public function __construct(private PDO $db)
     {
-        $this->migrate();
+        Schema::ensure($db);
     }
 
     private function run(string $sql): void
@@ -51,11 +53,16 @@ final class CoppiceStore
         $this->db->prepare($sql)->execute();
     }
 
-    private function migrate(): void
+    /**
+     * The tables, made or brought up to date. Run by `Schema` when the
+     * database is older than the code (14 October 2026), never per request.
+     */
+    public static function migrate(PDO $db): void
     {
-        $sqlite = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
+        $run = static fn (string $sql): bool => $db->prepare($sql)->execute();
+        $sqlite = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
         $id = $sqlite ? 'INTEGER PRIMARY KEY AUTOINCREMENT' : 'BIGINT PRIMARY KEY AUTO_INCREMENT';
-        $this->run("CREATE TABLE IF NOT EXISTS coppice (
+        $run("CREATE TABLE IF NOT EXISTS coppice (
             arrival $id,
             seed CHAR(64) NOT NULL UNIQUE,
             parent_a CHAR(64) NOT NULL,
@@ -71,12 +78,12 @@ final class CoppiceStore
             nudge_x DOUBLE PRECISION NOT NULL,
             nudge_z DOUBLE PRECISION NOT NULL,
             hidden INTEGER NOT NULL DEFAULT 0
-        )");
-        $this->run('CREATE INDEX IF NOT EXISTS coppice_plot ON coppice (plot)');
-        $this->run('CREATE TABLE IF NOT EXISTS coppice_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)');
-        $this->run('INSERT INTO coppice_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM coppice_lock)');
-        $this->run('CREATE INDEX IF NOT EXISTS coppice_hidden ON coppice (hidden)');
-        TakenBack::sweep($this->db, 'coppice', self::TAKEN_BACK);
+        )" . Schema::options($db));
+        $run('CREATE INDEX IF NOT EXISTS coppice_plot ON coppice (plot)');
+        $run('CREATE TABLE IF NOT EXISTS coppice_lock (id INTEGER PRIMARY KEY, arrivals INTEGER NOT NULL)' . Schema::options($db));
+        $run('INSERT INTO coppice_lock (id, arrivals) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM coppice_lock)');
+        $run('CREATE INDEX IF NOT EXISTS coppice_hidden ON coppice (hidden)');
+        TakenBack::sweep($db, 'coppice', self::TAKEN_BACK);
     }
 
     /**
@@ -117,6 +124,11 @@ final class CoppiceStore
                 array_map([self::class, 'forRule'], $all->fetchAll())
             );
             $p = Coppice::plant($ways, $seed, $height, $family, $habit);
+            // One public place, claimed with the planting (`Placed.php`, `WalkStore::plant`).
+            if (!Placed::claim($this->db, $seed, 'coppice')) {
+                $this->db->rollBack();
+                return [null, false];
+            }
             $insert = $this->db->prepare('INSERT INTO coppice
                 (seed, parent_a, parent_b, encounter, plot, coupe, place, slot_index, height, family, habit, nudge_x, nudge_z)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');

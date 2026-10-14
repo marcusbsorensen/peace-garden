@@ -896,6 +896,10 @@ $oldArrival = arrivalOf($legacyDb, 'long_walk', $old['seed']);
 $heldBefore = arrival($legacyDb, 'long_walk', (int) $oldArrival);
 $old += ['mine' => $oldMine, 'theirs' => $oldTheirs];
 check('the legacy rows hold what the old code kept', count(stillHeld($legacyDb, $old)) >= 5);
+// The old code kept no schema version, so a database carried across that
+// deploy has none: the next open finds it older than the code and migrates
+// (`Schema.php`, 14 October 2026). That is what deleting the row makes this.
+$legacyDb->prepare('DELETE FROM schema_version')->execute();
 unset($legacy, $legacyDb);
 
 $reopened = WalkStore::open('sqlite:' . $legacyFile);
@@ -924,6 +928,10 @@ $snapshot = static fn (PDO $db) => [
     $db->query('SELECT * FROM walk_offers ORDER BY offer')->fetchAll(PDO::FETCH_ASSOC),
 ];
 $once = $snapshot($reDb);
+check('and leaves the database at the code\'s version', Schema::stored($reDb) === Schema::VERSION);
+// Forgotten again, as a restore forgets it (`backup.php`), so the whole
+// migration runs a second time over a database it has already put right.
+$reDb->prepare('DELETE FROM schema_version')->execute();
 unset($reopened, $reDb);
 $third = WalkStore::open('sqlite:' . $legacyFile);
 check('and running it again changes nothing', $snapshot($third->connection()) === $once);
