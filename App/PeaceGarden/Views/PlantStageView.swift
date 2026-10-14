@@ -33,6 +33,14 @@ struct PlantStageView: View {
     @State private var showingExchange = false
     @State private var showingGarden = false
     @State private var showingSeed = false
+    /// Where the seed sheet stands: half way, so the plant its drawing marks
+    /// change is standing just above it — **or the whole way, where half way
+    /// leaves its rows below the fold**: a phone the height of an SE, or type
+    /// at an accessibility size (mass test, 13 October, finding 12). Either
+    /// way it can be dragged to the other. See `openSeed()`.
+    @State private var seedDetent: PresentationDetent = .medium
+    @State private var stageHeight: CGFloat = 0
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var showingSettings = false
     /// Which mark has unrolled into its word, if any. See
     /// `mark(_:_:_:isProminent:open:)`.
@@ -146,9 +154,10 @@ struct PlantStageView: View {
             SeedView()
                 .environment(model)
                 .environment(place)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.medium, .large], selection: $seedDetent)
                 .presentationBackground(Chrome.ground)
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { stageHeight = $0 }
         .onPreferenceChange(BandTopKey.self) { bandTop = $0 }
         .onAppear { model.refreshNow() }
 #if DEBUG
@@ -156,7 +165,7 @@ struct PlantStageView: View {
         // `Developer.openOnLaunch`.
         .task {
             switch Developer.shared.openOnLaunch {
-            case .seed: showingSeed = true
+            case .seed: openSeed()
             case .meet: showingExchange = true
             case .garden: showingGarden = true
             case .settings: openSettings()
@@ -242,7 +251,7 @@ struct PlantStageView: View {
                 }
 
                 HStack(spacing: 6) {
-                    mark(SeedGlyph(), "seed", "Seed") { showingSeed = true }
+                    mark(SeedGlyph(), "seed", "Seed") { openSeed() }
                     // Wider than the others: the stems reach the top corners of
                     // the mark, so the word needs the extra three points that a
                     // seed or a cog does not.
@@ -339,6 +348,14 @@ struct PlantStageView: View {
     /// crossfade rather than nothing: the panel still has to arrive.
     private var settingsTransition: AnyTransition {
         reduceMotion ? .opacity : .move(edge: .bottom)
+    }
+
+    /// The seed sheet, at the height `seedDetent` says why. 700 points is
+    /// between an SE (647 inside its status bar) and every other phone.
+    private func openSeed() {
+        let compact = stageHeight > 0 && stageHeight < 700
+        seedDetent = compact || typeSize.isAccessibilitySize ? .large : .medium
+        showingSeed = true
     }
 
     private func openSettings() {
