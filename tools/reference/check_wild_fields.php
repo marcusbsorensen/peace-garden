@@ -367,6 +367,14 @@ $offers->answer($nine['seed'], $b9, true, $now);
 check('a planting in the Quiet Garden is held by it', $held($nine['seed']) === 'quiet_garden');
 $offers->withdraw($nine['seed'], $a9, $now);
 check('and taken back, it is held by nothing', $held($nine['seed']) === null);
+// A claim nothing stands behind — what a rollback to code that did not keep
+// `placed` leaves when it takes a planting back — is taken over, not obeyed:
+// it must never refuse a plant for good.
+$db->prepare("INSERT INTO placed (seed, place) VALUES (?, 'quiet_garden')")->execute([$nine['seed']]);
+check('a stale claim does not keep a plant out of the field',
+      $offers->letGo($nine['seed'], $a9, $now) === true
+      && ($wild->release($nine['seed'], $nine['a'], $nine['b'])[1] ?? false) === true
+      && $held($nine['seed']) === Placed::WILD);
 check('the same plant planted straight into a second area is refused there',
       $walk->plantInto('meeting', $three['seed'], $three['a'], $three['b'], $three['encounter'], 1.0, 1)[0] === null);
 

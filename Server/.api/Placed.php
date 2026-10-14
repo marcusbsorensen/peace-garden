@@ -72,7 +72,7 @@ final class Placed
      */
     public static function claim(PDO $db, string $seed, string $place): bool
     {
-        for ($tries = 0; $tries < 2; $tries++) {
+        for ($tries = 0; $tries < 3; $tries++) {
             try {
                 $db->prepare('INSERT INTO placed (seed, place) VALUES (?, ?)')->execute([$seed, $place]);
                 return true;
@@ -81,9 +81,37 @@ final class Placed
             }
             $held = self::holder($db, $seed);
             // Let go in the moment between the two statements: claim again.
-            if ($held !== null) return $held === $place;
+            if ($held === null) continue;
+            if ($held === $place) return true;
+            if (self::stands($db, $held, $seed)) return false;
+            // **A claim nothing stands behind** — left by code that did not
+            // keep `placed` (a rollback to before 14 October 2026), or by a
+            // restore not yet migrated — is taken over rather than obeyed,
+            // so it can never refuse a plant for good. Only if it is still
+            // the claim just read; if not, look again.
+            $take = $db->prepare('UPDATE placed SET place = ? WHERE seed = ? AND place = ?');
+            $take->execute([$place, $seed, $held]);
+            if ($take->rowCount() === 1) return true;
         }
         return false;
+    }
+
+    /**
+     * Whether `$seed` stands in `$table` for anybody to see: in an area, a row
+     * not taken back; in the field, any row, hidden too, because a hidden plant
+     * still holds its seed. A locking read on MariaDB, for the reason `claim`'s
+     * is: a claim and its planting are committed together, so the planting of
+     * a claim just read is committed too, and only a locking read is sure to
+     * see it from inside an older snapshot.
+     */
+    private static function stands(PDO $db, string $table, string $seed): bool
+    {
+        if (!in_array($table, self::places(), true)) return false;
+        $standing = $table === self::WILD ? '' : ' AND hidden = 0';
+        $query = $db->prepare("SELECT 1 FROM $table WHERE seed = ?$standing"
+                              . (Schema::isMysql($db) ? ' LOCK IN SHARE MODE' : ''));
+        $query->execute([$seed]);
+        return $query->fetchColumn() !== false;
     }
 
     /** Lets go of `$seed`, if `$place` holds it. */
