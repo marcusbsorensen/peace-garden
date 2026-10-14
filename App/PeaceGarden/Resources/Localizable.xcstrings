@@ -776,6 +776,53 @@
         }
       }
     },
+    "A place from abstract list" : {
+      "comment" : "One answer in the Location description menu in Settings: the place is said with one of the app's own figurative places (After the storm, On the winds...), picked from the Abstract list under it. Marcus's wording, with no article before 'abstract list'; a language that needs one may use it.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Et sted fra den abstrakte liste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Un lugar de la lista abstracta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Un lieu de la liste abstraite"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Un luogo dalla lista astratta"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Et sted fra den abstrakte listen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Een plek uit de abstracte lijst"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "En plats från den abstrakta listan"
+          }
+        }
+      }
+    },
     "A place, if you like" : {
       "comment" : "Placeholder in that field. Everything on this screen is optional.",
       "localizations" : {
@@ -1012,6 +1059,7 @@
       }
     },
     "A seed planted while this is on carries the coordinates the phone measured, to five decimal places. Nothing is looked up and no place is named — the numbers are the honest record, and a map can say the rest." : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -1147,6 +1195,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Om det här mötet"
+          }
+        }
+      }
+    },
+    "Abstract list" : {
+      "comment" : "Label over the menu of the app's figurative places (After the storm, On the winds...) in Settings, shown when Location description is 'A place from abstract list'.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abstrakt liste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lista abstracta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Liste abstraite"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Lista astratta"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Abstrakt liste"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Abstracte lijst"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Abstrakt lista"
           }
         }
       }
@@ -4107,6 +4202,7 @@
       }
     },
     "How the place is said" : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -6217,6 +6313,53 @@
         }
       }
     },
+    "Location description" : {
+      "comment" : "Label over the menu in Settings, under Seed planting location, that chooses how a seed's planting place is described. Its three answers are 'A place from abstract list', 'Where you actually are' and 'Something you write'. Marcus's wording, 13 October 2026.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stedsbeskrivelse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Descripción del lugar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Description du lieu"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Descrizione del luogo"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Stedsbeskrivelse"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Beschrijving van de plek"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Platsbeskrivning"
+          }
+        }
+      }
+    },
     "Log places" : {
       "comment" : "Button accepting that offer. Log as in write down, not as in a wooden log. It sits beside 'Not now' on one line inside 40pt margins, which leaves about 250 points for the pair — so the verb on its own is better here than the verb with its object. The paragraph above the buttons says what is being recorded.",
       "localizations" : {
@@ -7831,6 +7974,7 @@
       }
     },
     "One of the places" : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -9424,6 +9568,7 @@
       }
     },
     "Shown when a seed is exchanged with another, as the place where the seed is planted." : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -11912,7 +12057,7 @@
       }
     },
     "What you write here is kept in this phone's settings, and for now it appears only there." : {
-      "comment" : "Under the field where a custom place is written, in Settings. True as it stands: what is written is kept in the phone's settings and nothing else uses it yet.",
+      "comment" : "One plain line under the Location description menu in Settings, shown only while 'Something you write' is chosen, above the field where the place is written. True as it stands: what is written is kept in the phone's settings and nothing else uses it yet.",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -12724,6 +12869,100 @@
         }
       }
     },
+    "Where you met is given as a place from the abstract list." : {
+      "comment" : "One plain line under the Location description menu in Settings, shown only while 'A place from abstract list' is chosen: a meeting's note gives where you met as one of the app's figurative places. 'You' is the two people who met.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvor I mødtes, angives som et sted fra den abstrakte liste."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El lugar del encuentro se indica con uno de la lista abstracta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L’endroit où vous vous êtes rencontrés est indiqué par un lieu de la liste abstraite."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dove vi siete incontrati è indicato con un luogo della lista astratta."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hvor dere møttes, oppgis som et sted fra den abstrakte listen."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Waar jullie elkaar ontmoetten, wordt aangegeven met een plek uit de abstracte lijst."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Var ni möttes anges som en plats från den abstrakta listan."
+          }
+        }
+      }
+    },
+    "Where you met is logged on this phone as the coordinates it measured, when you both ask." : {
+      "comment" : "One plain line under the Location description menu in Settings, shown only while 'Where you actually are' is chosen. Logged as in written down, the same word as the offer on the way into a meeting. 'It' is the phone; 'you both' is the two people who met, each of whom has to ask.",
+      "localizations" : {
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hvor I mødtes, registreres på denne telefon som de koordinater, den målte, når I begge beder om det."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El lugar del encuentro se registra en este teléfono con las coordenadas que midió, cuando las dos personas lo piden."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "L’endroit où vous vous êtes rencontrés est enregistré sur ce téléphone avec les coordonnées qu’il a mesurées, si vous le demandez tous les deux."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dove vi siete incontrati viene registrato su questo telefono con le coordinate che ha misurato, quando lo chiedete entrambi."
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hvor dere møttes, registreres på denne telefonen som koordinatene den målte, når dere begge ber om det."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Waar jullie elkaar ontmoetten, wordt op deze telefoon vastgelegd als de coördinaten die hij mat, als jullie er allebei om vragen."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Var ni möttes registreras på den här telefonen som de koordinater den mätte, när ni båda ber om det."
+          }
+        }
+      }
+    },
     "Where you were" : {
       "localizations" : {
         "da" : {
@@ -12818,6 +13057,7 @@
       }
     },
     "Which one" : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {

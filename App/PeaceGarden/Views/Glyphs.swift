@@ -288,6 +288,15 @@ struct MoonGlyph: Shape {
 /// it — the monoline has no fills to hide a line behind, so the overlap is a
 /// gap in the sun's stroke where the moon stands in front of it.
 struct SunAndMoonGlyph: Shape {
+    /// The whole mark, or one of its two lights alone — drawn in the same
+    /// place either way, so the two laid over each other are the whole. The
+    /// chosen answer in *Light and dark* strokes each in its own colour.
+    enum Part: Sendable {
+        case both, sun, moon
+    }
+
+    var part: Part = .both
+
     func path(in rect: CGRect) -> Path {
         let box = markBox(rect, 1)
         func at(_ u: CGFloat, _ v: CGFloat) -> CGPoint {
@@ -319,21 +328,25 @@ struct SunAndMoonGlyph: Shape {
             }
         }
 
-        draw((0...72).map { step in
-            let angle = Double(step) / 72 * 2 * .pi
-            return CGPoint(x: sunCentre.x + disc * cos(angle), y: sunCentre.y + disc * sin(angle))
-        })
-        for index in 0..<8 {
-            let bearing = Double(index) * .pi / 4 - .pi / 2
-            draw((0...8).map { step in
-                let r = inner + (outer - inner) * CGFloat(step) / 8
-                return CGPoint(x: sunCentre.x + r * cos(bearing), y: sunCentre.y + r * sin(bearing))
+        if part != .moon {
+            draw((0...72).map { step in
+                let angle = Double(step) / 72 * 2 * .pi
+                return CGPoint(x: sunCentre.x + disc * cos(angle), y: sunCentre.y + disc * sin(angle))
             })
+            for index in 0..<8 {
+                let bearing = Double(index) * .pi / 4 - .pi / 2
+                draw((0...8).map { step in
+                    let r = inner + (outer - inner) * CGFloat(step) / 8
+                    return CGPoint(x: sunCentre.x + r * cos(bearing), y: sunCentre.y + r * sin(bearing))
+                })
+            }
         }
 
-        let moonBox = CGRect(x: moonCentre.x - moonRadius - 0.6, y: moonCentre.y - moonRadius - 0.6,
-                             width: (moonRadius + 0.6) * 2, height: (moonRadius + 0.6) * 2)
-        path.addPath(MoonGlyph().path(in: moonBox))
+        if part != .sun {
+            let moonBox = CGRect(x: moonCentre.x - moonRadius - 0.6, y: moonCentre.y - moonRadius - 0.6,
+                                 width: (moonRadius + 0.6) * 2, height: (moonRadius + 0.6) * 2)
+            path.addPath(MoonGlyph().path(in: moonBox))
+        }
         return path
     }
 }

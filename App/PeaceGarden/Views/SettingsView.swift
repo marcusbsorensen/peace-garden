@@ -15,7 +15,9 @@ import SeedCore
 /// control whose label says all of it, like *Show plant name* or *How the
 /// plant is drawn*, stands alone, and a line goes only under the ones that
 /// would otherwise leave a question: what *Hidden* hides, what the light does
-/// by the clock, what leaves the phone when two people meet. The three rows
+/// by the clock, what the chosen way of describing a place does. The account
+/// of what leaves the phone when two people meet stood here too, until 13
+/// October 2026; it is an account of the meeting, not a setting. The three rows
 /// under *Starting again* keep no line on the screen at all, and say their
 /// piece while one is being held, at the moment somebody is deciding rather
 /// than while they are reading.
@@ -76,16 +78,39 @@ struct SettingsView: View {
         var id: String { rawValue }
     }
 
+    /// The cog beside the heading. The stage draws it at 28 in a circle of 48;
+    /// beside twenty-point capitals it is drawn at the size that puts its ink a
+    /// little over their cap height, as a mark beside a word rather than a
+    /// control.
+    static let headingMark: CGFloat = 22
+
     /// Pinned over the scroll, on the screen's own ground, with a short fade
     /// below it so a row going under reads as going under rather than as cut.
     private var header: some View {
         HStack(alignment: .center) {
-            Text("Settings")
-                .chromeHeading()
-                .foregroundStyle(Chrome.ink)
-                // Held two seconds, opens Testing at the foot, where the
-                // developer controls are available. See `Developer.showsSection`.
-                .unfoldsDeveloperSection()
+            // The mark that opened the screen, beside its name (Marcus, 13
+            // October 2026): the cog from the stage's row, in the same pen,
+            // in the heading's ink. A picture of the word beside it, so
+            // VoiceOver reads the word and not the picture.
+            HStack(alignment: .center, spacing: 10) {
+                CogShape()
+                    .stroke(Chrome.ink, style: Chrome.monoline)
+                    .frame(width: Self.headingMark, height: Self.headingMark)
+                    .drawnHand()
+                    // On the cap height rather than the line, as beside the
+                    // label voice in `ChromeIconLabel`.
+                    .offset(y: -1)
+                    .accessibilityHidden(true)
+                Text("Settings")
+                    .chromeHeading()
+                    .foregroundStyle(Chrome.ink)
+            }
+            .contentShape(Rectangle())
+            // Held two seconds, opens Testing at the foot, where the
+            // developer controls are available. See `Developer.showsSection`.
+            // On the mark and the word together, so the hold finds the
+            // heading wherever the thumb lands on it.
+            .unfoldsDeveloperSection()
             Spacer(minLength: 12)
             CloseButton { close() }
         }
@@ -109,44 +134,21 @@ struct SettingsView: View {
         ZStack {
             Chrome.ground.ignoresSafeArea()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 30) {
-                    // Grouped by the question each answers rather than by the
-                    // order they were built in. Four headings, and the one
-                    // thing that moved between them is the username: it is not
-                    // a display choice, it is what the other phone is told you
-                    // are called, so it belongs with the rest of what crosses
-                    // between two people.
-                    section("Display") { display }
-                    Hairline()
-                    section("Seed planting location") { plantingLocation }
-                    Hairline()
-                    section("Joint seeds") { jointSeeds }
-                    Hairline()
-                    startingAgain
-                    // A Debug build or a TestFlight copy, and folded in the
-                    // second until it is asked for. Never in an App Store copy.
-                    if Developer.shared.showsSection {
-                        Hairline()
-                        DeveloperSection(close: close)
-                            .environment(model)
-                    }
-                }
-                .padding(.horizontal, 30)
-                .padding(.top, 18)
-                .padding(.bottom, 60)
-                .frame(maxWidth: Chrome.readableWidth)
-                .frame(maxWidth: .infinity)
+            ScrollViewReader { proxy in
+                ScrollView { settings }
+                    // The field is on the rule near the top of a scroll view, so
+                    // the keyboard has never covered it — but a name typed and
+                    // then scrolled away from should still be kept, which is
+                    // what losing focus does below.
+                    .scrollDismissesKeyboard(.interactively)
+                    // The title and the way out stay put and the settings pass
+                    // under them. Scrolled with the rest, the title went off the
+                    // top and the toggles slid over the close control.
+                    .safeAreaInset(edge: .top, spacing: 0) { header }
+#if DEBUG
+                    .task { await scrollForScreenshot(proxy) }
+#endif
             }
-            // The field is on the rule near the top of a scroll view, so the
-            // keyboard has never covered it — but a name typed and then
-            // scrolled away from should still be kept, which is what losing
-            // focus does below.
-            .scrollDismissesKeyboard(.interactively)
-            // The title and the way out stay put and the settings pass under
-            // them. Scrolled with the rest, the title went off the top and the
-            // toggles slid over the close control.
-            .safeAreaInset(edge: .top, spacing: 0) { header }
         }
         .onAppear { draftName = model.identity?.displayName ?? "" }
         // The alert is the assisted path only: `HoldToConfirm` asks for it when
@@ -182,6 +184,51 @@ struct SettingsView: View {
             Text("Nothing has changed. Plants of yours are still standing there, and this is the only phone that can take them down, so try again when you have a signal.")
         }
     }
+
+    /// Everything under the heading, in the order it is read.
+    private var settings: some View {
+        VStack(alignment: .leading, spacing: 30) {
+            // Grouped by the question each answers rather than by the
+            // order they were built in. Four headings, and the one
+            // thing that moved between them is the username: it is not
+            // a display choice, it is what the other phone is told you
+            // are called, so it belongs with the rest of what crosses
+            // between two people.
+            section("Display") { display }
+                .id("display")
+            Hairline()
+            section("Seed planting location") { plantingLocation }
+                .id("location")
+            Hairline()
+            section("Joint seeds") { jointSeeds }
+                .id("joint")
+            Hairline()
+            startingAgain
+                .id("again")
+            // A Debug build or a TestFlight copy, and folded in the
+            // second until it is asked for. Never in an App Store copy.
+            if Developer.shared.showsSection {
+                Hairline()
+                DeveloperSection(close: close)
+                    .environment(model)
+            }
+        }
+        .padding(.horizontal, 30)
+        .padding(.top, 18)
+        .padding(.bottom, 60)
+        .frame(maxWidth: Chrome.readableWidth)
+        .frame(maxWidth: .infinity)
+    }
+
+#if DEBUG
+    /// `-pgSettingsAt <heading>`: see `Developer.settingsAt`. After the panel
+    /// has risen, so the scroll is not lost under its arrival.
+    private func scrollForScreenshot(_ proxy: ScrollViewProxy) async {
+        guard let heading = Developer.shared.settingsAt else { return }
+        try? await Task.sleep(for: .milliseconds(700))
+        proxy.scrollTo(heading, anchor: .top)
+    }
+#endif
 
     // MARK: - The shape of a section
 
@@ -226,7 +273,9 @@ struct SettingsView: View {
                     .font(.system(size: 15, weight: .light))
                     .foregroundStyle(Chrome.ink)
             }
-            .tint(Chrome.muted)
+            // Sage when on (Marcus, 13 October 2026), where it was `muted`:
+            // a grey track said *on* only by being lighter than *off*.
+            .tint(Chrome.sage)
 
             if let note {
                 Text(note)
@@ -242,7 +291,7 @@ struct SettingsView: View {
     private func chooser(
         _ title: LocalizedStringKey,
         current: Text,
-        note: LocalizedStringKey? = nil,
+        note: LocalizedStringResource? = nil,
         @ViewBuilder options: () -> some View
     ) -> some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -364,9 +413,21 @@ struct SettingsView: View {
     /// a switch that wrote down a coordinate — and they answer the same
     /// question. Only one of them can be the answer, so they are one control
     /// with two states rather than two controls that can disagree.
+    ///
+    /// **One line, for the answer that is chosen** (Marcus, 13 October 2026:
+    /// *very cryptic, not in a good way*). The labels are his — *Location
+    /// description*, *A place from abstract list*, *Abstract list* — and the
+    /// line under the menu is the chosen answer's own
+    /// (`PlantingLocationMode.note`), changing with it. What it replaced was a
+    /// line under each answer's control, two sentences on coordinates, and
+    /// under all three the ninety words on what two phones hand each other when
+    /// they meet. That account is about the meeting rather than this setting;
+    /// it is still in the catalogue, word for word and in every language, for
+    /// wherever the app's privacy account comes to live, and `privacy2` says
+    /// the same on the website.
     private var plantingLocation: some View {
         VStack(alignment: .leading, spacing: 22) {
-            chooser("How the place is said", current: Text(placeMode.label)) {
+            chooser("Location description", current: Text(placeMode.label), note: placeMode.note) {
                 ForEach(PlantingLocationMode.allCases, id: \.self) { mode in
                     Button { choose(mode) } label: { Text(mode.label) }
                 }
@@ -380,10 +441,9 @@ struct SettingsView: View {
                 // Storing what was on screen would have made the preference
                 // stop matching the list the moment the language changed.
                 chooser(
-                    "Which one",
+                    "Abstract list",
                     current: Places.stored(preferredPlace).map(Text.init)
-                        ?? Text("Wherever the seed travelled"),
-                    note: "Shown when a seed is exchanged with another, as the place where the seed is planted."
+                        ?? Text("Wherever the seed travelled")
                 ) {
                     Button("Wherever the seed travelled") { preferredPlace = "" }
                     Divider()
@@ -393,20 +453,14 @@ struct SettingsView: View {
                 }
 
             case .geographic:
-                VStack(alignment: .leading, spacing: 8) {
-                    if !place.isEnabled {
-                        // Choosing the mode is not the same as granting the
-                        // permission, and the phone will ask separately. Say so
-                        // rather than leaving somebody looking at a setting
-                        // that has quietly not taken.
-                        Text("Waiting for you to allow location.")
-                            .chromeLabel()
-                            .foregroundStyle(Chrome.sectionLabel)
-                    }
-                    Text("A seed planted while this is on carries the coordinates the phone measured, to five decimal places. Nothing is looked up and no place is named — the numbers are the honest record, and a map can say the rest.")
-                        .font(.system(size: 13, weight: .light))
-                        .foregroundStyle(Chrome.muted)
-                        .lineSpacing(4)
+                if !place.isEnabled {
+                    // Choosing the mode is not the same as granting the
+                    // permission, and the phone will ask separately. Say so
+                    // rather than leaving somebody looking at a setting that
+                    // has quietly not taken.
+                    Text("Waiting for you to allow location.")
+                        .chromeLabel()
+                        .foregroundStyle(Chrome.sectionLabel)
                 }
 
             case .custom:
@@ -416,6 +470,14 @@ struct SettingsView: View {
                         .foregroundStyle(Chrome.sectionLabel)
                         .padding(.bottom, 10)
 
+                    // **What is written here is used nowhere else yet.** It is
+                    // kept under `places.custom.v1` and read by nothing but
+                    // this field: the note screen offers the figurative places
+                    // (`Places.offered`), a `PollenCard` has no place in it at
+                    // all, and nothing is sent to the web garden. Until 24
+                    // September the line said it went to the other phone, which
+                    // it never has. The line under the menu says what happens;
+                    // when a seed does carry it, that is the line to change.
                     TextField("Where you were", text: $customPlace)
                         .font(.system(size: 17, weight: .light, design: .serif))
                         .foregroundStyle(Chrome.ink)
@@ -424,47 +486,8 @@ struct SettingsView: View {
                         .submitLabel(.done)
                         .padding(.horizontal, 26)
                         .underlining()
-
-                    // **What is written here is used nowhere else yet.** It is
-                    // kept under `places.custom.v1` and read by nothing but
-                    // this field: the note screen offers the figurative places
-                    // (`Places.offered`), a `PollenCard` has no place in it at
-                    // all, and nothing is sent to the web garden. Until 24
-                    // September this said it went to the other phone, which it
-                    // never has. The sentence now says what happens; when a
-                    // seed does carry it, the sentence is the thing to change.
-                    Text("What you write here is kept in this phone's settings, and for now it appears only there.")
-                        .font(.system(size: 13, weight: .light))
-                        .foregroundStyle(Chrome.muted)
-                        .lineSpacing(4)
-                        .padding(.top, 6)
                 }
             }
-
-            // The plainest account this app gives of what leaves the phone, and
-            // it stays whichever of the three is chosen.
-            // Rewritten in the commit that added `PollenCard.contactToken`,
-            // because that field made the old sentence untrue. "That is
-            // everything that crosses between you" was a promise, and a promise
-            // that quietly stops being true is worse than never having made it.
-            //
-            // Rewritten again on 24 September, because it had stopped being
-            // true in three places. It said neither number was kept after the
-            // meeting, and both phones keep both contact tokens with the plant
-            // (`PlantRecord.tokens`) — that is how either can offer it later —
-            // and the meeting's ID, made from the two nonces, in its lineage.
-            // It called its list everything that crosses, and the card also
-            // carries the plant's name, when the seed was drawn and whether
-            // a place may be kept (`PollenCard`). And it said none of it could
-            // be turned back into anything about you, of a list with your name
-            // in it. So it now lists what the card carries and says what is
-            // kept, and claims nothing it does not list. `privacy2` in
-            // Server/assets/js/strings.js states the same facts for the web,
-            // and the two should agree.
-            Text("When you meet someone, your phones connect directly, encrypted, and each hands the other its seed, when that seed was drawn, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the new plant, and one the other phone can use later to offer that plant to the web garden. Each phone keeps both second numbers with the plant, and a number for the meeting made from the first two.")
-                .font(.system(size: 13, weight: .light))
-                .foregroundStyle(Chrome.muted)
-                .lineSpacing(4)
         }
     }
 
@@ -800,8 +823,16 @@ struct SettingsView: View {
 ///
 /// **The chosen mark is the one with a capsule of its own.** A faint wash
 /// inside a brighter edge, the same edge `pressable(isProminent:)` gives the
-/// prominent button, and the glyph lifts from `faint` to `ink`. The wash is
-/// chrome rather than drawing: the marks themselves stay monoline.
+/// prominent button. The wash is chrome rather than drawing: the marks
+/// themselves stay monoline.
+///
+/// **And the chosen mark is in colour** (Marcus, 13 October 2026): the sun's
+/// strokes warm orange, the moon's pale yellow, and the middle answer's sun and
+/// moon each in its own — `Chrome.sunOrange` and `Chrome.moonYellow`, which
+/// deepen in the light appearance so they still read on the wash. The marks
+/// not chosen stay `faint`. It used to lift to `ink`, which said *chosen* by
+/// brightness alone. The garden's tray draws this same control, so the colours
+/// are there too.
 ///
 /// **One setting in two places.** It is also in the garden's own tray, reading
 /// and writing the same `Chrome.daylightKey`, so changing it in either is
@@ -830,19 +861,25 @@ struct LightToggle: View {
     private func segment(_ option: GardenDaylight) -> some View {
         let chosen = option == selection
         return Button { choose(option) } label: {
-            option.glyph
-                .stroke(chosen ? Chrome.ink : Chrome.faint, style: Chrome.monoline)
-                .frame(width: glyphSize, height: glyphSize)
-                .frame(minWidth: 58, minHeight: 44)
-                .background {
-                    if chosen {
-                        Capsule()
-                            .fill(Chrome.ink.opacity(0.10))
-                            .overlay(Capsule().strokeBorder(Chrome.ink.opacity(0.32), lineWidth: 1))
-                            .matchedGeometryEffect(id: "wash", in: wash)
-                    }
+            // A light at a time, each in its own colour once chosen.
+            ZStack {
+                ForEach(option.parts.indices, id: \.self) { index in
+                    let part = option.parts[index]
+                    part.shape
+                        .stroke(chosen ? part.light.colour : Chrome.faint, style: Chrome.monoline)
                 }
-                .contentShape(Rectangle())
+            }
+            .frame(width: glyphSize, height: glyphSize)
+            .frame(minWidth: 58, minHeight: 44)
+            .background {
+                if chosen {
+                    Capsule()
+                        .fill(Chrome.ink.opacity(0.10))
+                        .overlay(Capsule().strokeBorder(Chrome.ink.opacity(0.32), lineWidth: 1))
+                        .matchedGeometryEffect(id: "wash", in: wash)
+                }
+            }
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(option.label))

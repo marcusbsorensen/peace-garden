@@ -80,6 +80,37 @@ enum Chrome {
     static let ochre = Color(red: 0.690, green: 0.478, blue: 0.290)     // #B07A4A
     static let crimson = Color(red: 0.494, green: 0.114, blue: 0.157)   // #7E1D28
 
+    // MARK: - On, and the two lights
+
+    /// A switch that is on (Marcus, 13 October 2026: *the calm sage background
+    /// instead of light grey*).
+    ///
+    /// **The sage stop of the logo's own ramp**, in both of the pair BRAND.md
+    /// gives it: `#9CC29E` on dark and `#397E3D` on light. Against the screen's
+    /// ground, computed rather than eyeballed, the track is 10.6 : 1 on black —
+    /// as light as the grey it replaced, so the white knob reads against it as
+    /// it did — and 4.6 : 1 on the light ground, where it carries the knob at
+    /// 5.0 : 1. Both are well over the 3 : 1 an edge that says *on* needs.
+    static let sage = adaptive(dark: rgb(0x9CC29E), light: rgb(0x397E3D))
+
+    /// The sun's strokes, on the chosen answer of *Light and dark*: a warm
+    /// orange. `#F2A65A` on dark, 8.6 : 1 on the chosen capsule's wash;
+    /// `#B5561A` on light, 3.7 : 1 on the wash and 4.5 : 1 on the ground.
+    static let sunOrange = adaptive(dark: rgb(0xF2A65A), light: rgb(0xB5561A))
+
+    /// The moon's strokes, beside the sun's: a pale yellow. `#F4E4A1` on dark,
+    /// 13.6 : 1 on the wash. **On light it cannot be pale** — a pale yellow on
+    /// a near-white ground is 1.2 : 1 and disappears — so it deepens to a gold,
+    /// `#8C6A00`, 3.8 : 1 on the wash and 4.7 : 1 on the ground.
+    static let moonYellow = adaptive(dark: rgb(0xF4E4A1), light: rgb(0x8C6A00))
+
+    private static func rgb(_ hex: UInt32) -> UIColor {
+        UIColor(red: CGFloat((hex >> 16) & 0xFF) / 255,
+                green: CGFloat((hex >> 8) & 0xFF) / 255,
+                blue: CGFloat(hex & 0xFF) / 255,
+                alpha: 1)
+    }
+
     /// Text stops being readable somewhere past this. On an iPad a paragraph
     /// set to the full width of the screen is a wall; the plant is allowed the
     /// whole screen, the words are not.
@@ -193,11 +224,34 @@ enum PlantingLocationMode: String, CaseIterable, Sendable {
     /// Whatever the gardener would rather it said.
     case custom
 
+    /// What the *Location description* menu calls each answer. The first is
+    /// Marcus's wording of 13 October 2026, which replaced *One of the places*.
     var label: LocalizedStringResource {
         switch self {
-        case .abstract: return "One of the places"
+        case .abstract: return "A place from abstract list"
         case .geographic: return "Where you actually are"
         case .custom: return "Something you write"
+        }
+    }
+
+    /// The one line under the menu, for the answer that is chosen and no other
+    /// (Marcus, 13 October 2026).
+    ///
+    /// Each says what that answer does, in a sentence. Until then the section
+    /// carried a line under each answer's control and, whichever was chosen,
+    /// ninety words on everything that crosses between two phones — which is
+    /// an account of the meeting rather than of this setting, and belongs with
+    /// the privacy account rather than among the switches.
+    ///
+    /// *Something you write* keeps the sentence it already had, because it was
+    /// already one plain sentence, and true: what is written is used nowhere
+    /// else yet (`places.custom.v1`). When a seed does carry it, this is the
+    /// sentence to change.
+    var note: LocalizedStringResource {
+        switch self {
+        case .abstract: return "Where you met is given as a place from the abstract list."
+        case .geographic: return "Where you met is logged on this phone as the coordinates it measured, when you both ask."
+        case .custom: return "What you write here is kept in this phone's settings, and for now it appears only there."
         }
     }
 }
@@ -309,6 +363,31 @@ enum GardenDaylight: String, CaseIterable, Sendable {
         case .always: return AnyShape(SunGlyph())
         case .byTheClock: return AnyShape(SunAndMoonGlyph())
         case .alwaysNight: return AnyShape(MoonGlyph())
+        }
+    }
+
+    /// Which light a stroke of the mark is, and so the colour it takes when its
+    /// answer is the chosen one: the sun warm orange, the moon pale yellow
+    /// (Marcus, 13 October 2026).
+    enum Light: Sendable {
+        case sun, moon
+
+        var colour: Color {
+            switch self {
+            case .sun: return Chrome.sunOrange
+            case .moon: return Chrome.moonYellow
+            }
+        }
+    }
+
+    /// The same mark, drawn a light at a time, so that the middle answer's sun
+    /// and moon can each wear their own colour.
+    var parts: [(light: Light, shape: AnyShape)] {
+        switch self {
+        case .always: return [(.sun, AnyShape(SunGlyph()))]
+        case .byTheClock: return [(.sun, AnyShape(SunAndMoonGlyph(part: .sun))),
+                                  (.moon, AnyShape(SunAndMoonGlyph(part: .moon)))]
+        case .alwaysNight: return [(.moon, AnyShape(MoonGlyph()))]
         }
     }
 
