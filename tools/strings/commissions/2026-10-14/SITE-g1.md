@@ -276,3 +276,33 @@ eye are in `DANISH-site.md`. 44 keys added. `privacy10` checked and unchanged.
 - **`privacy10`**: *«تقليل الحركة»*, iOS's Arabic name.
 - **For a native reader:** *قطعة* for a plot; *حديقة خضروات* for the kitchen
   garden; *سفيرة* (feminine, with *نبتة*).
+
+## cy — Welsh
+
+45 keys: the 44 and `privacy10`. For review.
+
+- **Terms.** *Ardal* for area and *gwely* for plot, as `privacy6`; *Caiff hedyn
+  ei dynnu* for a seed drawn, as `privacy2`'s *pryd y tynnwyd ef*; *Does dim
+  modd cyrraedd … ar hyn o bryd* for every `…Away`, as `wildAway`, with the
+  area's article in lower case mid-sentence as `wildAway` writes *y Meysydd
+  Gwyllt*; *ti* throughout; the plant is masculine, as the catalogue has it.
+- **`{area}`** carries its capitalised article into the sentence: *Llysgennad
+  {area}* (a plain genitive, *Llysgennad Y berllan*) and *yn tyfu yn {area}*.
+  The grammar holds, since nothing mutates after *yn* + article, but the capital
+  *Y* mid-sentence is the one visible seam.
+- **Garden words.** *Border blodau dwbl*, *llwybr o laswellt wedi'i dorri*,
+  *gwrych*, *gardd gaeedig* for the enclosure, *cylch o balmant*, *chwarter*,
+  *fel y pump ar ddis* for the quincunx, *urdd* for the guild, *cwlwm* for the
+  Knot Garden's plot (the catalogue's own *Y cwlwm*), *rhych* in *pridd mân*,
+  *ffrâm* for the frames, *meinciau* for the staging, *coedlan* and *bonion*,
+  *pigau*, *pennau gwastad*, *rhosedau*, *llain* for the kitchen garden's plot.
+  Mutations checked by hand (*un gornel*, *ar raean*, *olwyn liw*, *yn dair
+  llain*, *o'r hen fonion*).
+- **Controls.** Verb-nouns, as Welsh software writes buttons and as
+  `frontTurn` already does: *Cau*, *Chwyddo i mewn*, *Chwyddo allan*, *Symud i
+  fyny*, *Troi'n glocwedd*.
+- **`privacy10`**: iOS has no Welsh, so a Welsh reader's phone names Reduce
+  Motion in English. *‘Lleihau Symudiad’* is a translation of it; giving the
+  English name, or both, may serve that reader better. A question for a reader.
+- **For a native reader:** *Dos yn dy flaen* is northern; a southern reader
+  may want *Cer yn dy flaen*.
