@@ -441,16 +441,29 @@ if (str_contains($body, 'type="module"')) {
 //   site, under `default-src`. A style set from a script (`--area-ground` on a
 //   front card) is not an inline style in the policy's sense; none of the
 //   pages has a `style` attribute or a `<style>` block.
+// - **one exception, for WebKit's own `<select>`**: every browser on an iPhone
+//   draws a `<select>` with a style attribute inside its own shadow tree, and
+//   refuses it under a policy without `'unsafe-inline'` for style attributes
+//   — one refusal on every page with the language chooser, logged in Safari's
+//   console, found by the crawler's WebKit pass and reproduced on a page with
+//   nothing in it but an empty `<select>`. The refusal changes nothing on
+//   screen (the bar is pixel for pixel the same either way), but a console
+//   with a refusal on every page is one where a real one goes unseen. So
+//   style *attributes* are allowed (`style-src-attr`); `<style>` blocks and
+//   stylesheets from elsewhere are not, and scripts are untouched. A browser that does not know
+//   `style-src-attr` falls back to `default-src` and refuses them, as before.
 // - no plug-ins, no `<base>`, a form only to this site (the tester door on
 //   `/t`), and no page of this site inside somebody else's frame.
 //
 // Checked with the site crawler on 14 October 2026: no refusal on any page in
-// any of the 43 languages in Chrome, or in five of them in WebKit. A new inline script, a
-// style attribute, or a file from another host will be refused by the browser
-// and named in its console — which is the point — so add it here first.
+// any of the 43 languages in Chrome, or in five of them in WebKit. A new
+// inline script, a `<style>` block, or a file from another host will be
+// refused by the browser and named in its console — which is the point — so
+// add it here first.
 $policy = implode('; ', [
     "default-src 'self'",
     "script-src 'self' 'wasm-unsafe-eval'" . ($inline ? ' ' . implode(' ', $inline) : ''),
+    "style-src-attr 'unsafe-inline'",
     "object-src 'none'",
     "base-uri 'none'",
     "form-action 'self'",

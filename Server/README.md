@@ -279,7 +279,7 @@ findings L1 and L3):
 | `Referrer-Policy` | the same | `strict-origin-when-cross-origin` |
 | `X-Content-Type-Options` | the same | `nosniff` |
 | `X-Powered-By` | — | taken off (`header_remove`); the host's PHP named itself and its version |
-| `Content-Security-Policy` | the pages | `default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-<the import map>'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'` |
+| `Content-Security-Policy` | the pages | `default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-<the import map>'; style-src-attr 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'` |
 | `Cache-Control` | `/plant.wasm?v=<this build>` | `public, max-age=31536000, immutable` |
 | | `/plant.wasm`, or an old stamp | `public, no-cache` |
 | `ETag`, `Last-Modified`, `Vary: Accept-Encoding` | `/plant.wasm` | on the 200 and the 304 alike |
@@ -289,7 +289,10 @@ requests, the import map `index.php` writes into each head (named by its hash,
 which `index.php` works out as it writes it), and `wasm-unsafe-eval`, without
 which a browser will not compile the plant renderer — it allows WebAssembly and
 nothing else. No page has an inline script of its own, a `style` attribute or
-a `<style>` block, and the site crawler found no refusal on any page in any of
+a `<style>` block. Style attributes are allowed all the same, for WebKit: every
+browser on an iPhone draws a `<select>` with one inside its own shadow tree and
+refuses it otherwise, one refusal in Safari's console on every page with the
+language chooser and nothing different on screen. And the site crawler found no refusal on any page in any of
 the 43 languages in Chrome, or in five of them in WebKit (14 October 2026). Anything new of that kind is
 refused by the browser and named in its console, which is the point: change
 the policy in `index.php` first. A browser keeps the policy it stored with a
