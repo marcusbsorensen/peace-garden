@@ -439,7 +439,7 @@ final class GardenSprites {
 
     /// The garden has gone, and its pictures go with it: every plant held its
     /// own, and this lets go of what was kept besides — the figures' pictures,
-    /// the shadows and the ground's drawings too, which the garden alone uses.
+    /// the shadows, the ground's drawings and the plants' baked textures too.
     /// 1.46 GB stayed behind after a garden of 500 had closed (mass test,
     /// 13 October, finding 11).
     func closed() {
@@ -448,6 +448,7 @@ final class GardenSprites {
         forget()
         GardenCreatures.shared.forget()
         GardenShadows.shared.forget()
+        GradientTexture.forget()
         Task { await GardenTerrain.shared.forget() }
     }
 

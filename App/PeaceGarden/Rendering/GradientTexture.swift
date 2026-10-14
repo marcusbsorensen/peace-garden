@@ -38,6 +38,12 @@ enum GradientTexture {
         return cache
     }()
 
+    /// Lets go of every bake, when the garden closes: the stage's one plant
+    /// bakes its own again in a few milliseconds.
+    static func forget() {
+        cache.removeAllObjects()
+    }
+
     /// Sixty-four carried a gradient and nothing else. Venation, quilting and
     /// a picotee rim are patterns, and a pattern needs frequency the way a
     /// gradient does not: at 64 the veins landed between texels and came out

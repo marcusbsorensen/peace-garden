@@ -119,6 +119,15 @@ struct PlotView: View {
 
     /// What is worked out from the garden, kept between frames: see `PlotMemo`.
     @State private var memo = PlotMemo()
+    /// Whether VoiceOver or Switch Control is running, and so whether the plot
+    /// has a layer of elements for it (`PlotVoiceOver`). A garden of five
+    /// hundred is five hundred elements, built when its plants arrive: a
+    /// third of a second of main thread, for nobody, when neither is on.
+    @State private var assistive = PlotView.assistiveTechnologyRunning
+
+    private static var assistiveTechnologyRunning: Bool {
+        UIAccessibility.isVoiceOverRunning || UIAccessibility.isSwitchControlRunning
+    }
     @Environment(\.displayScale) private var displayScale
 
     /// The hour the garden is being looked at, as a fraction.
@@ -285,12 +294,15 @@ struct PlotView: View {
                     .modifier(PlotCamera(
                         zoom: zoom, pan: pan, size: proxy.size,
                         // What VoiceOver finds on the plot (`PlotVoiceOver`),
-                        // moved exactly as the plot is moved.
-                        moved: memo.kept(VoiceOverKey(standings: memo.revision, lamps: lamps, held: held,
-                                                      heldLamp: heldLamp, world: world, side: side,
-                                                      view: view)) {
-                            voiceOver(standings, lamps: lamps, world: world, side: side, in: view)
-                        },
+                        // moved exactly as the plot is moved: while VoiceOver or
+                        // Switch Control is running, and worked out again only
+                        // when where things stand changes.
+                        moved: assistive ? voiceOver(memo.kept(VoiceOverKey(
+                            standings: memo.revision, lamps: lamps, held: held, heldLamp: heldLamp,
+                            world: world, side: side, view: view
+                        )) {
+                            voiceOverPlaces(standings, lamps: lamps, world: world, side: side, in: view)
+                        }) : nil,
                         looking: { pinching, turning in
                             looking(in: proxy.size, pinching: pinching, turning: turning)
                         },
@@ -369,6 +381,10 @@ struct PlotView: View {
             PlantDetailView(record: record)
                 .environment(model)
                 .inTheAppearance()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)
+            .merge(with: NotificationCenter.default.publisher(for: UIAccessibility.switchControlStatusDidChangeNotification))) { _ in
+            assistive = Self.assistiveTechnologyRunning
         }
         .onAppear {
             memo.open()
@@ -1835,7 +1851,7 @@ private struct PlotCamera<Looking: Gesture, Panning: Gesture, Above: View>: View
     let size: CGSize
     /// What VoiceOver finds on the plot, moved with it: built by `PlotView`
     /// and handed over whole, so a gesture moves it and does not rebuild it.
-    let moved: PlotVoiceOver
+    let moved: PlotVoiceOver?
     let looking: (GestureState<CGFloat>, Binding<Angle>) -> Looking
     let panning: (GestureState<CGSize>) -> Panning
     /// What stands over the plot in the screen's own space — the threads and
@@ -1860,11 +1876,13 @@ private struct PlotCamera<Looking: Gesture, Panning: Gesture, Above: View>: View
                 .scaleEffect(scale)
                 .offset(offset)
                 .rotationEffect(turning)
-            moved
-                .equatable()
-                .scaleEffect(scale)
-                .offset(offset)
-                .rotationEffect(turning)
+            if let moved {
+                moved
+                    .equatable()
+                    .scaleEffect(scale)
+                    .offset(offset)
+                    .rotationEffect(turning)
+            }
             above(scale, offset)
         }
         .frame(width: size.width, height: size.height)
@@ -2116,13 +2134,14 @@ extension PlotView {
     ///
     /// A plant's box is its stem's height at this stage, near enough: the
     /// picture's own size is the sprite's, which this layer does not wait for.
-    private func voiceOver(_ standings: [Standing], lamps: [Lamp], world: Int, side: Double,
-                           in view: Isometric) -> PlotVoiceOver {
+    private func voiceOverPlaces(_ standings: [Standing], lamps: [Lamp], world: Int, side: Double,
+                                 in view: Isometric) -> VoiceOverPlaces {
         let metre = view.pointsPerMetre
         let plants = standings.map { standing in
             let resting = view.point(standing.spot, y: standsAt(standing.spot, world: world, side: side))
             return PlotVoiceOver.Plant(
                 record: standing.record,
+                name: standing.genome.name.full,
                 stage: standing.growth.stage,
                 isAsked: standing.record.standingOrHere.state == .invited,
                 foot: held?.id == standing.id ? (held?.foot ?? resting) : resting,
@@ -2141,9 +2160,21 @@ extension PlotView {
                 height: max(24, grip.height * scale), width: max(24, grip.width * scale)
             )
         }
-        return PlotVoiceOver(
-            plants: plants,
-            lights: lights,
+        return VoiceOverPlaces(plants: plants, lights: lights)
+    }
+
+    /// Where everything stands, for VoiceOver: kept in `PlotMemo` between
+    /// frames. The layer itself is made fresh, because its actions hold this
+    /// view, and this view holds the memo.
+    private struct VoiceOverPlaces {
+        let plants: [PlotVoiceOver.Plant]
+        let lights: [PlotVoiceOver.Light]
+    }
+
+    private func voiceOver(_ places: VoiceOverPlaces) -> PlotVoiceOver {
+        PlotVoiceOver(
+            plants: places.plants,
+            lights: places.lights,
             open: { record in
                 visits.seen(record, growth: record.growth(now: model.now))
                 selected = record

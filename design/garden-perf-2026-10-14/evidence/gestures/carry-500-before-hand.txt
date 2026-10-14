@@ -1,0 +1,8 @@
+idle: 4.21 ms CPU a frame over 290; display link p50 16.7 p95 16.7 max 16.7 ms
+idle: 0.35 ms CPU a frame over 299; display link p50 16.7 p95 16.7 max 16.7 ms
+idle: 0.36 ms CPU a frame over 299; display link p50 16.7 p95 16.7 max 16.7 ms
+pinch: 5.91 ms CPU a frame over 301; display link p50 16.7 p95 16.7 max 16.7 ms
+carry: 20.03 ms CPU a frame over 244; display link p50 16.7 p95 36.7 max 47.3 ms
+pinch: 6.21 ms CPU a frame over 300; display link p50 16.7 p95 16.7 max 16.7 ms
+carry: 20.27 ms CPU a frame over 240; display link p50 16.7 p95 37.1 max 48.2 ms
+idle: 0.34 ms CPU a frame over 295; display link p50 16.7 p95 16.7 max 16.7 ms
