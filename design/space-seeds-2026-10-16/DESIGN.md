@@ -76,8 +76,8 @@ Both apps add the suite-wide App Group decided in 116A. The Hub fixed its name o
 Small files in the Hub's folders: presence markers in `Presence/v1/`, and Zone C's seeds in `Seeds/v1/`. Files rather than a shared `UserDefaults` suite, because each file has one writer and is written whole and atomically, so two apps never edit the same thing at once. Both apps use `NSFileCoordinator`.
 
 ```
-Presence/v1/autonaut        written by Autonaut each time it opens (Hub convention)
-Presence/v1/peacegarden     written by Peace Garden each time it opens
+Presence/v1/autonaut        written by Autonaut when missing (Hub convention)
+Presence/v1/peacegarden     written by Peace Garden when missing
 Seeds/v1/
   exchange                  written by Peace Garden while its launch request is switched on
   out/<random>              a seed the person has sent; Autonaut writes, Peace Garden takes
@@ -92,7 +92,7 @@ Seeds/v1/
 | `Seeds/v1/in/<random>` | `{"v":1,"seed":"<64 hex>"}` — the 32-byte space seed Peace Garden found |
 
 - **File names are random**, never a count or a time.
-- **Every file's dates are set to a fixed value straight after writing** (1 January 2001), the presence markers included each time they are rewritten (Autonaut's condition on A6). A file system records when a file was made, and a date in this folder would say when someone was in Autonaut's Create, which can be when they were in crisis.
+- **Every file's dates are set to a fixed value straight after writing** (1 January 2001), the presence markers included (Autonaut's condition on A6; suite-wide by the Hub's rule). A presence marker is written only when it is missing, never on every launch (Hub). A file system records when a file was made, and a date in this folder would say when someone was in Autonaut's Create, which can be when they were in crisis.
 - **The folder is left out of device backups** (`isExcludedFromBackup`).
 - **Each reader takes what it reads.** Peace Garden deletes an `out` file once the server has answered the request that carried it; Autonaut moves an `in` file into its own storage and deletes it from the group. The folder holds only seeds in flight, never a history.
 
@@ -271,7 +271,7 @@ How often finds happen depends on how many people use Autonaut. As a rough guide
 ### 6.1 Peace Garden app
 
 - Add the suite App Group to the entitlements; read and write `Seeds/v1/` with `NSFileCoordinator`, fixed file dates, backup exclusion, strict format checks.
-- Write `Presence/v1/peacegarden` on each launch (empty, fixed dates). Keep `Seeds/v1/exchange` (empty, fixed dates) while the launch request's switch is on, and delete it when the switch goes off.
+- Write `Presence/v1/peacegarden` when it is missing (empty, fixed dates). Keep `Seeds/v1/exchange` (empty, fixed dates) while the launch request's switch is on, and delete it when the switch goes off.
 - Send `pending` on each launch while the switch is on, **with or without meeting tokens**.
 - Put `aloft` in every `pending` request: the oldest waiting `out` seed, marked, or 32 random bytes. Delete the `out` file only after a 2xx answer.
 - Read the `aloft` bundle in every answer; check marks with `K`; skip its own last eight casts; plant at most one a day in Zone C while Autonaut is present; write it to `Seeds/v1/in/` while fewer than three wait.
@@ -302,7 +302,7 @@ How often finds happen depends on how many people use Autonaut. As a rough guide
 ### 6.4 Autonaut
 
 - Join the suite App Group. Still no network code.
-- Write `Presence/v1/autonaut` (empty, fixed dates) each time it opens.
+- Write `Presence/v1/autonaut` when it is missing (empty, fixed dates).
 - On "Send as a seed": draw 16 random bytes, write one `out` file atomically, set its dates to the fixed value. Nothing else.
 - On opening: take every `in` file into its own storage and delete it from the group.
 - Show "Send as a seed" and the space garden only while `Presence/v1/peacegarden` and `Seeds/v1/exchange` both exist.
@@ -313,7 +313,7 @@ How often finds happen depends on how many people use Autonaut. As a rough guide
 
 - Settled (H1, 16 October): the group is `group.com.interfulgent.suite`; folders `Presence/v1/`, `Seeds/v1/`, `Inbox/v1/<app-id>/`, `Outbox/v1/<app-id>/`.
 - **One amendment asked of the Hub:** its record has `Seeds/v1/` written by Autonaut and read only by Peace Garden. Zone C runs both ways, so the rule needs to read: `Seeds/v1/out/` written by Autonaut and read by Peace Garden; `Seeds/v1/in/` and `Seeds/v1/exchange` written by Peace Garden and read by Autonaut; no other app touches `Seeds/v1/`.
-- Fixed file dates on every presence marker, suite-wide: a rewritten marker's date would record when each app was last opened.
+- Accepted by the Hub (16 October): the two-way `Seeds/v1/` rule above; fixed file dates (1 January 2001) on every file in the group after each write, suite-wide; and a presence marker is written only when it is missing.
 - The DPIA row, and the residual risks in §4.5.
 
 ---
@@ -341,6 +341,6 @@ How often finds happen depends on how many people use Autonaut. As a rough guide
 - **A3. Space flora — agreed.** One pinned derivation in SeedCore with vectors both repos test against. Autonaut's design work proposes the kinds, names and look (brief §7: space flora with an aesthetic of its own); once agreed they are pinned in SeedCore.
 - **A4. Sent seeds — with Marcus.** Autonaut recommends found seeds only, as proposed here: sending has its own moment as the seed leaves, and no record waits for an answer.
 - **A5. Backups — with Marcus.** Autonaut recommends keeping its own data out of iCloud Backup (brief item 11). The Zone C transit files stay out regardless.
-- **A6. Presence — agreed, with fixed file dates** on every rewrite, so the marker records no activity pattern (brief §7: only presence and a seed's kind ever cross). The Hub's layout makes it the empty file `Presence/v1/autonaut`.
+- **A6. Presence — agreed, with fixed file dates**, and (Hub) written only when missing, so the marker records no activity pattern (brief §7: only presence and a seed's kind ever cross). The Hub's layout makes it the empty file `Presence/v1/autonaut`.
 - **A7. The Mac — agreed.** No seeds and no "Send as a seed" until Peace Garden or a seed pouch exists there.
 - **H1 (with the Hub) — answered.** See §3.1 and §6.5, including the one amendment asked of the Hub.
