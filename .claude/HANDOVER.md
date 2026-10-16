@@ -1,9 +1,30 @@
-# Peace Garden: build 9 assembled, 32B merged for build 10 — handover 14 October 2026
+# Peace Garden: build 10 to rerun, space seeds to design — handover 16 October 2026
+
+## Build 10 (16 October)
+- **Build 9 is on TestFlight.** Marcus uploaded it from the Organizer.
+- **Build 10:** the version was bumped to 10 and pushed (`ca25b43`). The full test run was lost when the coordinating session restarted, because its log lived in that session's scratchpad. There was no result and no archive, so nothing has been archived for 10. **Marcus said (16 October, 1A): rerun in a fresh session.**
+  - Run the full suite through the lock on a new scratch iPhone Air, with its log and an `rc=` file under `build/` rather than a scratchpad.
+  - Then archive to `build/PeaceGarden-1.0-10.xcarchive`, export with the `/usr/bin` PATH, and upload with `sh tools/upload-build.sh 10`, or use the Organizer.
+  - The simulator `PG-build10-Air` (E31C4A3C…) was left booted; reuse it or delete it.
+  - Check `pgrep -fl xcodebuild` first: on 16 October a Pfish build was running without the shared lock.
+- **Logo:** round two is done and ported (`2cb2fd5`, BRAND.md). There is nothing left to do.
+- **Space seeds, from the Interfulgent Hub session (16 October). Marcus said 2A: design them in a fresh session.**
+  - Read `~/Projects/interfulgent-hub/docs/suite-crossovers.md` first.
+  - Peace Garden becomes where the suite meets: each app can give a seed that opens a special area or plant here.
+  - Decided so far:
+    - an area only for people who have Autonaut (`~/Projects/autonaut`, brief §7);
+    - space seeds carry no custom content;
+    - seeds pass between a person's own apps through a suite App Group (team R94VDZ56RY), and never through iCloud or a server;
+    - web apps pass seeds as a signed link or code;
+    - between devices, a seed QR or code is shown only in Peace Garden or a neutral pouch.
+  - **The exception, and the hard part:** another Autonaut user can find one person's space seed through the server. Autonaut never contacts the server. The space seed reaches Peace Garden through the App Group and travels in Peace Garden's ordinary seed exchange, looking like its own traffic. The reason is that 20i keeps IP logs for 12 weeks, and Autonaut use is health data. That only holds if the size, timing and endpoint match ordinary exchanges.
+  - Coordinate directly with the Autonaut session. Neither session edits the other's repo.
+  - "Zone C" (Marcus's phrase) isn't a term in this repo; ask him what he meant.
 
 ## Paused here (14 October, late evening)
 Marcus paused development because the work account's (hello@uncubed.app) credit is running out. He'll carry on from his personal account. Nothing is running, and there are no worktrees or agent branches left except main.
 - **Local main is at the HANDOVER commit after `7dd470f`** and is ahead of GitHub (last pushed `84194c8`). The unpushed commits are 29B/30A, build 9, 32B and these notes. **Marcus pushes main first.** A cloud routine can't see anything unpushed.
-- **Build 9:** the upload script failed with "Failed to Use Accounts", so the Organizer was opened on `build/PeaceGarden-1.0-9.xcarchive`. Ask Marcus whether the upload went through.
+- **Build 9:** the upload script failed with "Failed to Use Accounts", so the Organizer was opened on `build/PeaceGarden-1.0-9.xcarchive`. ~~Ask Marcus whether the upload went through.~~ **Answered: Marcus confirmed build 9 went up to App Store Connect from the Organizer.**
 - **The disk was almost full** (424 MB free and falling) while an UnCubed session archived outside the shared lock. Check `df -h /System/Volumes/Data` before any Xcode work. The large consumers belong to other projects: CoreSimulator devices (21 GB) and `/private/tmp/claude-501/*-rubiks-solving` (3.9 GB).
 - **The next session starts here:** build 10 = build 32B (`CountLineShadow.shipping = .B` in `PlotView.swift`, not yet compiled on main). Bump to 10, run the full suite through the lock, archive, export.
 - The lock script is in the repo: `sh tools/xcode-lock.sh xcodebuild … -jobs 4 …`. Its lock is the shared `/private/tmp/claude-501/xcode.lock`, which other projects' sessions use too.
