@@ -318,19 +318,21 @@ How often finds happen depends on how many people use Autonaut. As a rough guide
 
 ---
 
-## 7. Open questions for Marcus
+## 7. Marcus's decisions (16 October)
 
-1. **Where Zone C's traffic hides** — A (recommended): inside the launch request every Peace Garden phone makes, sent at every start even with no meetings, so every Peace Garden user is the crowd. B: build The Winds first and hide space seeds only among its users, a smaller crowd until it is popular. C: move the seed route to a host whose logs can be switched off, and keep the matching as a second layer.
-2. **The switch that governs it** — A (recommended): one switch for the launch request, relabelled to cover both, for example "Ask the garden for news when it opens"; off means no request and no Zone C exchange. B: keep "Alert me when a joint seed is shared" as it is; Zone C needs it on. C: a second switch for Zone C, which sends the same request.
-3. **When the launch request goes, for everyone** — A (recommended): as today, once each time Peace Garden starts. B: also when it comes back to the screen, at most once an hour, so a sent seed leaves sooner.
-4. **How many people can find one space seed** — A (recommended): it is offered to about 128 phones and then drifts on; nobody, one person or a few may find it. B: exactly one finder, which needs a "taken" request the server could tie to the finder's address; not recommended. C: it waits a fixed time, such as a week, offered to everyone who opens Peace Garden meanwhile; that needs a date on each row, which the pool otherwise never holds.
-5. **How often one person can find one** — A (recommended): at most one a day. B: at most one a week. C: as many as arrive.
-6. **Whether the sender is told** — A (recommended): no; a sent seed goes out into the dark, as the Voyager record did. B: an anonymous "found" signal, which needs a write from the finder's phone that the server would see.
-7. **What grows from a found seed** — A (recommended): the found seed as it is, in space flora. B: a cross of it with one of the finder's own sent seeds.
-8. **Where the pool lives** — A (recommended): its own SQLite file beside `public_html`, in no backup, after asking 20i how often it snapshots the web space. B: 20i's MySQL, if 20i confirms it keeps no binary or query logs for shared databases. C: a different host.
-9. **Backups** — A (recommended): Zone C and the group's seed folder are left out of iCloud and computer backups, so Zone C starts again on a new phone. B: backed up with the rest of the garden.
-10. **Zone C plants and sharing** — A (recommended): they stay on the phone: no offer, release, tap, link or share picture, and Zone C has its own door with no glimpse from the ordinary garden. B: as A, but a share picture is allowed as the person's own choice.
-11. **The Winds, when built** — A (recommended): it uses the same `aloft` slot and pool, with its own mark, so its users join the same crowd. B: its own route, which keeps the two crowds apart.
+1. **Where Zone C's traffic hides — decided A.** Inside the launch request every Peace Garden phone makes, sent at every start even with no meetings, so every Peace Garden user is the crowd.
+2. **The switch that governs it — decided A.** One switch for the launch request, relabelled to cover both, for example "Ask the garden for news when it opens"; off means no request and no Zone C exchange.
+3. **When the launch request goes, for everyone — decided A.** As today, once each time Peace Garden starts.
+4. **How many people can find one space seed — decided A.** It is offered to about 128 phones and then drifts on; nobody, one person or a few may find it.
+5. **How often one person can find one — decided A.** At most one a day.
+6. **Whether the sender is told — decided B.** The sender is told when their space seed is found.
+7. **What grows from a found seed — decided: a cross with the finder's own seed.** A found seed grows a plant crossed from the found seed and the finder's own seed, "just like when phones in real time and real life are crossed".
+8. **Where the pool lives — decided A.** Its own SQLite file beside `public_html`, in no backup. Still to do: ask 20i how often it snapshots the web space.
+9. **Backups — decided B, kept after Marcus was told the consequence.** Zone C's plants and store are backed up with the rest of the garden. **Accepted consequence:** in an iCloud backup without Advanced Data Protection, Apple can read that the person has space flora, and therefore uses Autonaut. The App Group's transit files stay out of backups: that is the Hub's suite rule and Autonaut's A5.
+10. **Zone C plants and sharing — decided B.** They stay on the phone, with no offer, release, tap or link, and Zone C has its own door with no glimpse from the ordinary garden; the person may make a share picture by their own choice.
+11. **The Winds, when built — decided A.** It uses the same `aloft` slot and pool, with its own mark, so its users join the same crowd.
+12. **Whether the sender gets the same plant — decided A** (new). Yes. In a real-life cross both phones get the same plant ("you both have it"), so the "found" signal carries the finder's half back, and the sender grows the identical cross.
+13. **Where the sender sees the find — decided A** (new). In Peace Garden's Zone C, with the new plant. Peace Garden holds whatever record of a sent seed is needed to recognise its return. Autonaut stays as decided under A4: its space garden shows found seeds only, and it keeps no record that waits for an answer.
 
 ---
 
