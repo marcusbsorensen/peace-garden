@@ -337,10 +337,10 @@ How often finds happen depends on how many people use Autonaut. As a rough guide
 ## 8. Questions for the Autonaut session, and its answers (16 October)
 
 - **A1. The `out` file — agreed.** `{"v":1,"r":"<32 hex>"}`, 16 bytes from `SecRandomCopyBytes`, a random file name, fixed file dates, no other fields, written atomically and only when the person taps "Send as a seed".
-- **A2. When three seeds are waiting — with Marcus.** Autonaut recommends hiding "Send as a seed" until one of the three leaves: replacing the oldest would quietly discard a seed the person chose to send, and hiding matches the rule that the exchange is absent without Peace Garden.
+- **A2. When three seeds are waiting — decided (Marcus, as recommended).** Autonaut hides "Send as a seed" until one of the three leaves; nothing is replaced or discarded.
 - **A3. Space flora — agreed.** One pinned derivation in SeedCore with vectors both repos test against. Autonaut's design work proposes the kinds, names and look (brief §7: space flora with an aesthetic of its own); once agreed they are pinned in SeedCore.
-- **A4. Sent seeds — with Marcus.** Autonaut recommends found seeds only, as proposed here: sending has its own moment as the seed leaves, and no record waits for an answer.
-- **A5. Backups — with Marcus.** Autonaut recommends keeping its own data out of iCloud Backup (brief item 11). The Zone C transit files stay out regardless.
+- **A4. Sent seeds — decided (Marcus, as recommended).** Autonaut's space garden shows found seeds only. Sending has its own moment as the seed leaves, and no record waits for an answer.
+- **A5. Backups — decided (Marcus, as recommended).** Autonaut's own data stays out of iCloud Backup, on the phone only. The Zone C transit files stay out too.
 - **A6. Presence — agreed, with fixed file dates**, and (Hub) written only when missing, so the marker records no activity pattern (brief §7: only presence and a seed's kind ever cross). The Hub's layout makes it the empty file `Presence/v1/autonaut`.
 - **A7. The Mac — agreed.** No seeds and no "Send as a seed" until Peace Garden or a seed pouch exists there.
 - **H1 (with the Hub) — answered.** See §3.1 and §6.5, including the one amendment asked of the Hub.
