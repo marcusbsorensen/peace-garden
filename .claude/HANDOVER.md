@@ -1,12 +1,13 @@
-# Peace Garden: build 10 to rerun, space seeds to design — handover 16 October 2026
+# Peace Garden: build 10 ready to upload, space seeds (Zone C) in design — handover 16 October 2026
 
 ## Build 10 (16 October)
 - **Build 9 is on TestFlight.** Marcus uploaded it from the Organizer.
-- **Build 10:** the version was bumped to 10 and pushed (`ca25b43`). The full test run was lost when the coordinating session restarted, because its log lived in that session's scratchpad. There was no result and no archive, so nothing has been archived for 10. **Marcus said (16 October, 1A): rerun in a fresh session.**
-  - Run the full suite through the lock on a new scratch iPhone Air, with its log and an `rc=` file under `build/` rather than a scratchpad.
-  - Then archive to `build/PeaceGarden-1.0-10.xcarchive`, export with the `/usr/bin` PATH, and upload with `sh tools/upload-build.sh 10`, or use the Organizer.
-  - The simulator `PG-build10-Air` (E31C4A3C…) was left booted; reuse it or delete it.
-  - Check `pgrep -fl xcodebuild` first: on 16 October a Pfish build was running without the shared lock.
+- **Build 10 is assembled (16 October, evening), from `ca25b43`:**
+  - 309 tests, 0 failures, 20 skipped (`build/test-10.log`, `build/test-10.rc`);
+  - the archive is at `build/PeaceGarden-1.0-10.xcarchive`, and the .ipa is at `build/export-10/`, with CFBundleVersion 10;
+  - the scratch simulator `PG-build10-Air` has been deleted.
+
+  **To upload:** `sh tools/upload-build.sh 10`, or use the Organizer if the Xcode sign-in has lapsed. Marcus to confirm it went up.
 - **Logo:** round two is done and ported (`2cb2fd5`, BRAND.md). There is nothing left to do.
 - **Space seeds, from the Interfulgent Hub session (16 October). Marcus said 2A: design them in a fresh session.**
   - Read `~/Projects/interfulgent-hub/docs/suite-crossovers.md` first.
@@ -19,7 +20,15 @@
     - between devices, a seed QR or code is shown only in Peace Garden or a neutral pouch.
   - **The exception, and the hard part:** another Autonaut user can find one person's space seed through the server. Autonaut never contacts the server. The space seed reaches Peace Garden through the App Group and travels in Peace Garden's ordinary seed exchange, looking like its own traffic. The reason is that 20i keeps IP logs for 12 weeks, and Autonaut use is health data. That only holds if the size, timing and endpoint match ordinary exchanges.
   - Coordinate directly with the Autonaut session. Neither session edits the other's repo.
-  - "Zone C" (Marcus's phrase) isn't a term in this repo; ask him what he meant.
+  - **Zone C** is Marcus's code name, adopted on 16 October, for the space-garden area in Peace Garden and the space-seed exchange that feeds it (Autonaut brief §7).
+  - The Autonaut session's facts:
+    - the only trigger is "Send as a seed" on a finished creation;
+    - the seed is a kind only;
+    - Autonaut reads back seeds found for the person through the same App Group;
+    - Autonaut hides both "Send as a seed" and the space garden when Peace Garden is absent, and checks presence through the App Group;
+    - Autonaut has zero network code and no Xcode project yet;
+    - if Autonaut is deleted, what has grown in Zone C stays.
+  - **Design in progress** (16 October): `design/space-seeds-2026-10-16/DESIGN.md` on branch `claude/space-seeds-design`.
 
 ## Paused here (14 October, late evening)
 Marcus paused development because the work account's (hello@uncubed.app) credit is running out. He'll carry on from his personal account. Nothing is running, and there are no worktrees or agent branches left except main.
