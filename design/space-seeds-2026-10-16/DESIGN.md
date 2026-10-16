@@ -155,12 +155,14 @@ What lingers in the container when both apps are gone but another suite app rema
 
 ### 4.1 Where it rides
 
-The launch request, `POST /api/walk/pending`, already goes from most Peace Garden phones each time the app starts, by the person's own timing, and the privacy page already describes it (`privacy7`: the app asks each time it starts). Zone C adds one field each way, named `aloft` here to keep it clear of The Winds, the sky renderer and Autonaut's "Let it drift".
+The launch request, `POST /api/walk/pending`, already goes from every Peace Garden phone whose garden holds a meeting, each time the app starts, by the person's own timing, and the privacy page already describes it (`privacy7`: the app asks each time it starts). Zone C adds one field each way, named `aloft` here to keep it clear of The Winds, the sky renderer and Autonaut's "Let it drift".
 
 **Two changes make every Peace Garden phone send the same request, Autonaut or not:**
 
-1. **The request goes even when the garden has no meeting tokens.** Today a phone with no shared plant sends nothing (`GardenModel.swift:565`). If that stayed, an Autonaut user with no meetings would be one of the few phones sending an empty bag. The server already accepts an empty bag and counts it by address (`router.php:515–523`).
+1. **The request goes even when the garden has no meeting tokens.** Today a phone with no meetings sends nothing (`GardenModel.swift:565`). If that stayed, an Autonaut user with no meetings would be one of the few phones sending an empty bag. The server already accepts an empty bag and counts it by address (`router.php:515–523`).
 2. **Every request carries `aloft`, and every answer carries a bundle.** The field is always there, always the same length, and the server treats every value the same.
+
+**What this costs Peace Garden itself.** Today a phone with no meetings to ask about never contacts the server when it starts, so 20i's logs list only people who have met someone. After the first change, every phone with the switch on contacts it at each start, and 20i's logs list each of those addresses as a Peace Garden user for 12 weeks. Using Peace Garden is not health data, and the privacy page already describes a request at every start; it is still a wider footprint than today, and the reason the crowd is big enough to hide in. Each start also downloads about 8 KB of mostly random bytes.
 
 ### 4.2 The frame
 
@@ -186,7 +188,7 @@ The server cannot tell the two apart. It has no `K`, and both are random-looking
 | Who sends it | Phones with the switch on **and** at least one meeting | Every phone with the switch on | The crowd is every Peace Garden user |
 | When | Each time the app starts | The same (question 3 offers one more moment, for everyone) | A waiting seed leaves with the next request the phone makes anyway; nothing in the folder ever starts a request |
 | How often | Once per start, more for gardens over 128 meetings | The same | At most one cast per start, for every phone |
-| Request size | 13 bytes + about 35 per token | + 73 bytes for every phone | The slot is always 32 bytes |
+| Request size | 13 bytes + about 35 per token | + 75 bytes for every phone | The slot is always 32 bytes |
 | Answer size | 23 bytes + offers and released plants | + about 8.2 KB for every phone | The bundle is always `B` seeds; what varies is the offers and released plants, which have nothing to do with Autonaut |
 | Status | 200, or 400 / 429 | The same | `aloft` cannot cause a refusal except when malformed |
 | Headers | System default User-Agent with app name and build | The same | No Autonaut build, header or flag |
@@ -204,7 +206,7 @@ PRAGMA secure_delete = ON; journal_mode = DELETE
 ```
 
 - **One column: the 32 bytes.** No time, no address, no token, no counter, no order of arrival. The key is random, so the rows sit in the order of nothing, as the Wild Fields' do.
-- **A cap, `P` rows (20,000 to start, about 1 MB).** Once full, each insert removes one row chosen at random. A row's age is written nowhere, and a seed is offered to about `B` phones on average before it is removed.
+- **A cap, `P` rows (2,048 to start, about 64 KB).** Once full, each insert pushes out one row chosen at random. A row's age is written nowhere. A seed stays for about `P` requests and is offered to about `B` phones on average, however busy the garden is: at a thousand launches a day it waits about two days, at a hundred thousand about half an hour. Until the pool first fills, early seeds are offered more often.
 - **Bundles are drawn by `B` random probes into the key**, each one index lookup.
 - **Not in the nightly copy.** It is not added to `backup.php`'s list; a restore starts the pool empty, and an unfound seed is lost.
 - **Why a separate SQLite file.** A database server can keep its own log of every write with a time (MySQL's binary log), and on shared hosting that log is 20i's, not ours. Matched against the 12-week access logs, a timed write would tie each pool row to an address, and anyone holding `K` could then pick out the space seeds. A SQLite file in our own space keeps no log of writes, and `secure_delete` overwrites what is removed.
@@ -215,7 +217,7 @@ PRAGMA secure_delete = ON; journal_mode = DELETE
 
 | Who | What they hold | What the design does | What is left |
 |---|---|---|---|
-| **20i's access and error logs** (12 weeks) | Address, time, route, status, sizes, User-Agent | Every Peace Garden phone sends the same route at its own launches, with the same fixed slot and the same fixed bundle; `aloft` causes no refusal and no log line | They show who uses Peace Garden, as they do today |
+| **20i's access and error logs** (12 weeks) | Address, time, route, status, sizes, User-Agent | Every Peace Garden phone sends the same route at its own launches, with the same fixed slot and the same fixed bundle; `aloft` causes no refusal and no log line | They show who uses Peace Garden, and more phones than today (§4.1) |
 | **20i's CDN logs** (7 days) | The same | The same | The same |
 | **The pool file**, in a breach, a subpoena or Marcus's own hands | Random 32-byte values | No time, address, token, counter or order; padding is stored too | With `K` from the app: how many space seeds wait. Nobody's name or address |
 | **20i's snapshots of the web space** | The pool at each snapshot | Every request adds one row, padding or not | Rows new since the last snapshot match the addresses that opened Peace Garden in that interval. With `K`, a space seed narrows to that crowd, which is every Peace Garden user who opened the app between two snapshots. **Ask 20i how often it snapshots** (question 8) |
@@ -230,7 +232,9 @@ PRAGMA secure_delete = ON; journal_mode = DELETE
 | **Apple, through iCloud Backup** | Device backups, readable by Apple unless Advanced Data Protection is on | The group folder and Zone C's file are left out of backups (question 9) | Autonaut's own data, which is Autonaut's choice |
 | **A flood of fake seeds** | — | Contentless, one per launch, rate-limited, evicted at random | Fewer finds for a while |
 
-**Behaviour that cannot be hidden:** someone with Autonaut may open Peace Garden more often to look in Zone C. Opening Peace Garden more often is something many people do for many reasons; it is a weak signal and the design does not try to mask it.
+**Behaviour that cannot be hidden:**
+- Someone with Autonaut may open Peace Garden more often to look in Zone C. Many people open it often for many reasons; it is a weak signal and the design does not try to mask it.
+- Someone who had the switch off and turns it on to use Zone C starts sending the launch request from that day. People turn switches on for many reasons too, and the switch is on by default, so most phones already send it.
 
 ---
 
@@ -284,6 +288,7 @@ How often finds happen depends on how many people use Autonaut. As a rough guide
 - `sweep.php`: nothing to sweep beyond holding the cap.
 - `tools/reference/check_aloft.php` in CI: the answer is the same length whatever the pool and the slot hold; every well-formed slot is stored; the table has one column; the file is in no copy.
 - `tools/deploy.sh --check`: `pending` answers with a bundle of the right length.
+- Before relying on SQLite at 20i: check its file locking holds on their storage under many launches at once. The population test in `design/mass-test-2026-10-13/` can stand in for the phones.
 
 ### 6.3 Site
 
@@ -332,7 +337,7 @@ How often finds happen depends on how many people use Autonaut. As a rough guide
 - **A1. The `out` file.** Agree `{"v":1,"r":"<32 hex>"}`, a random file name and fixed file dates, written only on "Send as a seed"?
 - **A2. When three seeds are waiting.** If Peace Garden has been deleted, three seeds wait and nothing takes them. What does Autonaut show then: hide "Send as a seed" until one leaves, or let a new seed replace the oldest (they carry nothing, so any one is as good as another)?
 - **A3. Space flora.** Who owns the list of space-plant kinds and their names, so both apps draw the same kind from the same 16 bytes? Peace Garden proposes a pinned derivation in SeedCore with vectors both repos test against.
-- **A4. Sent seeds.** Does Autonaut's space garden show the seeds the person sent, or only those found for them? Peace Garden's Zone C proposes found seeds only.
+- **A4. Sent seeds.** Does Autonaut's space garden show the seeds the person sent, or only those found for them? Peace Garden's Zone C proposes found seeds only. Whatever Autonaut shows for a sent seed should promise nothing about it being found: it may reach nobody.
 - **A5. Backups.** Will Autonaut leave its own data out of iCloud Backup? Zone C should match whatever Autonaut does.
 - **A6. Presence.** Agree `present/autonaut` as `{"v":1}` with no date, rewritten on each launch?
 - **A7. The Mac.** Autonaut on a Mac writes no seeds until Peace Garden or a seed pouch exists there?
