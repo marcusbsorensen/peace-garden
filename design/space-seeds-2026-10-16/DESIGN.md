@@ -302,7 +302,7 @@ In code, the finder's phone computes `CrossPollinationResult(localSeed: own, rem
 
 **Why not the person's own seed itself.** A person's own seed is a parent of every plant their meetings make (`WildFields.swift:135–138`): everyone they have met holds it in their garden, and the Wild Fields publish both parents of every planting (`WildStore.php:278–294`). A return carrying it would let a sender who has ever met the finder, or who looks through the Wild Fields, recognise who found the seed, and learn that they use Autonaut. The finder's own seed in Zone C does the same work, and nobody outside Zone C knows it. Question 14 puts this to Marcus.
 
-**Why the sender's half is the space seed itself.** It is the thing that travelled, and it is fresh for every seed sent, so nothing in the pool links two of Ana's seeds. Her own seed, in either garden, stays on her phone.
+**Why the sender's half is the space seed itself.** It is the thing that travelled, and it is fresh for every seed sent, so nothing in the pool links two of Ana's seeds. Her own seed in the ordinary garden plays no part, and her own seed in Zone C travels only when she is the finder, sealed in a return.
 
 ### 5.3 The return
 
@@ -322,7 +322,7 @@ Why 60: a seed stays in the pool for about 2,048 starts across the garden; its f
 
 **Opening a return.** At each answer, the sender's phone tries each live record's key on each of the `R` returns: at most 8 × 128 = 1,024 key agreements, a few tens of milliseconds, off the main thread. A return opens only with the right key and the right space seed. Then Peace Garden:
 1. rebuilds the cross from the space seed, `r`, the finder's own seed and the finder's nonce (§5.2);
-2. compares the checksum with the one in the return, and grows nothing if they differ, as a link's reply does: the two phones are on different versions;
+2. compares the checksum with the one in the return, and grows nothing if they differ, as a link's reply does, since a difference means the two phones are on different versions;
 3. passes over a copy whose plant Zone C already holds;
 4. otherwise grows the plant in Zone C, with the same seed, lineage and drawing as the finder's, marked as grown because the person's seed was found.
 
@@ -338,7 +338,7 @@ It writes nothing to the App Group, and Autonaut's side is unchanged (A4). Each 
 | 10,000 | about 1 in 5 |
 | 100,000 | about 1 in 50 |
 
-Every find the sender hears of is real; as Peace Garden grows, more finds go untold. The copies and `R` can rise later, for everyone at once. Sure delivery at any size, inside a bounded download, needs a different shape (question 15).
+The sender hears of a find only when a return arrives; as Peace Garden grows, more finds go untold. The copies and `R` can rise later, for everyone at once. Sure delivery at any size, inside a bounded download, needs a different shape (question 15).
 
 ### 5.4 The other routes, and why not
 
