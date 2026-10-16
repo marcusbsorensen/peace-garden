@@ -1,4 +1,4 @@
-# Peace Garden: build 10 ready to upload, space seeds (Zone C) in design — handover 16 October 2026
+# Peace Garden: build 10 uploaded, space seeds (Zone C) in design — handover 16 October 2026
 
 ## Build 10 (16 October)
 - **Build 9 is on TestFlight.** Marcus uploaded it from the Organizer.
@@ -7,7 +7,7 @@
   - the archive is at `build/PeaceGarden-1.0-10.xcarchive`, and the .ipa is at `build/export-10/`, with CFBundleVersion 10;
   - the scratch simulator `PG-build10-Air` has been deleted.
 
-  **To upload:** `sh tools/upload-build.sh 10`, or use the Organizer if the Xcode sign-in has lapsed. Marcus to confirm it went up.
+  **Uploaded on 16 October at 18:09** with `sh tools/upload-build.sh 10` (Marcus 1A). The script worked, with no Organizer needed. App Store Connect was processing it. The log is at `build/upload-10.log`.
 - **Logo:** round two is done and ported (`2cb2fd5`, BRAND.md). There is nothing left to do.
 - **Space seeds, from the Interfulgent Hub session (16 October). Marcus said 2A: design them in a fresh session.**
   - Read `~/Projects/interfulgent-hub/docs/suite-crossovers.md` first.
