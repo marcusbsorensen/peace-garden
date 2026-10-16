@@ -69,29 +69,30 @@ Peace Garden has none. Its entitlements file holds the associated domains only. 
 
 ### 3.1 The group
 
-Both apps add the suite-wide App Group decided in 116A. Its name is the Hub's to fix; `group.com.interfulgent.suite` follows the house's reverse-domain pattern. Autonaut declares nothing of its own (Autonaut session, 16 October).
+Both apps add the suite-wide App Group decided in 116A. The Hub fixed its name on 16 October (H1): `group.com.interfulgent.suite` on team R94VDZ56RY, separate from each app's own group. Its folder rules are in the Hub's `docs/suite-crossovers.md`, "The suite App Group"; they are a convention, since an App Group can't enforce per-folder access, so each app's tests check that it writes only its own files. Autonaut declares nothing of its own (Autonaut session, 16 October).
 
 ### 3.2 What sits in it
 
-One folder, `Seeds/v1/`, of small files. Files rather than a shared `UserDefaults` suite, because each file has one writer and is written whole and atomically, so two apps never edit the same thing at once. Both apps use `NSFileCoordinator`.
+Small files in the Hub's folders: presence markers in `Presence/v1/`, and Zone C's seeds in `Seeds/v1/`. Files rather than a shared `UserDefaults` suite, because each file has one writer and is written whole and atomically, so two apps never edit the same thing at once. Both apps use `NSFileCoordinator`.
 
 ```
+Presence/v1/autonaut        written by Autonaut each time it opens (Hub convention)
+Presence/v1/peacegarden     written by Peace Garden each time it opens
 Seeds/v1/
-  present/autonaut          written by Autonaut each time it opens
-  present/peacegarden       written by Peace Garden each time it opens
-  autonaut/out/<random>     a seed the person has sent; Autonaut writes, Peace Garden takes
-  autonaut/in/<random>      a seed found for the person; Peace Garden writes, Autonaut takes
+  exchange                  written by Peace Garden while its launch request is switched on
+  out/<random>              a seed the person has sent; Autonaut writes, Peace Garden takes
+  in/<random>               a seed found for the person; Peace Garden writes, Autonaut takes
 ```
 
 | File | Content, and nothing else |
 |---|---|
-| `present/autonaut` | `{"v":1}` |
-| `present/peacegarden` | `{"v":1,"exchange":true}` — `exchange` says whether Peace Garden's launch request is switched on, so Autonaut can hide "Send as a seed" when nothing would carry it |
-| `autonaut/out/<random>` | `{"v":1,"r":"<32 hex>"}` — 16 random bytes Autonaut draws when the person chooses "Send as a seed" |
-| `autonaut/in/<random>` | `{"v":1,"seed":"<64 hex>"}` — the 32-byte space seed Peace Garden found |
+| `Presence/v1/autonaut`, `Presence/v1/peacegarden` | empty (Hub convention) |
+| `Seeds/v1/exchange` | empty; it exists while Peace Garden's launch request is switched on, so Autonaut can hide "Send as a seed" when nothing would carry it |
+| `Seeds/v1/out/<random>` | `{"v":1,"r":"<32 hex>"}` — 16 bytes from `SecRandomCopyBytes`, drawn when the person chooses "Send as a seed", written atomically (A1, agreed) |
+| `Seeds/v1/in/<random>` | `{"v":1,"seed":"<64 hex>"}` — the 32-byte space seed Peace Garden found |
 
 - **File names are random**, never a count or a time.
-- **Every file's dates are set to a fixed value straight after writing** (1 January 2001). A file system records when a file was made, and a date in this folder would say when someone was in Autonaut's Create, which can be when they were in crisis.
+- **Every file's dates are set to a fixed value straight after writing** (1 January 2001), the presence markers included each time they are rewritten (Autonaut's condition on A6). A file system records when a file was made, and a date in this folder would say when someone was in Autonaut's Create, which can be when they were in crisis.
 - **The folder is left out of device backups** (`isExcludedFromBackup`).
 - **Each reader takes what it reads.** Peace Garden deletes an `out` file once the server has answered the request that carried it; Autonaut moves an `in` file into its own storage and deletes it from the group. The folder holds only seeds in flight, never a history.
 
@@ -104,17 +105,17 @@ Seeds/v1/
 
 ### 3.4 Presence
 
-- **Zone C opens in Peace Garden when `present/autonaut` exists.**
-- **Autonaut shows "Send as a seed" and its space garden when `present/peacegarden` exists and says `exchange: true`.** Presence comes from the group, never a URL-scheme check (Autonaut session).
+- **Zone C opens in Peace Garden when `Presence/v1/autonaut` exists.**
+- **Autonaut shows "Send as a seed" and its space garden when `Presence/v1/peacegarden` and `Seeds/v1/exchange` both exist.** Presence comes from the group, never a URL-scheme check (Autonaut session).
 - **The limit, and how the design lives with it.** The container lasts as long as any suite app that uses the group is installed: UnCubed or Pfish keeps it alive after Autonaut and Peace Garden are both gone. So a presence file says "was installed", never "is installed". Two caps stand in for the missing check:
-  - **Peace Garden writes into `autonaut/in` only while fewer than three files wait there.** Autonaut takes them each time it opens. If Autonaut has been deleted, nobody takes them, and finding stops after three.
-  - **At most three seeds wait in `autonaut/out`.** If Peace Garden has been deleted, nothing takes them. What Autonaut shows once three are waiting is Autonaut's choice (question A2).
+  - **Peace Garden writes into `Seeds/v1/in/` only while fewer than three files wait there.** Autonaut takes them each time it opens. If Autonaut has been deleted, nobody takes them, and finding stops after three.
+  - **At most three seeds wait in `Seeds/v1/out/`.** If Peace Garden has been deleted, nothing takes them. What Autonaut shows once three are waiting is Autonaut's choice (question A2).
 
 ### 3.5 How Peace Garden knows a seed is genuine, without a server
 
 Two separate questions.
 
-**Did it come from Autonaut?** On iPhone and iPad, iOS opens an App Group container only to apps signed by the team that owns it (R94VDZ56RY) with that group in their entitlements. So everything in the folder was written by one of Marcus's own apps; nothing from another developer can reach it. Inside the suite, `autonaut/out` has one writer by agreement, and Peace Garden holds every file to the exact format: version 1, exactly the keys shown, exactly 32 lowercase hex characters. Anything else is deleted unread. A bug in another suite app can at worst add a contentless seed.
+**Did it come from Autonaut?** On iPhone and iPad, iOS opens an App Group container only to apps signed by the team that owns it (R94VDZ56RY) with that group in their entitlements. So everything in the folder was written by one of Marcus's own apps; nothing from another developer can reach it. Inside the suite, `Seeds/v1/out/` has one writer by agreement, and Peace Garden holds every file to the exact format: version 1, exactly the keys shown, exactly 32 lowercase hex characters. Anything else is deleted unread. A bug in another suite app can at worst add a contentless seed.
 
 **Is a seed from the server a space seed?** Peace Garden turns the 16 bytes `r` into a 32-byte seed by adding a mark:
 
@@ -135,7 +136,7 @@ space seed = r ‖ mark
 |---|---|
 | Autonaut | Zone C stays, with everything grown there. Nothing new is cast. Finding stops once three seeds wait unread. What Autonaut held goes with it. |
 | Peace Garden | Zone C goes with Peace Garden's own storage. Autonaut's space garden keeps what it already took in. Seeds waiting in `out` stay unsent. |
-| Autonaut, then reinstalled | It writes `present/autonaut`, takes up to three waiting seeds, and carries on. |
+| Autonaut, then reinstalled | It writes `Presence/v1/autonaut`, takes up to three waiting seeds, and carries on. |
 | Every suite app | iOS deletes the container. |
 
 What lingers in the container when both apps are gone but another suite app remains: two presence files and at most six 16- or 32-byte values. The presence file still says Autonaut was once installed. **So no other suite app may ever read `Seeds/v1/`**, a rule for the Hub's record (question H1).
@@ -167,7 +168,7 @@ The launch request, `POST /api/walk/pending`, already goes from every Peace Gard
 ### 4.2 The frame
 
 **Request.** `"aloft": "<64 hex>"`, exactly 32 bytes:
-- a space seed waiting in `autonaut/out` (at most one per launch, and only in the first request if a large garden sends several), or
+- a space seed waiting in `Seeds/v1/out/` (at most one per launch, and only in the first request if a large garden sends several), or
 - 32 fresh random bytes, which carry no mark.
 
 The server cannot tell the two apart. It has no `K`, and both are random-looking 32 bytes.
@@ -242,9 +243,9 @@ PRAGMA secure_delete = ON; journal_mode = DELETE
 
 ### 5.1 The way it works
 
-1. **Ana finishes something in Create and chooses "Send as a seed".** Autonaut draws 16 random bytes into `autonaut/out` and shows the seed going out in its own way. It promises nothing about being found.
+1. **Ana finishes something in Create and chooses "Send as a seed".** Autonaut draws 16 random bytes into `Seeds/v1/out/` and shows the seed going out in its own way. It promises nothing about being found.
 2. **The next time Ana opens Peace Garden**, for any reason, the launch request it makes anyway carries her seed in the `aloft` slot instead of padding. When the server answers, Peace Garden deletes the file.
-3. **Somewhere else, Ben opens Peace Garden.** His bundle of 128 seeds may hold Ana's. His Peace Garden sees Autonaut is present, checks each seed's mark, skips any it cast itself (the last eight, kept in Zone C's own file), and plants at most one space seed (question 5) in Zone C, where it grows as itself, in space flora. It also drops the seed into `autonaut/in`.
+3. **Somewhere else, Ben opens Peace Garden.** His bundle of 128 seeds may hold Ana's. His Peace Garden sees Autonaut is present, checks each seed's mark, skips any it cast itself (the last eight, kept in Zone C's own file), and plants at most one space seed (question 5) in Zone C, where it grows as itself, in space flora. It also drops the seed into `Seeds/v1/in/`.
 4. **When Ben next opens Autonaut**, it takes the seed into its space garden.
 5. **Ana is never told, and neither learns anything of the other.** The seed was offered to about 128 phones; most belonged to people without Autonaut, whose apps passed over it without a trace. It may be found by nobody, by one person or by a few (question 4).
 
@@ -270,10 +271,10 @@ How often finds happen depends on how many people use Autonaut. As a rough guide
 ### 6.1 Peace Garden app
 
 - Add the suite App Group to the entitlements; read and write `Seeds/v1/` with `NSFileCoordinator`, fixed file dates, backup exclusion, strict format checks.
-- Write `present/peacegarden` on each launch.
+- Write `Presence/v1/peacegarden` on each launch (empty, fixed dates). Keep `Seeds/v1/exchange` (empty, fixed dates) while the launch request's switch is on, and delete it when the switch goes off.
 - Send `pending` on each launch while the switch is on, **with or without meeting tokens**.
 - Put `aloft` in every `pending` request: the oldest waiting `out` seed, marked, or 32 random bytes. Delete the `out` file only after a 2xx answer.
-- Read the `aloft` bundle in every answer; check marks with `K`; skip its own last eight casts; plant at most one a day in Zone C while Autonaut is present; write it to `autonaut/in` while fewer than three wait.
+- Read the `aloft` bundle in every answer; check marks with `K`; skip its own last eight casts; plant at most one a day in Zone C while Autonaut is present; write it to `Seeds/v1/in/` while fewer than three wait.
 - Zone C: its own door, like the Wild Fields; space flora from a new SeedCore derivation with pinned vectors and a reference implementation; no glimpse from the ordinary garden.
 - Zone C plants never leave the phone: no offer, release, tap, link or share (question 10).
 - Zone C's storage in its own file, left out of backups (question 9).
@@ -301,17 +302,18 @@ How often finds happen depends on how many people use Autonaut. As a rough guide
 ### 6.4 Autonaut
 
 - Join the suite App Group. Still no network code.
-- Write `present/autonaut` (`{"v":1}`) each time it opens.
+- Write `Presence/v1/autonaut` (empty, fixed dates) each time it opens.
 - On "Send as a seed": draw 16 random bytes, write one `out` file atomically, set its dates to the fixed value. Nothing else.
 - On opening: take every `in` file into its own storage and delete it from the group.
-- Show "Send as a seed" and the space garden only while `present/peacegarden` exists with `exchange: true`.
+- Show "Send as a seed" and the space garden only while `Presence/v1/peacegarden` and `Seeds/v1/exchange` both exist.
 - Draw a space plant's kind from `r` with the same pinned derivation as Peace Garden (shared test vectors).
-- Never write anything else into the group, and never read Peace Garden's files beyond `present/peacegarden`.
+- Never write anything else into the group, and never read Peace Garden's files beyond `Presence/v1/peacegarden`, `Seeds/v1/exchange` and `Seeds/v1/in/`.
 
 ### 6.5 The Hub record
 
-- The group's name.
-- The rule that no other suite app reads `Seeds/v1/`.
+- Settled (H1, 16 October): the group is `group.com.interfulgent.suite`; folders `Presence/v1/`, `Seeds/v1/`, `Inbox/v1/<app-id>/`, `Outbox/v1/<app-id>/`.
+- **One amendment asked of the Hub:** its record has `Seeds/v1/` written by Autonaut and read only by Peace Garden. Zone C runs both ways, so the rule needs to read: `Seeds/v1/out/` written by Autonaut and read by Peace Garden; `Seeds/v1/in/` and `Seeds/v1/exchange` written by Peace Garden and read by Autonaut; no other app touches `Seeds/v1/`.
+- Fixed file dates on every presence marker, suite-wide: a rewritten marker's date would record when each app was last opened.
 - The DPIA row, and the residual risks in §4.5.
 
 ---
@@ -332,13 +334,13 @@ How often finds happen depends on how many people use Autonaut. As a rough guide
 
 ---
 
-## 8. Questions for the Autonaut session
+## 8. Questions for the Autonaut session, and its answers (16 October)
 
-- **A1. The `out` file.** Agree `{"v":1,"r":"<32 hex>"}`, a random file name and fixed file dates, written only on "Send as a seed"?
-- **A2. When three seeds are waiting.** If Peace Garden has been deleted, three seeds wait and nothing takes them. What does Autonaut show then: hide "Send as a seed" until one leaves, or let a new seed replace the oldest (they carry nothing, so any one is as good as another)?
-- **A3. Space flora.** Who owns the list of space-plant kinds and their names, so both apps draw the same kind from the same 16 bytes? Peace Garden proposes a pinned derivation in SeedCore with vectors both repos test against.
-- **A4. Sent seeds.** Does Autonaut's space garden show the seeds the person sent, or only those found for them? Peace Garden's Zone C proposes found seeds only. Whatever Autonaut shows for a sent seed should promise nothing about it being found: it may reach nobody.
-- **A5. Backups.** Will Autonaut leave its own data out of iCloud Backup? Zone C should match whatever Autonaut does.
-- **A6. Presence.** Agree `present/autonaut` as `{"v":1}` with no date, rewritten on each launch?
-- **A7. The Mac.** Autonaut on a Mac writes no seeds until Peace Garden or a seed pouch exists there?
-- **H1 (with the Hub). The group's name**, and the rule that no other suite app reads `Seeds/v1/`.
+- **A1. The `out` file — agreed.** `{"v":1,"r":"<32 hex>"}`, 16 bytes from `SecRandomCopyBytes`, a random file name, fixed file dates, no other fields, written atomically and only when the person taps "Send as a seed".
+- **A2. When three seeds are waiting — with Marcus.** Autonaut recommends hiding "Send as a seed" until one of the three leaves: replacing the oldest would quietly discard a seed the person chose to send, and hiding matches the rule that the exchange is absent without Peace Garden.
+- **A3. Space flora — agreed.** One pinned derivation in SeedCore with vectors both repos test against. Autonaut's design work proposes the kinds, names and look (brief §7: space flora with an aesthetic of its own); once agreed they are pinned in SeedCore.
+- **A4. Sent seeds — with Marcus.** Autonaut recommends found seeds only, as proposed here: sending has its own moment as the seed leaves, and no record waits for an answer.
+- **A5. Backups — with Marcus.** Autonaut recommends keeping its own data out of iCloud Backup (brief item 11). The Zone C transit files stay out regardless.
+- **A6. Presence — agreed, with fixed file dates** on every rewrite, so the marker records no activity pattern (brief §7: only presence and a seed's kind ever cross). The Hub's layout makes it the empty file `Presence/v1/autonaut`.
+- **A7. The Mac — agreed.** No seeds and no "Send as a seed" until Peace Garden or a seed pouch exists there.
+- **H1 (with the Hub) — answered.** See §3.1 and §6.5, including the one amendment asked of the Hub.
