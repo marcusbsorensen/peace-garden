@@ -1,4 +1,4 @@
-# Peace Garden: build 10 uploaded, space seeds (Zone C) in design — handover 16 October 2026
+# Peace Garden: build 10 uploaded, Zone C designed — handover 16 October 2026
 
 ## Build 10 (16 October)
 - **Build 9 is on TestFlight.** Marcus uploaded it from the Organizer.
@@ -28,7 +28,16 @@
     - Autonaut hides both "Send as a seed" and the space garden when Peace Garden is absent, and checks presence through the App Group;
     - Autonaut has zero network code and no Xcode project yet;
     - if Autonaut is deleted, what has grown in Zone C stays.
-  - **Design in progress** (16 October): `design/space-seeds-2026-10-16/DESIGN.md` on branch `claude/space-seeds-design`.
+  - **Design decided (16 October):** `design/space-seeds-2026-10-16/DESIGN.md` on branch `claude/space-seeds-design` (`93c52d6`), not merged and not built.
+    - Marcus answered: 1–5A, 6B, 7 (cross with the finder's own seed), 8A, 9B (kept after he was told the iCloud consequence), 10B, 11A, 12A, 13A, 14A, 15A.
+    - In short:
+      - space seeds and returns ride in two fixed slots of `POST /api/walk/pending`, sent by every phone at every start, into two SQLite pools on the server;
+      - the finder crosses the found seed with their own Zone C seed, using the knock's `Pollination` derivation drawn as space flora;
+      - an HPKE-sealed return brings the sender the same plant in Peace Garden's Zone C;
+      - Autonaut's side is unchanged.
+    - The Hub accepted the App Group layout: `group.com.interfulgent.suite`; `Seeds/v1/out|in|exchange`; `Presence/v1/<app>`, written only when missing; fixed file dates on every file.
+    - Autonaut's A1–A7 are settled.
+    - **Next:** the build plan (app, server, site, privacy copy in all languages, a DPIA row with the Hub), and asking 20i how often it snapshots the web space (8A). Test SQLite locking at 20i before relying on it.
 
 ## Paused here (14 October, late evening)
 Marcus paused development because the work account's (hello@uncubed.app) credit is running out. He'll carry on from his personal account. Nothing is running, and there are no worktrees or agent branches left except main.
