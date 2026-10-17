@@ -777,9 +777,16 @@ final class ZoneCEngineTests: XCTestCase {
     @MainActor
     func testTheModelsOwnAskingFindsASeedThroughTheEngine() async throws {
         let ben = phone("Ben")
-        let file = FileManager.default.temporaryDirectory
-            .appendingPathComponent("zonec-engine-model-\(UUID().uuidString).json")
-        defer { try? FileManager.default.removeItem(at: file) }
+        // A folder of its own. Zone C's store sits beside the garden's file
+        // (`zonec.json`), so a garden file straight in the temporary directory
+        // put Zone C's file there too, shared by every run: the first run found
+        // a seed and left today's find and its plant behind, and every run after
+        // it on that device found nothing.
+        let folder = FileManager.default.temporaryDirectory
+            .appendingPathComponent("zonec-engine-model-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let file = folder.appendingPathComponent("garden.json")
         let garden = GardenStore(fileURL: file, writeOptions: [.atomic])
         let service = AskingTests.Stub()
         service.replies["/api/walk/pending"] = (
