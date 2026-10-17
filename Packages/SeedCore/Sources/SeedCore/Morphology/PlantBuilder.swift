@@ -270,8 +270,13 @@ public struct PlantBuilder {
         // centre.
         let inward = count > 1 ? Float(index) / Float(count - 1) : 0
         var jitter = SplitMix64(seed: genome.seed, label: "leaf.crown.\(index)")
-        let azimuth = Float(genome.foliage.divergence) * Float(index)
+        var azimuth = Float(genome.foliage.divergence) * Float(index)
             + Float(jitter.value(in: -0.15...0.15))
+        // **The Comet Reed's straps stream one way.** Only a plant that says so
+        // takes this: the default `sweep` is 0, and then the line never runs.
+        if habit.sweep > 0 {
+            azimuth = Self.swept(azimuth, share: Float(habit.sweep), leaning: genome.stem.lean)
+        }
         let up = SIMD3<Float>(0, 1, 0)
         let radial = SIMD3<Float>(cos(azimuth), 0, sin(azimuth))
         let spread = Float(jitter.value(in: 0.86...1.14))
@@ -325,6 +330,22 @@ public struct PlantBuilder {
             pinnae: habit.pinnae,
             maturity: maturity
         )
+    }
+
+    /// A crown leaf's bearing with `share` of the way round to the side the
+    /// stem leans toward pulled out of it, by the short way round.
+    ///
+    /// The stem integrates its lean about the z axis, and a positive lean
+    /// takes it toward -x (`SkeletonBuilder.stem`); a crown leaf's `radial` is
+    /// `(cos a, 0, sin a)`, so -x is a bearing of pi and +x is 0. A share of 1
+    /// puts every strap on that bearing, and a share of 0.7 leaves each of them
+    /// 30% of the way back toward where the spiral had it: a clump streaming
+    /// one way and not a comb.
+    static func swept(_ azimuth: Float, share: Float, leaning lean: Double) -> Float {
+        let target: Float = lean >= 0 ? .pi : 0
+        var delta = (target - azimuth).truncatingRemainder(dividingBy: 2 * .pi)
+        if delta > .pi { delta -= 2 * .pi } else if delta < -.pi { delta += 2 * .pi }
+        return azimuth + delta * min(1, share)
     }
 
     /// A lotus pad: round, held flat on its own stalk from the middle of the
@@ -1302,7 +1323,14 @@ public struct PlantBuilder {
     /// saxifrage flowers, over its whole surface at once.
     private func addCushion(_ builder: inout MeshBuilder, growth: GrowthModel.State) {
         var shape = SplitMix64(seed: genome.seed, label: "cushion.shape")
-        let full = min(0.32, max(0.1, 0.08 + 0.8 * Float(genome.habit.crownLength)))
+        // A cushion that states its own width is that wide across (the Nebula
+        // Moss); every other takes it from its leaves, as it always has.
+        let full: Float
+        if let width = genome.habit.cushionWidth {
+            full = Float(width) * 0.5
+        } else {
+            full = min(0.32, max(0.1, 0.08 + 0.8 * Float(genome.habit.crownLength)))
+        }
         let flatten = Float(shape.value(in: 0.5...0.78))
         // **It grows out of the shoot it was**, over the first two-thirds of
         // its leaves opening. Sized by the plant's height alone, it was a
@@ -1383,7 +1411,7 @@ public struct PlantBuilder {
             )
 
             guard genome.bloom.present, growth.budSwell > 0.02,
-                  jitter.value(in: 0...1) < 0.45 else { continue }
+                  jitter.value(in: 0...1) < genome.habit.flowerShare else { continue }
             let flower = Self.flushed(growth, position: Double(index) / Double(count))
             addCushionFlower(
                 &builder,

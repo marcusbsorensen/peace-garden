@@ -136,6 +136,28 @@ public struct Genome: Equatable, Sendable {
         /// The plant is a cushion: a low dome packed with rosettes too small
         /// to count, flowering over its surface, as an alpine's is.
         public var cushion: Bool = false
+
+        // **Four traits for the space flora, and every default is what the
+        // garden already does.** Added for `peacegarden.space.v1`
+        // (`ZoneC/SpaceFlora.swift`); `Genome.init(seed:lineage:)` never sets
+        // them, so every plant on every phone takes the default and its mesh is
+        // bit for bit what it was. Each is read behind a test against its
+        // default, so the path an existing plant takes holds no new arithmetic.
+
+        /// How much of each crown leaf's bearing is pulled round to the side
+        /// the stem leans toward, `0...1`: the Comet Reed's straps all streaming
+        /// one way under an arched culm. 0 leaves the golden-angle spiral alone.
+        public var sweep: Double = 0
+        /// How many turns the stem makes round its own axis, in loops of radius
+        /// 0.16 of its length: the Orbit Vine. 0 is a stem that stays on its
+        /// line.
+        public var orbit: Double = 0
+        /// A cushion's width across, in metres, where the plant says it outright.
+        /// `nil` takes it from the leaf draw, as every cushion has.
+        public var cushionWidth: Double? = nil
+        /// The share of a cushion's rosettes that carry a flower. 0.45 is what
+        /// the cushion has always had.
+        public var flowerShare: Double = 0.45
     }
 
     public struct Bloom: Equatable, Sendable {
