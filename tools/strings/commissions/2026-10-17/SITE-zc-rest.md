@@ -179,3 +179,153 @@ vocabulary; they are for review.
 
 - **Terms.** seeme, taim, veebiaed, kohtumine, juhuslikud arvud, bait; pool hoidla; switch uudised aiast.
 - **Unsure.** *Autonaut-rakenduse seemned* to avoid declining the name; *peotäis* for *a handful*.
+
+## eu - Basque
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- eu: Lorategiko berriak aktibatuta daudenean, aplikazioak abiatzen den bakoitzean sareko lorategiari galdetzen dio zure landare partekatuei buruz, eta horretarako zure topaketetako ausazko zenbakiak bidaltzen ditu. Galdetzen du, inor topatu duzun ala ez. Eskaera bakoitzak ausazkoa dirudien balio bat eta ausazkoa dirudien erantzun bat ere bidaltzen ditu, eta eskaeraren erantzunak bakoitzetik eskukada bat itzultzen du.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- eu: Sareko lorategiak jasotzen dituen balio ausazkoak diruditenak bi biltegitan gordetzen ditu, bata 64 byteko balioena eta bestea 104 byteko balioena. Balio bakoitza bere aldetik gordetzen da, ordurik, helbiderik eta ordenarik gabe. Balio batek bertan jarraitzen du, berriagoek kanporatu arte. Lorategiaren gaueko babeskopiak biltegiak kanpoan uzten ditu. Erantzun bat bere hazia bidali zuen telefonoan bakarrik irekitzen da. Autonaut-en haziak ere horrela bidaiatzen dute. Sareko lorategiarentzat, balio bakoitza ausazko zenbakiak da.
+
+- **Terms.** hazi, landare, sareko lorategi, topaketa, ausazko zenbakiak, byte; pool biltegi; switch lorategiko berriak.
+- **Unsure.** Case endings on *Autonaut-en*; *eskukada* for a handful; the verb agreement of *balio bakoitza ausazko zenbakiak da*. The catalogue's *zu* address is kept.
+
+## fi - Finnish
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- fi: Kun uutiset puutarhasta ovat käytössä, sovellus kysyy verkkopuutarhalta jaetuista kasveistasi joka kerta käynnistyessään ja lähettää sitä varten kohtaamistesi satunnaisluvut. Se kysyy riippumatta siitä, oletko tavannut ketään. Jokainen pyyntö lähettää lisäksi yhden satunnaiselta näyttävän arvon ja yhden satunnaiselta näyttävän vastauksen, ja pyynnön vastaus tuo takaisin kummastakin kourallisen.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- fi: Verkkopuutarha säilyttää vastaanottamansa satunnaiselta näyttävät arvot kahdessa varastossa, joista toisessa on 64 tavun arvot ja toisessa 104 tavun arvot. Kutakin arvoa säilytetään yksin, ilman aikaa, osoitetta tai järjestystä. Arvo pysyy, kunnes uudemmat työntävät sen ulos. Puutarhan yöllinen varmuuskopio jättää varastot pois. Vastaus aukeaa vain puhelimessa, joka lähetti siemenensä. Autonaut-sovelluksen siemenet kulkevat samoin. Verkkopuutarhalle jokainen arvo on satunnaislukuja.
+
+- **Terms.** siemen, kasvi, verkkopuutarha, kohtaaminen, satunnaisluvut, tavu; pool varasto; switch uutiset puutarhasta.
+- **Unsure.** *Autonaut-sovelluksen* avoids declining the name; *kourallinen* for a handful.
+
+## fr - French
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- fr: Quand les nouvelles du jardin sont activées, l'application interroge le jardin en ligne sur tes plantes partagées à chaque démarrage, en envoyant les nombres tirés au hasard de tes rencontres. Elle pose la question, que tu aies rencontré quelqu'un ou non. Chaque requête envoie aussi une valeur d'apparence aléatoire et une réponse d'apparence aléatoire, et la réponse à la requête en rapporte une poignée de chaque.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- fr: Le jardin en ligne garde les valeurs d'apparence aléatoire qu'il reçoit dans deux réserves, l'une de valeurs de 64 octets et l'autre de valeurs de 104 octets. Chaque valeur est gardée seule, sans heure, adresse ni ordre. Une valeur reste jusqu'à ce que de plus récentes la repoussent. La sauvegarde de nuit du jardin laisse les réserves de côté. Une réponse ne s'ouvre que sur le téléphone qui a envoyé sa graine. Les graines d'Autonaut voyagent aussi de cette façon. Pour le jardin en ligne, chaque valeur, ce sont des nombres tirés au hasard.
+
+- **Terms.** graine, plante, jardin en ligne, rencontre, nombres tirés au hasard, octet; pool réserve; switch nouvelles du jardin.
+- **Unsure.** *Octet* is France's word for byte; *une poignée* for a handful. The app is translated into French but has no label yet for the switch.
+
+## ga - Irish
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- ga: Le nuacht ón ngairdín ar siúl, gach uair a thosaíonn an aip fiafraíonn sí de ghairdín an ghréasáin faoi na plandaí atá roinnte agat, trí na huimhreacha randamacha ó do chastaí a sheoladh. Fiafraíonn sí cibé ar casadh duine ort nó nár casadh. Seolann gach iarratas luach amháin a bhfuil cuma randamach air agus freagra amháin a bhfuil cuma randamach air freisin, agus tugann an freagra ar an iarratas dornán díobh araon ar ais.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- ga: Coinníonn gairdín an ghréasáin na luachanna a bhfuil cuma randamach orthu a fhaigheann sé i dhá linn, ceann de luachanna 64 beart agus ceann de luachanna 104 beart. Coinnítear gach luach ina aonar, gan am, seoladh ná ord. Fanann luach go dtí go ndéanann cinn níos nuaí é a bhrú amach. Fágann cúltaca oíche an ghairdín na linnte ar lár. Ní osclaíonn freagra ach ar an nguthán a sheol a shíol. Taistealaíonn síolta ó Autonaut ar an mbealach seo freisin. Do ghairdín an ghréasáin, is uimhreacha randamacha gach luach.
+
+- **Terms.** síol, planda, gairdín an ghréasáin, casadh, uimhreacha randamacha, beart; pool linn (plural linnte); switch nuacht ón ngairdín.
+- **Unsure.** Mutations after *ar an* and *i dhá*, the plural *linnte*, and *beart* for byte. I am not confident of this one.
+
+## gl - Galician
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- gl: Coas novas do xardín activadas, cada vez que a aplicación arranca, pregunta ao xardín da web polas túas plantas compartidas, enviándolle os números aleatorios dos teus encontros. Pregunta tanto se te atopaches con alguén como se non. Cada petición envía ademais un valor de aspecto aleatorio e unha resposta de aspecto aleatorio, e a resposta á petición trae de volta un puñado de cada.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- gl: O xardín da web garda os valores que recibe e que parecen aleatorios en dous depósitos, un de valores de 64 bytes e outro de valores de 104 bytes. Cada valor gárdase só, sen hora, enderezo nin orde. Un valor queda ata que outros máis novos o desprazan. A copia de seguranza nocturna do xardín deixa fóra os depósitos. Unha resposta só se abre no teléfono que enviou a súa semente. As sementes de Autonaut viaxan tamén así. Para o xardín da web, cada valor son números aleatorios.
+
+- **Terms.** semente, planta, xardín da web, encontro, números aleatorios, byte; pool depósito; switch novas do xardín.
+- **Unsure.** *Un puñado* for a handful. The catalogue's old *pregúntalle* with an enclitic was replaced by *pregunta ao xardín*.
+
+## he - Hebrew
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- he: כשחדשות מהגן דלוקות, בכל פעם שהאפליקציה עולה היא שואלת את גן הרשת על הצמחים שאתה חולק, בכך שהיא שולחת את המספרים המקריים מהמפגשים שלך. היא שואלת בין שפגשת מישהו ובין שלא. כל בקשה שולחת גם ערך אחד שנראה מקרי ותשובה אחת שנראית מקרית, והתשובה לבקשה מחזירה חופן מכל אחד מהם.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- he: גן הרשת שומר את הערכים שנראים מקריים שהוא מקבל בשני מאגרים, אחד של ערכים בני 64 בייט ואחד של ערכים בני 104 בייט. כל ערך נשמר לבדו, בלי זמן, כתובת או סדר. ערך נשאר עד שחדשים יותר דוחקים אותו החוצה. הגיבוי הלילי של הגן משאיר את המאגרים בחוץ. תשובה נפתחת רק בטלפון ששלח את הזרע שלה. זרעים מ-Autonaut עוברים גם הם בדרך הזאת. מבחינת גן הרשת, כל ערך הוא מספרים מקריים.
+
+- **Terms.** זרע, צמח, גן הרשת, מפגש, מספרים מקריים, בייט; pool מאגר; switch חדשות מהגן.
+- **Unsure.** Masculine address kept as in the catalogue (*שאתה חולק*); *חופן* for a handful; the Latin *Autonaut* after the prefix *מ-*; right-to-left mixing should be seen in a browser.
+
+## hr - Croatian
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- hr: Ako su vijesti iz vrta uključene, aplikacija pri svakom pokretanju pita mrežni vrt o tvojim dijeljenim biljkama, tako da pošalje slučajne brojeve iz tvojih susreta. Pita bez obzira na to je li bilo ikakvog susreta. Svaki zahtjev šalje i jednu vrijednost koja izgleda slučajno i jedan odgovor koji izgleda slučajno, a odgovor na zahtjev vraća šaku jednih i drugih.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- hr: Mrežni vrt čuva vrijednosti koje primi i koje izgledaju slučajno u dva spremnika, jednom za vrijednosti od 64 bajta i jednom za vrijednosti od 104 bajta. Svaka se vrijednost čuva sama, bez vremena, adrese i redoslijeda. Vrijednost ostaje dok je ne istisnu novije. Noćna sigurnosna kopija vrta izostavlja spremnike. Odgovor se otvara samo na telefonu koji je poslao svoje sjeme. Sjemena iz aplikacije Autonaut putuju na isti način. Za mrežni vrt svaka je vrijednost slučajni brojevi.
+
+- **Terms.** sjeme, biljka, mrežni vrt, susret, slučajni brojevi, bajt; pool spremnik; switch vijesti iz vrta.
+- **Unsure.** *Je li bilo ikakvog susreta* keeps the sentence gender-neutral. *Šaka jednih i drugih* for a handful.
+
+## hu - Hungarian
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- hu: Ha a hírek a kertből be vannak kapcsolva, az alkalmazás minden induláskor megkérdezi a webes kertet a megosztott növényeidről, és ehhez elküldi a találkozásaid véletlen számait. Megkérdezi akkor is, ha találkoztál valakivel, és akkor is, ha nem. Minden kérés elküld egy véletlennek tűnő értéket és egy véletlennek tűnő választ is, és a kérésre adott válasz mindkettőből egy maréknyit hoz vissza.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- hu: A webes kert a kapott, véletlennek tűnő értékeket két tárolóban őrzi, az egyikben 64 bájtos, a másikban 104 bájtos értékek vannak. Mindegyik érték külön van tárolva, idő, cím és sorrend nélkül. Egy érték addig marad, amíg újabbak ki nem szorítják. A kert éjszakai mentése kihagyja a tárolókat. Egy válasz csak azon a telefonon nyílik meg, amelyik elküldte a hozzá tartozó magot. Az Autonaut magjai is így utaznak. A webes kertnek minden érték véletlen számok.
+
+- **Terms.** mag, növény, webes kert, találkozás, véletlen számok, bájt; pool tároló; switch hírek a kertből.
+- **Unsure.** *Akkor is … és akkor is, ha nem* for *whether or not*; *maréknyi* for a handful.
+
+## is - Icelandic
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- is: Þegar fréttir úr garðinum eru á, spyr appið vefgarðinn um plönturnar sem þú deilir í hvert skipti sem appið er opnað, með því að senda tölurnar af handahófi frá fundunum þínum. Það spyr hvort sem þú hefur hitt einhvern eða ekki. Hver beiðni sendir einnig eitt gildi sem lítur út fyrir að vera af handahófi og eitt svar sem lítur út fyrir að vera af handahófi, og svarið við beiðninni kemur með handfylli af hvoru til baka.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- is: Vefgarðurinn geymir gildin sem hann fær og líta út fyrir að vera af handahófi í tveimur geymslum, einni með 64 bæta gildum og einni með 104 bæta gildum. Hvert gildi er geymt eitt og sér, án tíma, heimilisfangs eða raðar. Gildi helst þar til nýrri ýta því út. Næturafrit garðsins skilur geymslurnar útundan. Svar opnast aðeins í símanum sem sendi fræið sitt. Fræ frá Autonaut ferðast líka þannig. Fyrir vefgarðinum er hvert gildi tölur af handahófi.
+
+- **Terms.** fræ, planta, vefgarður, fundur, tölur af handahófi, bæti (gen. pl. bæta); pool geymsla; switch fréttir úr garðinum.
+- **Unsure.** Case and number agreement throughout, *hvort sem … eða ekki*, and *handfylli*. I am not confident of this one.
+
+## it - Italian
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- it: Quando le novità dal giardino sono attive, l'app chiede al giardino sul web delle tue piante condivise ogni volta che parte, inviando i numeri casuali dei tuoi incontri. Lo chiede che tu abbia incontrato qualcuno o no. Ogni richiesta invia anche un valore dall'aspetto casuale e una risposta dall'aspetto casuale, e la risposta alla richiesta ne riporta una manciata di ciascuno.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- it: Il giardino sul web conserva i valori dall'aspetto casuale che riceve in due depositi, uno di valori da 64 byte e uno di valori da 104 byte. Ogni valore è conservato da solo, senza ora, indirizzo né ordine. Un valore resta finché altri più recenti non lo spingono fuori. Il backup notturno del giardino lascia fuori i depositi. Una risposta si apre solo sul telefono che ha inviato il suo seme. I semi di Autonaut viaggiano anch'essi così. Per il giardino sul web, ogni valore è numeri casuali.
+
+- **Terms.** seme, pianta, giardino sul web, incontro, numeri casuali, byte; pool deposito; switch novità dal giardino.
+- **Unsure.** *Una manciata* for a handful. The app is translated into Italian but has no label yet for the switch.
