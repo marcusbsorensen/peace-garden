@@ -4,9 +4,10 @@ import Foundation
 /// and the returns it may open in `back`.
 ///
 /// `ZoneCExchange` reads the answer and hands the rows here. What is done with
-/// them is the engine's (package A4): check each seed's mark, skip a seed this
-/// phone sent, cross and plant one find a day, try every live record's key on
-/// every return. Until then `ZoneCNoBundles` takes them and does nothing.
+/// them is `ZoneCEngine`'s: check each seed's mark, skip a seed this phone
+/// sent, cross and plant one find a day, try every live record's key on every
+/// return. `ZoneCNoBundles` takes them and does nothing, for a test that wants
+/// the request and not the engine.
 ///
 /// **The rows are unread.** Most are padding and a few are real, and nothing in
 /// the answer says which: the service cannot tell, and neither can this
@@ -29,7 +30,7 @@ protocol ZoneCBundles: Sendable {
     func receive(aloft: [Data], back: [Data]) async
 }
 
-/// What A3 hands the rows to: nobody. A4 replaces it.
+/// A sink that takes the rows and does nothing with them.
 struct ZoneCNoBundles: ZoneCBundles {
     func receive(aloft: [Data], back: [Data]) async {}
 }

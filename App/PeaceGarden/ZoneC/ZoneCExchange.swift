@@ -131,9 +131,13 @@ struct ZoneCExchange: Sendable {
     }
 
     /// Zone C as the app has it: its own store beside the garden's file, the
-    /// suite's real folder, and the switch in `UserDefaults`.
+    /// suite's real folder, the switch in `UserDefaults`, and the engine
+    /// (`ZoneCEngine`) behind the bundles. The engine is reached only while the
+    /// switch is on, which it is not until the person turns it on.
     init(besideGardenAt garden: GardenStore) {
-        self.init(store: ZoneCStore(besideGardenAt: garden))
+        let store = ZoneCStore(besideGardenAt: garden)
+        let transit = SuiteTransit()
+        self.init(transit: transit, store: store, bundles: ZoneCEngine(store: store, transit: transit))
     }
 
     // MARK: - One launch
