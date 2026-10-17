@@ -408,6 +408,46 @@ final class ZoneCCryptoTests: XCTestCase {
         XCTAssertEqual(sequence1, plaintext)
     }
 
+    /// **A return sealed outside the app, in the app's own framing.** The RFC
+    /// vector above pins the suite, the key schedule and the AEAD, but not what
+    /// Zone C puts around them: the info string (`peacegarden.zonec.back.v1`
+    /// then the space seed, in that order, with nothing between) and the 56-byte
+    /// payload. Every other return test seals and opens through the same
+    /// `info(for:)`, so a reordered info string would pass them all while
+    /// returns from the old build and the new build stopped opening for each
+    /// other. This one was made by a hand-written RFC 9180 key schedule in
+    /// Python (A2 review, finding 3), which also opens both of the RFC's own
+    /// ciphertexts, and is opened here by the real `ZoneCReturn.open`.
+    ///
+    /// Inputs: the recipient's private key is SHA-256 of
+    /// `peacegarden.zonec.test-seed-key.v1`; the ephemeral key was SHA-256 of
+    /// `peacegarden.zonec.test-ephemeral.v1`; the space seed is `r` then its
+    /// mark under the test K (the first vector in `testAMarkIs...`); no
+    /// associated data. Both keys come from public labels and guard nothing.
+    func testAReturnMadeOutsideTheAppOpensSoTheFramingIsPinned() throws {
+        let seedKey = try Curve25519.KeyAgreement.PrivateKey(
+            rawRepresentation: Data(SHA256.hash(data: Data("peacegarden.zonec.test-seed-key.v1".utf8)))
+        )
+        let spaceSeed = try XCTUnwrap(ZoneCMark.spaceSeed(from: bytes("000102030405060708090a0b0c0d0e0f"), key: testK))
+        XCTAssertEqual(spaceSeed, bytes("000102030405060708090a0b0c0d0e0f939fc180ccde6a689d4782f1d286460b"))
+        XCTAssertEqual(payload.bytes, Data(repeating: 0x11, count: 32) + Data(repeating: 0x22, count: 16)
+                       + Data(repeating: 0x33, count: 8), "the payload the vector was made from")
+
+        let sealed = bytes(
+            "b92453afc2b9a737652487217cfedcf522e4675314e137c8cf040b70aa18ec70"
+            + "3d8e3bffb6e68de987748cc0c4f53686bdca2ef8751a75f919dc770ac81fb4d2"
+            + "cf84a9d5328217f32d85616cb190434713f2130c7f6c490ed0cff1f87c4f24bd"
+            + "2460b60ebd2ba9c2"
+        )
+        XCTAssertEqual(sealed.count, 104)
+        XCTAssertEqual(ZoneCReturn.open(sealed, with: seedKey, spaceSeed: spaceSeed), payload)
+
+        // And it is the framing that opens it: the same bytes under the space
+        // seed's halves swapped, or with nothing but the mark, are no return.
+        let swapped = spaceSeed.suffix(16) + spaceSeed.prefix(16)
+        XCTAssertNil(ZoneCReturn.open(sealed, with: seedKey, spaceSeed: swapped))
+    }
+
     // MARK: - Cost
 
     /// 8 records, 128 rows, one genuine return among the padding, and a pass
