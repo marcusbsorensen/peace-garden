@@ -359,9 +359,14 @@ final class ZoneCSwitchTests: XCTestCase {
                                             privateKey: Data(repeating: 9, count: 32))!)
             state.addPlant(ZoneCPlant(childSeed: seed(1), parentA: seed(2), parentB: seed(3),
                                       encounterID: Data(repeating: 4, count: 32), side: .finder))
+            // A record that has ended, which leaves its mark behind.
+            state.addSentSeed(ZoneCSentSeed(r: Data(repeating: 8, count: 16),
+                                            privateKey: Data(repeating: 9, count: 32), launchesLeft: 1)!)
+            state.countLaunch()
         }
         XCTAssertTrue(FileManager.default.fileExists(atPath: zoneC.fileURL.path))
         XCTAssertEqual(try zoneC.load().plants.count, 1)
+        XCTAssertEqual(try zoneC.load().retiredMarks.count, 1)
 
         try autonautIsInstalled()
         try put(#"{"v":1,"r":"\#(r)"}"#, in: SuiteGroup.outFolder, named: "a")
@@ -376,6 +381,7 @@ final class ZoneCSwitchTests: XCTestCase {
         XCTAssertNil(model.identity, "the garden is empty")
         XCTAssertFalse(FileManager.default.fileExists(atPath: zoneC.fileURL.path), "zonec.json is gone")
         XCTAssertEqual(try zoneC.load(), ZoneCState(), "and Zone C reads as never used")
+        XCTAssertEqual(try zoneC.load().retiredMarks, [], "with no mark of a seed it sent")
         XCTAssertEqual(names(in: SuiteGroup.outFolder), [])
         XCTAssertEqual(names(in: SuiteGroup.inFolder), [])
         XCTAssertTrue(exists(SuiteGroup.outFolder) && exists(SuiteGroup.inFolder), "the folders stay")

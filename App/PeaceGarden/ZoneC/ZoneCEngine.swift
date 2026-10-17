@@ -10,11 +10,11 @@ import SeedCore
 /// ## The order
 ///
 /// A find first, then the returns. The order is not what keeps a sender from
-/// finding its own seed today: a record ends inside an answer only by its third
-/// plant, and the plant a return grows has the sender's space seed for a parent,
-/// so the finder passes that seed over (`hasPlant(parentedBy:)`) whichever
-/// comes first. Looking first keeps the record holding its seed back to the end
-/// of the answer, whatever else may end a record later.
+/// finding its own seed: a record that ends inside an answer leaves its mark in
+/// the store's retired marks (`ZoneCState.hasSent`), and the plant a return grows
+/// has the sender's space seed for a parent, so the finder passes that seed over
+/// whichever comes first. Looking first keeps the record holding its seed back
+/// to the end of the answer all the same.
 ///
 /// ## Off the main actor
 ///

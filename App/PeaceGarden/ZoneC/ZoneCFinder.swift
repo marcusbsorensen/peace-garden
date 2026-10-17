@@ -14,7 +14,8 @@ import SeedCore
 /// - it is 64 bytes whose second half can be a key (`ZoneCSlots.splitSeedSlot`);
 /// - its first half passes the mark (`ZoneCMark.isValid`), so that it was made by
 ///   a Peace Garden holding K and is not padding or a stranger's guess;
-/// - this phone holds no record of having sent it;
+/// - this phone did not send it: it holds no record of it, and the mark is not
+///   among those it kept from records that have ended (`ZoneCState.hasSent`);
 /// - and it is not already a parent of a plant in Zone C, so a seed found once
 ///   is not found again.
 ///
@@ -123,8 +124,8 @@ struct ZoneCFinder: Sendable {
                   let seed = SeedID(bytes: spaceSeed)
             else { continue }
             let r = Data(spaceSeed.prefix(ZoneCMark.randomLength))
-            // Its own seeds, and one found already.
-            guard state.sentSeed(forR: r) == nil, !state.hasPlant(parentedBy: seed) else { continue }
+            // Its own seeds, live or ended, and one found already.
+            guard !state.hasSent(spaceSeed: spaceSeed), !state.hasPlant(parentedBy: seed) else { continue }
             found.append(Candidate(spaceSeed: spaceSeed, r: r, seed: seed, seedKey: seedKey))
         }
         return found
@@ -162,7 +163,7 @@ struct ZoneCFinder: Sendable {
             // The gates again, on the state that is about to be written.
             guard state.canFind(onDay: day),
                   state.canOweAnother,
-                  state.sentSeed(forR: candidate.r) == nil,
+                  !state.hasSent(spaceSeed: candidate.spaceSeed),
                   !state.hasPlant(parentedBy: candidate.seed)
             else { return nil }
             // The file first: a throw leaves the store as it was.
