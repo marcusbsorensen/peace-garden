@@ -140,7 +140,7 @@
 - Tests: `python3 tools/strings/check.py` clean for all 42; the crawl in `tools/masstest/site` (layout shift and overflow) for the longest languages (de, fi, hu) at phone width.
 
 **T1. App translations** · M · Sonnet, cloud · needs: A5, A6, A7 text final; G2a
-- Strings: the relabelled switch and its note; the About paragraph; the Zone C door's accessibility label, empty state and share caption; whatever A5–A7 add. A known glyph before a new word, to spare 7 translations each time. Languages: da, es, fr, it, nb, nl, sv.
+- Strings (Marcus, 17 October): the Danish switch label is **Nyt fra haven** (to match the site's privacy7); the five space-flora names **and their quotations** are translated, freshly, never copied from a published translation, with the original source kept in English. Also: the relabelled switch and its note; the About paragraph; the Zone C door's accessibility label, empty state and share caption; whatever A5–A7 add. A known glyph before a new word, to spare 7 translations each time. Languages: da, es, fr, it, nb, nl, sv.
 - How: `tools/strings/sync.sh` after a build lists the new keys; one routine per language writes `tools/strings/commissions/<date>/app/<code>.json` (as on 1 October), then one apply step puts all seven into `Localizable.xcstrings`. Danish first, for G2b.
 - Tests: `python3 tools/strings/app_check.py`; the app's catalogue tests; the language sweep in `tools/masstest/app`, once.
 
