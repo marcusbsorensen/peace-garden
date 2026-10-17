@@ -107,8 +107,9 @@
 
 **A5. Switch, About text, reset** · S · Sonnet · needs: A0, A3
 - Changed: `Views/SettingsView.swift` (the row at 579–582 relabelled "Ask the garden for news when it opens" with one short line under it; the stored key `sharing.invitations.v1` stays, so no one's choice moves); `Views/AboutView.swift` (a Privacy paragraph: the request at each start carries two random-looking values and returns a handful of each; Zone C is in the phone's backup with the garden); `Views/Sharing.swift` (the comment on what off stops); `GardenModel.swift` (`resetEverything`, 648–654, also erases Zone C's store; R8); additions to `SettingsClarityTests` and `AboutSheetTests`.
-- Behaviour: on writes `Seeds/v1/exchange`; off deletes it; reconciled at each launch. The presence marker is A0's and does not follow the switch.
-- Tests: label and note present; off sends no request and removes the `exchange` marker; on restores it; reset removes `zonec.json` (own seed, records, plants) and any seed waiting in `out/` or `in/`, and leaves the switch as it was.
+- **Zone C switch (DESIGN §7 item 16, Marcus 17 October):** a second row, "Zone C" with one short line, off by default, shown only while `Presence/v1/autonaut` exists; its own stored key. Turning it on is the consent. Off: the padded request still goes, A3 takes nothing from `out/` and A4 finds nothing and queues no return.
+- Behaviour: `Seeds/v1/exchange` exists only while both switches are on; otherwise deleted; reconciled at each launch. The presence marker is A0's and does not follow the switch.
+- Tests: Zone C row hidden without the presence file and off by default with it; Zone C off keeps the padded request but sends padding only and removes `exchange`; label and note present; launch switch off sends no request and removes the `exchange` marker; on restores it; reset removes `zonec.json` (own seed, records, plants) and any seed waiting in `out/` or `in/`, and leaves the switch as it was.
 
 **A6. Zone C view, door, space flora drawn** · L · Sonnet · needs: A4, C1, G1
 - Changed: `Views/PlantStageView.swift` (one mark in the foot row, shown while `Presence/v1/autonaut` exists or Zone C holds a plant: a known glyph, not a word).
