@@ -410,14 +410,10 @@ final class ZoneCCryptoTests: XCTestCase {
 
     // MARK: - Cost
 
-    /// A sender tries each live record's key on every row of the answer: at
-    /// most 8 records × 128 rows, one key agreement apiece. The design said "a
-    /// few tens of milliseconds, off the main thread", and this holds it to 100.
-    ///
-    /// Best of five passes after one unmeasured, because this runs on a shared
-    /// Mac and a pass that lost its core says nothing about the code. The
-    /// pass-by-pass times are printed.
-    func testAThousandAndTwentyFourOpeningsTakeUnderAHundredMilliseconds() throws {
+    /// 8 records, 128 rows, one genuine return among the padding, and a pass
+    /// that tries every record's key on every row, as a sender does at each
+    /// answer.
+    private func openingFixture() throws -> (rows: Int, pass: () -> (milliseconds: Double, opened: [ZoneCReturn.Payload])) {
         let records = 8
         let rowCount = 128
         let keys = (0..<records).map { _ in Curve25519.KeyAgreement.PrivateKey() }
@@ -426,12 +422,13 @@ final class ZoneCCryptoTests: XCTestCase {
         // One genuine return among the padding, for record 5 at row 77.
         var rows = (0..<rowCount).map { _ in ZoneCSlots.returnPadding() }
         rows[77] = try ZoneCReturn.seal(payload, to: keys[5].publicKey, spaceSeed: spaceSeeds[5])
+        let all = rows
 
-        func pass() -> (milliseconds: Double, opened: [ZoneCReturn.Payload]) {
+        return (records * rowCount, {
             var opened: [ZoneCReturn.Payload] = []
             let start = DispatchTime.now().uptimeNanoseconds
             for record in 0..<records {
-                for row in rows {
+                for row in all {
                     if let found = ZoneCReturn.open(row, with: keys[record], spaceSeed: spaceSeeds[record]) {
                         opened.append(found)
                     }
@@ -439,18 +436,53 @@ final class ZoneCCryptoTests: XCTestCase {
             }
             let elapsed = DispatchTime.now().uptimeNanoseconds - start
             return (Double(elapsed) / 1_000_000, opened)
-        }
+        })
+    }
 
-        _ = pass()
+    /// A sender tries each live record's key on every row of the answer: at
+    /// most 8 records × 128 rows, one key agreement apiece (`DESIGN.md` §5).
+    /// About 90 ms on a Mac, a few hundred on the oldest phone the app runs on,
+    /// off the main thread.
+    ///
+    /// **The bound is 300 ms, and it is there for an order of magnitude**, not
+    /// for the last 10%: a key generated for every row, or the work done on the
+    /// main thread, would show here at a second or more. It used to be 100 ms,
+    /// which a parallel build, Spotlight or a warm laptop could break with the
+    /// code unchanged (A2 review, finding 1). The real figure is tracked by
+    /// `testTheCostOfTheOpeningsIsMeasured`.
+    ///
+    /// Best of five passes after one unmeasured, because this runs on a shared
+    /// Mac and a pass that lost its core says nothing about the code. The
+    /// pass-by-pass times are printed.
+    func testAThousandAndTwentyFourOpeningsTakeUnderThreeHundredMilliseconds() throws {
+        let fixture = try openingFixture()
+        XCTAssertEqual(fixture.rows, 1_024)
+
+        _ = fixture.pass()
         var times: [Double] = []
         for _ in 0..<5 {
-            let result = pass()
+            let result = fixture.pass()
             XCTAssertEqual(result.opened, [payload], "exactly the one genuine return opens")
             times.append(result.milliseconds)
         }
         let best = times.min()!
         print("ZoneC 1,024 openings, ms per pass:", times.map { String(format: "%.1f", $0) }.joined(separator: ", "),
               "| best:", String(format: "%.1f", best))
-        XCTAssertLessThan(best, 100, "1,024 openings took \(best) ms at best")
+        XCTAssertLessThan(best, 300, "1,024 openings took \(best) ms at best")
+    }
+
+    /// The real figure, kept where it can be read and compared: Xcode's own
+    /// measurement of the same pass, with the clock as its metric. It asserts
+    /// nothing, since a baseline stored in the project would not survive
+    /// `xcodegen generate` and one that failed under load would be the flake
+    /// finding 1 removed. `xcodebuild` prints each run's average
+    /// ("Clock Monotonic Time") in the test log, and the result bundle keeps
+    /// them; compare those across builds and across machines.
+    func testTheCostOfTheOpeningsIsMeasured() throws {
+        let fixture = try openingFixture()
+        _ = fixture.pass()
+        measure(metrics: [XCTClockMetric()]) {
+            _ = fixture.pass()
+        }
     }
 }
