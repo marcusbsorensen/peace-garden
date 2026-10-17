@@ -19,7 +19,8 @@ import SeedCore
 /// The phone remembers `r` (from which the space seed is rebuilt with the mark
 /// key) and the private half of the key drawn for this seed alone. Nothing else
 /// of Autonaut's travels here. A record ends after 60 of the phone's own launch
-/// requests, or once three plants have grown from it, and is then removed.
+/// requests, or once three plants have grown from it, and is then removed (or
+/// sooner, if a ninth pushes it out); `ZoneCState.retiredMarks` keeps its mark.
 struct ZoneCSentSeed: Codable, Equatable, Sendable {
     static let rLength = 16
     static let privateKeyLength = 32
@@ -176,12 +177,15 @@ struct ZoneCPlant: Codable, Equatable, Identifiable, Sendable {
 /// have them written together or not at all.
 struct ZoneCState: Codable, Equatable, Sendable {
     /// Bumped when the on-disk shape changes, so an older file can be migrated
-    /// rather than thrown away.
+    /// rather than thrown away. A field added with a default, as `retiredMarks`
+    /// was, does not bump it: a file without the field reads as if it were empty.
     static let currentSchemaVersion = 1
     /// A ninth pushes out the oldest.
     static let sentSeedLimit = 8
     /// While three returns are still going out, no new find is planted.
     static let owedReturnLimit = 3
+    /// The marks of ended records kept: the latest sixty-four.
+    static let retiredMarkLimit = 64
 
     var schemaVersion: Int
     /// Zone C's own seed: 32 random bytes, minted once when first needed and
@@ -195,6 +199,17 @@ struct ZoneCState: Codable, Equatable, Sendable {
     /// The day of the last find, as `ZoneCDay.number` gives it. A day and no
     /// time, so that "one find a day" can be kept without a clock reading.
     var lastFindDay: Int?
+    /// The marks (`ZoneCMark.mark(for:)`, 16 bytes each) of seeds this phone
+    /// sent whose records have ended, by launches, by plants or by being pushed
+    /// out of the eight. Oldest first, at most `retiredMarkLimit`, the oldest
+    /// dropped first.
+    ///
+    /// A seed stays in the server's pool after its record ends, so without this
+    /// the phone could later find its own seed. The finder skips a seed whose
+    /// mark is here, as it skips one it holds a live record for
+    /// (`hasSent(spaceSeed:)`). A return opens only with the seed key, which
+    /// went with the record; the mark alone reads nothing.
+    var retiredMarks: [Data]
 
     init(
         schemaVersion: Int = ZoneCState.currentSchemaVersion,
@@ -202,7 +217,8 @@ struct ZoneCState: Codable, Equatable, Sendable {
         sentSeeds: [ZoneCSentSeed] = [],
         owedReturns: [ZoneCOwedReturn] = [],
         plants: [ZoneCPlant] = [],
-        lastFindDay: Int? = nil
+        lastFindDay: Int? = nil,
+        retiredMarks: [Data] = []
     ) {
         self.schemaVersion = schemaVersion
         self.ownSeed = ownSeed
@@ -210,6 +226,32 @@ struct ZoneCState: Codable, Equatable, Sendable {
         self.owedReturns = owedReturns
         self.plants = plants
         self.lastFindDay = lastFindDay
+        self.retiredMarks = Array(retiredMarks.suffix(Self.retiredMarkLimit))
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case schemaVersion, ownSeed, sentSeeds, owedReturns, plants, lastFindDay, retiredMarks
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        schemaVersion = try container.decode(Int.self, forKey: .schemaVersion)
+        ownSeed = try container.decodeIfPresent(SeedID.self, forKey: .ownSeed)
+        sentSeeds = try container.decode([ZoneCSentSeed].self, forKey: .sentSeeds)
+        owedReturns = try container.decode([ZoneCOwedReturn].self, forKey: .owedReturns)
+        plants = try container.decode([ZoneCPlant].self, forKey: .plants)
+        lastFindDay = try container.decodeIfPresent(Int.self, forKey: .lastFindDay)
+        // A file written before the field existed has none: no record had ended
+        // that this phone kept the mark of.
+        let marks = try container.decodeIfPresent([Data].self, forKey: .retiredMarks) ?? []
+        guard marks.allSatisfy({ $0.count == ZoneCMark.markLength }) else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .retiredMarks,
+                in: container,
+                debugDescription: "expected marks of \(ZoneCMark.markLength) bytes"
+            )
+        }
+        retiredMarks = Array(marks.suffix(Self.retiredMarkLimit))
     }
 }
 
@@ -234,15 +276,30 @@ extension ZoneCState {
         sentSeeds.first { $0.r == r }
     }
 
+    /// Whether this phone sent this space seed: it holds a live record for its
+    /// `r`, or it kept the mark of a record that has ended. The finder passes
+    /// over such a seed. Both are read from the seed itself, so a seed of the
+    /// wrong length is nobody's.
+    func hasSent(spaceSeed: Data) -> Bool {
+        guard spaceSeed.count == ZoneCMark.spaceSeedLength else { return false }
+        let r = Data(spaceSeed.prefix(ZoneCMark.randomLength))
+        let mark = Data(spaceSeed.suffix(ZoneCMark.markLength))
+        return sentSeed(forR: r) != nil || retiredMarks.contains(mark)
+    }
+
     /// Keeps a record for a seed about to be sent. A seed already recorded is
     /// left as it is, so a retry after a lost answer reuses the key the first
     /// attempt put in the pool. Returns whether a record was added.
+    ///
+    /// A ninth record pushes out the oldest, and the mark of that one is kept.
     @discardableResult
     mutating func addSentSeed(_ record: ZoneCSentSeed) -> Bool {
         guard sentSeed(forR: record.r) == nil else { return false }
         sentSeeds.append(record)
         if sentSeeds.count > Self.sentSeedLimit {
-            sentSeeds.removeFirst(sentSeeds.count - Self.sentSeedLimit)
+            let pushedOut = sentSeeds.count - Self.sentSeedLimit
+            sentSeeds.prefix(pushedOut).forEach { retire($0) }
+            sentSeeds.removeFirst(pushedOut)
         }
         return true
     }
@@ -251,6 +308,7 @@ extension ZoneCState {
     /// one fewer, and those that reach none end.
     mutating func countLaunch() {
         for index in sentSeeds.indices { sentSeeds[index].launchesLeft -= 1 }
+        sentSeeds.filter { !$0.isLive }.forEach { retire($0) }
         sentSeeds.removeAll { !$0.isLive }
     }
 
@@ -260,8 +318,22 @@ extension ZoneCState {
     mutating func countPlantGrown(forR r: Data) -> Bool {
         guard let index = sentSeeds.firstIndex(where: { $0.r == r }) else { return false }
         sentSeeds[index].plantsGrown += 1
-        if !sentSeeds[index].isLive { sentSeeds.remove(at: index) }
+        if !sentSeeds[index].isLive {
+            retire(sentSeeds[index])
+            sentSeeds.remove(at: index)
+        }
         return true
+    }
+
+    /// Keeps the mark of a record that is ending, as the newest. A mark already
+    /// kept moves to the end rather than standing twice.
+    private mutating func retire(_ record: ZoneCSentSeed) {
+        guard let mark = ZoneCMark.mark(for: record.r) else { return }
+        retiredMarks.removeAll { $0 == mark }
+        retiredMarks.append(mark)
+        if retiredMarks.count > Self.retiredMarkLimit {
+            retiredMarks.removeFirst(retiredMarks.count - Self.retiredMarkLimit)
+        }
     }
 }
 

@@ -25,6 +25,11 @@ private func owed(_ n: UInt8) -> ZoneCOwedReturn {
     ZoneCOwedReturn(payload: bytes(n, 56), recipientKey: bytes(n &+ 100, 32), spaceSeed: bytes(n, 32))!
 }
 
+/// The mark of the seed whose `r` is `n` repeated, as a record that ends leaves it.
+private func mark(_ n: UInt8) -> Data {
+    ZoneCMark.mark(for: bytes(n, 16))!
+}
+
 private func plant(_ n: UInt8, side: ZoneCPlant.Side = .finder) -> ZoneCPlant {
     ZoneCPlant(
         childSeed: seed(n),
@@ -83,7 +88,7 @@ final class ZoneCStoreTests: XCTestCase {
             localNonce: bytes(3, 16),
             remoteNonce: bytes(4, 16)
         )
-        var state = ZoneCState(ownSeed: seed(9), lastFindDay: 20_743)
+        var state = ZoneCState(ownSeed: seed(9), lastFindDay: 20_743, retiredMarks: [bytes(7, 16), bytes(8, 16)])
         state.addSentSeed(sent(1))
         state.addSentSeed(ZoneCSentSeed(r: bytes(2, 16), privateKey: bytes(102, 32), launchesLeft: 17, plantsGrown: 2)!)
         state.addOwedReturn(owed(1))
@@ -347,6 +352,154 @@ final class ZoneCStoreTests: XCTestCase {
         XCTAssertEqual(state.sentSeed(forR: bytes(1, 16))?.privateKey, bytes(11, 32))
     }
 
+    // MARK: - Retired marks
+
+    func testARecordThatEndsByLaunchesLeavesItsMark() throws {
+        let store = makeStore()
+        try store.update {
+            $0.addSentSeed(ZoneCSentSeed(r: bytes(1, 16), privateKey: bytes(101, 32), launchesLeft: 2)!)
+            $0.addSentSeed(sent(2))
+        }
+        try store.update { $0.countLaunch() }
+        XCTAssertEqual(try store.load().retiredMarks, [], "it has one launch left")
+
+        try store.update { $0.countLaunch() }
+
+        let state = try store.load()
+        XCTAssertEqual(state.sentSeeds.map { $0.r.first }, [2])
+        XCTAssertEqual(state.retiredMarks, [mark(1)])
+        XCTAssertTrue(state.hasSent(spaceSeed: ZoneCMark.spaceSeed(from: bytes(1, 16))!), "the seed that ended")
+        XCTAssertTrue(state.hasSent(spaceSeed: ZoneCMark.spaceSeed(from: bytes(2, 16))!), "the seed that lives")
+        XCTAssertFalse(state.hasSent(spaceSeed: ZoneCMark.spaceSeed(from: bytes(3, 16))!), "and a stranger's")
+    }
+
+    func testARecordThatEndsByPlantsLeavesItsMark() throws {
+        var state = ZoneCState()
+        state.addSentSeed(sent(1))
+        state.addSentSeed(sent(2))
+        state.countPlantGrown(forR: bytes(1, 16))
+        state.countPlantGrown(forR: bytes(1, 16))
+        XCTAssertEqual(state.retiredMarks, [], "two plants are not three")
+
+        state.countPlantGrown(forR: bytes(1, 16))
+
+        XCTAssertEqual(state.sentSeeds.map { $0.r.first }, [2])
+        XCTAssertEqual(state.retiredMarks, [mark(1)])
+        // A plant counted against a record that has ended changes nothing.
+        XCTAssertFalse(state.countPlantGrown(forR: bytes(1, 16)))
+        XCTAssertEqual(state.retiredMarks, [mark(1)])
+    }
+
+    func testARecordPushedOutOfTheEightLeavesItsMark() throws {
+        var state = ZoneCState()
+        for n in 1...8 { state.addSentSeed(sent(UInt8(n))) }
+        XCTAssertEqual(state.retiredMarks, [])
+
+        state.addSentSeed(sent(9))
+
+        XCTAssertEqual(state.sentSeeds.map { $0.r.first }, (2...9).map { UInt8($0) })
+        XCTAssertEqual(state.retiredMarks, [mark(1)])
+    }
+
+    func testOnlyTheLatestSixtyFourMarksAreKept() throws {
+        let store = makeStore()
+        // Seventy are pushed out, one at a time, by the 71st to the 78th.
+        for n in 1...78 { try store.update { $0.addSentSeed(sent(UInt8(n))) } }
+
+        let state = try store.load()
+        XCTAssertEqual(state.sentSeeds.map { $0.r.first }, (71...78).map { UInt8($0) })
+        XCTAssertEqual(state.retiredMarks.count, ZoneCState.retiredMarkLimit)
+        XCTAssertEqual(ZoneCState.retiredMarkLimit, 64)
+        XCTAssertEqual(state.retiredMarks, (7...70).map { mark(UInt8($0)) }, "oldest first, the first six dropped")
+        XCTAssertTrue(state.retiredMarks.allSatisfy { $0.count == 16 })
+        XCTAssertFalse(state.hasSent(spaceSeed: ZoneCMark.spaceSeed(from: bytes(6, 16))!), "dropped")
+        XCTAssertTrue(state.hasSent(spaceSeed: ZoneCMark.spaceSeed(from: bytes(7, 16))!), "kept")
+        // The list is what the file holds.
+        XCTAssertEqual(try makeStore().load().retiredMarks, state.retiredMarks)
+    }
+
+    func testAMarkIsKeptOnceAndTheNewestIsLast() {
+        var state = ZoneCState()
+        state.addSentSeed(ZoneCSentSeed(r: bytes(1, 16), privateKey: bytes(101, 32), launchesLeft: 1)!)
+        state.addSentSeed(ZoneCSentSeed(r: bytes(2, 16), privateKey: bytes(102, 32), launchesLeft: 1)!)
+        state.countLaunch()
+        XCTAssertEqual(state.retiredMarks, [mark(1), mark(2)], "oldest record first")
+
+        // The same seed sent again ends again: its mark moves to the end.
+        state.addSentSeed(ZoneCSentSeed(r: bytes(1, 16), privateKey: bytes(103, 32), launchesLeft: 1)!)
+        state.countLaunch()
+
+        XCTAssertEqual(state.retiredMarks, [mark(2), mark(1)])
+    }
+
+    func testASeedOfTheWrongLengthIsNobodys() {
+        var state = ZoneCState()
+        state.addSentSeed(sent(1))
+        state.retiredMarks = [mark(2)]
+
+        XCTAssertFalse(state.hasSent(spaceSeed: bytes(1, 16)))
+        XCTAssertFalse(state.hasSent(spaceSeed: Data()))
+        XCTAssertFalse(state.hasSent(spaceSeed: ZoneCMark.spaceSeed(from: bytes(1, 16))! + [0]))
+    }
+
+    /// A phone that updates keeps its file: `retiredMarks` was added to the
+    /// shape without a new schema version, and an older file has no such key.
+    func testAFileWithoutRetiredMarksStillLoads() throws {
+        var older = fullState()
+        older.retiredMarks = []
+        var object = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: JSONEncoder().encode(older)) as? [String: Any]
+        )
+        XCTAssertNotNil(object.removeValue(forKey: "retiredMarks"), "the file is as the older version wrote it")
+        try JSONSerialization.data(withJSONObject: object).write(to: fileURL)
+        let store = makeStore()
+
+        let state = try store.load()
+        XCTAssertEqual(state, older)
+        XCTAssertEqual(state.retiredMarks, [])
+        XCTAssertEqual(state.schemaVersion, 1)
+
+        // And it goes on from there: a record that ends leaves its mark in the file.
+        try store.update {
+            $0.addSentSeed(ZoneCSentSeed(r: bytes(5, 16), privateKey: bytes(105, 32), launchesLeft: 1)!)
+            $0.countLaunch()
+        }
+        XCTAssertEqual(try makeStore().load().retiredMarks, [mark(5)])
+    }
+
+    func testRetiredMarksSurviveARoundTripInTheirOrder() throws {
+        var state = fullState()
+        state.retiredMarks = [bytes(3, 16), bytes(1, 16), bytes(2, 16)]
+        try makeStore().save(state)
+
+        XCTAssertEqual(try makeStore().load().retiredMarks, [bytes(3, 16), bytes(1, 16), bytes(2, 16)])
+    }
+
+    func testAMarkOfTheWrongSizeRefusesTheFile() throws {
+        var damaged = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: JSONEncoder().encode(fullState())) as? [String: Any]
+        )
+        damaged["retiredMarks"] = [bytes(1, 15).base64EncodedString()]
+        try JSONSerialization.data(withJSONObject: damaged).write(to: fileURL)
+
+        XCTAssertThrowsError(try makeStore().load()) { error in
+            guard case ZoneCStore.StoreError.unreadable = error else {
+                return XCTFail("unexpected error \(error)")
+            }
+        }
+    }
+
+    func testEraseTakesTheRetiredMarksWithTheRest() throws {
+        let store = makeStore()
+        try store.save(fullState())
+        XCTAssertFalse(try store.load().retiredMarks.isEmpty)
+
+        try store.erase()
+
+        XCTAssertEqual(try store.load().retiredMarks, [])
+        XCTAssertEqual(try store.load(), ZoneCState())
+    }
+
     // MARK: - Owed returns
 
     func testNoMoreThanThreeReturnsAreOwed() {
@@ -474,7 +627,7 @@ final class ZoneCStoreTests: XCTestCase {
 
         let root = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: fileURL)) as? [String: Any])
         XCTAssertEqual(Set(root.keys),
-                       ["schemaVersion", "ownSeed", "sentSeeds", "owedReturns", "plants", "lastFindDay"])
+                       ["schemaVersion", "ownSeed", "sentSeeds", "owedReturns", "plants", "lastFindDay", "retiredMarks"])
         // The one day that is kept is a whole number, with no time of day.
         XCTAssertEqual(root["lastFindDay"] as? Int, 20_743)
 

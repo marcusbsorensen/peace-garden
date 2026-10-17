@@ -269,7 +269,7 @@ PRAGMA secure_delete = ON; journal_mode = DELETE
 
 1. **Ana finishes something in Create and chooses "Send as a seed".** Autonaut draws 16 random bytes into `Seeds/v1/out/` and shows the seed going out in its own way. It promises nothing about being found.
 2. **The next time Ana opens Peace Garden**, for any reason, the launch request it makes anyway carries her seed and a fresh seed key in the `aloft` slot instead of padding. When the server answers, Peace Garden deletes the file and keeps a small record: `r` and the key's private half.
-3. **Somewhere else, Ben opens Peace Garden.** His bundle of 128 seeds may hold Ana's. His Peace Garden sees Autonaut is present, checks each seed's mark, skips any it holds a record for (its own), and takes at most one a day (5A). It crosses Ana's seed with Ben's own seed in Zone C, as two phones cross at a knock, and plants the cross in Zone C, drawn as space flora (§5.2). It drops Ana's seed, as itself, into `Seeds/v1/in/`.
+3. **Somewhere else, Ben opens Peace Garden.** His bundle of 128 seeds may hold Ana's. His Peace Garden sees Autonaut is present, checks each seed's mark, skips any it holds a record for or kept the mark of (its own, §5.3), and takes at most one a day (5A). It crosses Ana's seed with Ben's own seed in Zone C, as two phones cross at a knock, and plants the cross in Zone C, drawn as space flora (§5.2). It drops Ana's seed, as itself, into `Seeds/v1/in/`.
 4. **When Ben next opens Autonaut**, it takes the seed into its space garden and draws it as itself, as agreed (A3, A4).
 5. **Ben's next eight launch requests each carry a return** in the `back` slot: his half of the cross, sealed to Ana's seed key, sealed afresh each time so no two copies look alike (§5.3).
 6. **Each time Ana opens Peace Garden**, her phone tries its records' keys on the 128 returns in the answer. If one of Ben's copies is there, it opens, and Ana's Zone C grows the same plant Ben has, marked as grown because her seed was found. A return that never reaches her leaves no trace.
@@ -311,7 +311,7 @@ In code, the finder's phone computes `CrossPollinationResult(localSeed: own, rem
 
 ### 5.3 The return
 
-**The seed key.** When Peace Garden takes a seed from `out/` to carry it, it draws a key pair for that seed alone (X25519, CryptoKit) and sends the public half in the `aloft` slot beside the space seed. The private half is the per-seed secret that lets this phone, and only this phone, recognise and open the seed's returns. It is drawn, not derived from `r`, because `r` travels in the clear inside the space seed: anything computed from `r` alone is known to everyone who holds the pool. And it is drawn fresh for each seed rather than derived from one lasting secret, so once a record ends, nothing on the phone or in a backup can pick out which pool rows were this phone's.
+**The seed key.** When Peace Garden takes a seed from `out/` to carry it, it draws a key pair for that seed alone (X25519, CryptoKit) and sends the public half in the `aloft` slot beside the space seed. The private half is the per-seed secret that lets this phone, and only this phone, recognise and open the seed's returns. It is drawn, not derived from `r`, because `r` travels in the clear inside the space seed: anything computed from `r` alone is known to everyone who holds the pool. And it is drawn fresh for each seed rather than derived from one lasting secret, so once a record ends, the key is gone and nothing on the phone can open a return for that seed. What stays for a while is the seed's 16-byte mark (see "The record"): enough to pass the seed over, and no key.
 
 **The record.** For each seed it carries aloft, Peace Garden keeps in Zone C's store:
 - `r` (16 bytes), from which it rebuilds the space seed with `K`;
@@ -320,6 +320,8 @@ In code, the finder's phone computes `CrossPollinationResult(localSeed: own, rem
 - how many plants have grown from it, at most three.
 
 It holds no date and nothing else from Autonaut. Zone C shows no list of seeds waiting: a sent seed appears there only when a return arrives (13A), so no record waits for an answer where the person can see it, as A4 asks of Autonaut. **At most eight records are kept**; a ninth pushes out the oldest. **A record ends after 60 of the phone's own launch requests**, about a month at two starts a day, **or once three plants have grown from it.** Peace Garden counts its launches, not days, so a record says nothing about when the seed was sent. The records also do the job of the earlier "last eight casts" list: a phone never finds a seed it holds a record for.
+
+**The retired marks.** A seed stays in the pool after its record ends, and the phone could then find its own seed. So when a record ends, by launches, by plants or by being pushed out of the eight, Peace Garden keeps its mark (16 bytes, `ZoneCMark.mark(for: r)`) in a list in Zone C's store: the latest 64, the oldest dropped first. The finder passes over a seed whose mark belongs to a live record or is in that list. The list holds no date, no key and no `r`, and Reset erases it with the rest of Zone C. **The trade:** the mark is also in the pool row, so for the latest 64 ended records, anyone who holds both this phone's file (a backup, 9B) and a copy of the pool can tell which rows were this phone's. A return still cannot be read without the key, which goes with the record. Added 17 October 2026.
 
 Why 60: a seed stays in the pool for about 2,048 starts across the garden; its finders send their returns in their next eight starts; each return then stays about 2,048 starts more. At a thousand starts a day that is about a week, well inside a month.
 
@@ -371,7 +373,7 @@ The sender hears of a find only when a return arrives; as Peace Garden grows, mo
 - Put `aloft` in every `pending` request: the oldest waiting `out` seed, marked, with a fresh seed key, or padding of the same shape. After a 2xx answer, write the seed's record, then delete the `out` file.
 - Put `back` in every `pending` request: the next copy of a return this phone owes, sealed afresh, or padding of the same shape.
 - Read both bundles in every answer:
-  - Seeds: check marks with `K`; skip seeds it holds a record for; find at most one a day, only while Autonaut is present, fewer than three seeds wait in `Seeds/v1/in/` and fewer than three returns are going out; cross it with Zone C's own seed (§5.2) and plant it; write the found seed to `Seeds/v1/in/`; queue its return for the next eight launches.
+  - Seeds: check marks with `K`; skip seeds it holds a record for or kept the mark of; find at most one a day, only while Autonaut is present, fewer than three seeds wait in `Seeds/v1/in/` and fewer than three returns are going out; cross it with Zone C's own seed (§5.2) and plant it; write the found seed to `Seeds/v1/in/`; queue its return for the next eight launches.
   - Returns: try each live record's key; when one opens and its checksum agrees, grow the same cross in Zone C.
 - Zone C's own seed: minted once when Zone C first opens, kept for good.
 - Sent-seed records: at most eight; each ends after 60 of the phone's launch requests or three plants; no dates.

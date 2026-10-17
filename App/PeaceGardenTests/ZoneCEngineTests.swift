@@ -184,6 +184,15 @@ final class ZoneCEngineTests: XCTestCase {
 
     private func spaceSeed(_ n: UInt8) -> Data { ZoneCMark.spaceSeed(from: r(n))! }
 
+    /// The 16-byte mark of the seed with `r(n)`, as a retired record leaves it.
+    private func mark(_ n: UInt8) -> Data { ZoneCMark.mark(for: r(n))! }
+
+    /// The service's answer to a launch: 128 `aloft` rows, with these among padding.
+    private func aloftAnswer(_ real: [Data]) -> (status: Int, body: String) {
+        let rows = bundleWithPadding(real).reduce(into: Data()) { $0.append($1) }
+        return (200, #"{"aloft":"\#(SuiteHex.encode(rows))"}"#)
+    }
+
     /// A seed key, kept so that a test can open what is sealed to it.
     private func key(_ n: UInt8) -> Curve25519.KeyAgreement.PrivateKey {
         try! Curve25519.KeyAgreement.PrivateKey(rawRepresentation: SHA256.hash(data: Data("zonec-engine-test-\(n)".utf8)).withUnsafeBytes { Data($0) })
@@ -768,6 +777,78 @@ final class ZoneCEngineTests: XCTestCase {
 
         XCTAssertEqual(Set(ana.state.plants.map(\.side)), [.finder, .sender])
         XCTAssertEqual(ana.seedsForAutonaut, [spaceSeed(2)])
+    }
+
+    // MARK: - A record that has ended
+
+    /// A seed stays in the pool after its record ends. The phone that sent it
+    /// keeps the mark, so that it does not find its own seed later.
+    func testASenderDoesNotFindItsOwnSeedOnceItsRecordHasEndedByLaunches() async throws {
+        let ana = phone("Ana")
+        try ana.store.update { $0.addSentSeed(record(1, launchesLeft: 1)) }
+        let service = AskingTests.Stub()
+        service.replies["/api/walk/pending"] = aloftAnswer([seedRow(1)])
+
+        // The launch that ends the record. Her seed is in the answer, and the
+        // record still holds it back.
+        try await ana.launch(service)
+        XCTAssertEqual(ana.state.sentSeeds, [], "the launch counted was the last the record had")
+        XCTAssertEqual(ana.state.retiredMarks, [mark(1)])
+        XCTAssertEqual(ana.state.plants, [])
+
+        // The next launch: no record, and the same seed still in the pool.
+        try await ana.launch(service)
+        XCTAssertEqual(ana.state.plants, [])
+        XCTAssertNil(ana.state.lastFindDay, "she found nothing")
+        XCTAssertNil(ana.state.ownSeed, "and took nothing")
+        XCTAssertEqual(ana.inFiles, [])
+
+        // The seed was there to be found: a phone that did not send it finds it.
+        let ben = phone("Ben")
+        try await ben.launch(service)
+        XCTAssertEqual(ben.seedsForAutonaut, [spaceSeed(1)])
+    }
+
+    func testASenderDoesNotFindItsOwnSeedOnceItsRecordHasEndedByPlants() async throws {
+        let ana = phone("Ana")
+        try ana.store.update { $0.addSentSeed(record(1, plants: 2)) }
+        let third = try finderReturn(for: 1).sealed
+
+        await ana.engine.receive(aloft: [], back: backBundle([third]))
+        XCTAssertEqual(ana.state.sentSeeds, [], "the third plant ended the record")
+        XCTAssertEqual(ana.state.retiredMarks, [mark(1)])
+        XCTAssertEqual(ana.state.plants.count, 1)
+
+        // The plant that return grew has her seed for a parent, and that alone
+        // would stop her finding it. Take the plant away, so that what is held
+        // here is the mark.
+        try ana.store.update { $0.plants = [] }
+
+        await ana.engine.receive(aloft: bundleWithPadding([seedRow(1)]), back: backBundle([]))
+        XCTAssertEqual(ana.state.plants, [])
+        XCTAssertNil(ana.state.lastFindDay)
+        XCTAssertEqual(ana.inFiles, [])
+    }
+
+    func testASenderDoesNotFindASeedItsRecordWasPushedOutFor() async throws {
+        let ana = phone("Ana")
+        // A ninth record pushes out the first.
+        try ana.store.update { state in
+            for n in 1...9 { state.addSentSeed(record(UInt8(n))) }
+        }
+        XCTAssertEqual(ana.state.sentSeeds.count, ZoneCState.sentSeedLimit)
+        XCTAssertNil(ana.state.sentSeed(forR: r(1)))
+        XCTAssertEqual(ana.state.retiredMarks, [mark(1)])
+
+        // Her pushed-out seed, one she still holds a record for, and a
+        // stranger's: only the stranger's is found.
+        await ana.engine.receive(
+            aloft: bundleWithPadding([seedRow(1), seedRow(2), seedRow(10)]), back: backBundle([])
+        )
+
+        XCTAssertEqual(ana.seedsForAutonaut, [spaceSeed(10)])
+        XCTAssertEqual(ana.state.plants.count, 1)
+        XCTAssertEqual(ana.state.owedReturns.map(\.spaceSeed), [spaceSeed(10)])
     }
 
     // MARK: - Where the app reaches it
