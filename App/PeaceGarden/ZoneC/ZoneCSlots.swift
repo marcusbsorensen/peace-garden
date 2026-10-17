@@ -17,12 +17,18 @@ import Foundation
 ///     aloft padding   32 fresh random bytes  ‖  public half of a key pair drawn and thrown away
 ///     back  padding   public half of a key pair drawn and thrown away  ‖  72 fresh random bytes
 ///
-/// Random bytes would not do for the key halves. An X25519 public key is a
-/// field element below 2²⁵⁵ − 19, so the top bit of its last byte is always
-/// clear, and 32 uniformly random bytes have it set half the time. A pool in
-/// which one kind of row has that bit and the other does not would sort itself
-/// for anyone who looked. In the real `back` slot the first 32 bytes are the
-/// HPKE ephemeral public key, so they have the same shape for the same reason.
+/// Random bytes would not do for the key halves, and neither would random bytes
+/// with the top bit cleared. A public key is canonical (below 2²⁵⁵ − 19, so the
+/// top bit of its last byte is clear), lies on the curve rather than on its
+/// twist, and is in the prime-order subgroup; only a real key has all three.
+/// Random bytes have the top bit set half the time, and with it cleared they
+/// are still off the curve half the time (u³ + 486662u² + u is not a square
+/// modulo p), so a few rows would sort a pool with near certainty. A pool in
+/// which one kind of row has these properties and the other does not would sort
+/// itself for anyone who looked. In the real `back` slot the first 32 bytes are
+/// the HPKE ephemeral public key, so they have the same shape for the same
+/// reason. Anyone changing how padding is made must keep it drawn from real
+/// keys; `ZoneCCryptoTests` checks the first two properties.
 enum ZoneCSlots {
     /// The two slots, named as the fields are on the wire.
     enum Slot {
