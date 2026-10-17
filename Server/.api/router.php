@@ -101,6 +101,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/Areas.php';
 require_once __DIR__ . '/Seeds.php';
+require_once __DIR__ . '/Aloft.php';
 require_once __DIR__ . '/Limits.php';
 require_once __DIR__ . '/WalkStore.php';
 // `settings()`: `config.php` over the defaults, read the same way by the pages.
@@ -512,6 +513,18 @@ function route(string $method, string $path): never
         foreach ($tokens as $token) {
             if (!Seeds::isHex16($token)) respond(400, ['error' => 'Each token is 32 lowercase hex characters.']);
         }
+        // **The Zone C slots**, each optional: a space seed's row (64 bytes) and
+        // a sealed return (104), as hex. Builds 1-10 send neither. A slot that
+        // is not exactly its length in lowercase hex is the same 400 a bad
+        // token is, and its bytes are never logged (`respond` logs the route).
+        $slots = [];
+        foreach (['aloft' => Aloft::ALOFT_ROW * 2, 'back' => Aloft::BACK_ROW * 2] as $name => $length) {
+            if (!array_key_exists($name, $body)) continue;
+            if (!Seeds::isHexOfLength($body[$name], $length)) {
+                respond(400, ['error' => "$name is $length lowercase hex characters."]);
+            }
+            $slots[$name] = hex2bin($body[$name]);
+        }
         // **One phone, by the bag it asks with**: a phone sends every token
         // it holds each time, so the bag, sorted, is the same request after
         // request until it meets somebody new. An empty bag asks about nothing
@@ -527,8 +540,18 @@ function route(string $method, string $path): never
         // the *Alert me* switch, which stops this request, stops both.
         $asked = array_values($tokens);
         $store = store($settings);
-        respond(200, ['offers' => $store->offers()->touching($asked, time()),
-                      'wild' => $store->wild()->touching($asked)]);
+        $offers = $store->offers()->touching($asked, time());
+        $wild = $store->wild()->touching($asked);
+        // **Zone C, drawn first and stored after**, so a request never gets its
+        // own row back. Both bundles are always answered, at fixed lengths,
+        // whatever the pools hold; a pool that is locked answers with padding
+        // and drops the put (`Aloft`), so the status and the length never move.
+        $pools = Aloft::open($settings['aloft']);
+        $aloft = array_map('bin2hex', $pools->drawAloft());
+        $back = array_map('bin2hex', $pools->drawBack());
+        if (isset($slots['aloft'])) $pools->putAloft($slots['aloft']);
+        if (isset($slots['back'])) $pools->putBack($slots['back']);
+        respond(200, ['offers' => $offers, 'wild' => $wild, 'aloft' => $aloft, 'back' => $back]);
     }
 
     if ($path === '/api/walk/answer' && $method === 'POST') {
