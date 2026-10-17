@@ -369,6 +369,49 @@ final class ZoneCCryptoTests: XCTestCase {
         )
     }
 
+    /// **Every weak public key, not only zero.** `splitSeedSlot` takes any 32
+    /// bytes as a seed key and CryptoKit does not check that a point is a good
+    /// one. What protects a finder is that sealing to a low-order point fails
+    /// because the shared secret is all zero (RFC 9180 section 7.1.4, RFC 7748
+    /// section 6.1); had it sealed, the secret would be known to everyone and
+    /// the finder's own seed readable by anyone holding the pool (A2 review,
+    /// finding 4). So the whole blocklist is walked, each with the top bit of
+    /// the last byte set as well (RFC 7748 masks it): 0 and 1, the two points
+    /// of order 8, and p - 1, p and p + 1, which are the same classes written
+    /// non-canonically. All fourteen were checked to be refused by an
+    /// independent X25519 (OpenSSL) before they were listed.
+    func testSealingToAnyWeakPublicKeyThrows() throws {
+        func little(_ lowest: UInt8, fill: UInt8 = 0, last: UInt8 = 0) -> Data {
+            Data([lowest] + [UInt8](repeating: fill, count: 30) + [last])
+        }
+        let weakKeys: [(name: String, key: Data)] = [
+            ("0", little(0x00)),
+            ("1", little(0x01)),
+            ("order 8, first", bytes("e0eb7a7c3b41b8ae1656e3faf19fc46ada098deb9c32b1fd866205165f49b800")),
+            ("order 8, second", bytes("5f9c95bca3508c24b1d0b1559c83ef5b04445cc4581c8e86d8224eddd09f1157")),
+            ("p - 1", little(0xec, fill: 0xff, last: 0x7f)),
+            ("p", little(0xed, fill: 0xff, last: 0x7f)),
+            ("p + 1", little(0xee, fill: 0xff, last: 0x7f)),
+        ]
+
+        // The control: a good key seals, so a loop of throws is not a seal that
+        // always fails.
+        let good = Curve25519.KeyAgreement.PrivateKey()
+        XCTAssertNoThrow(try ZoneCReturn.seal(payload, to: good.publicKey, spaceSeed: newSpaceSeed()))
+
+        for (name, key) in weakKeys {
+            for topBitSet in [false, true] {
+                var bytes = key
+                if topBitSet { bytes[31] |= 0x80 }
+                let weakKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: bytes)
+                XCTAssertThrowsError(
+                    try ZoneCReturn.seal(payload, to: weakKey, spaceSeed: newSpaceSeed()),
+                    "sealed to the weak key \(name)\(topBitSet ? " with the top bit set" : "")"
+                )
+            }
+        }
+    }
+
     /// RFC 9180 appendix A.2.1: DHKEM(X25519, HKDF-SHA256), HKDF-SHA256,
     /// ChaCha20-Poly1305, base mode. The RFC's own ciphertexts, opened through
     /// the same `ciphersuite` constant the app seals with. CryptoKit cannot
