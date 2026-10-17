@@ -209,6 +209,31 @@ check_path /api/knot                    200 application/json
 check_path /api/seedbed                 200 application/json
 check_path /api/frame                   200 application/json
 check_path /api/wild                    200 application/json
+# The pending route, with its two Zone C slots. An empty bag with padding
+# slots (random bytes of the right lengths: 64 for `aloft`, 104 for `back`,
+# as hex) must be answered 200, with both bundles at their fixed shape: 128
+# rows of 128 hex for `aloft`, 128 rows of 208 for `back`. A pool file that
+# will not open, or a route that has lost the slots, shows here and nowhere
+# else, because the answer stays 200 either way. The slots are padding, so
+# whatever the pools take from this request is no more than they hold already.
+pending_body=$(python3 -c 'import json, secrets
+print(json.dumps({"tokens": [], "aloft": secrets.token_hex(64), "back": secrets.token_hex(104)}))')
+pending=$(curl -sS -w '\n%{http_code}' --max-time 25 -H 'Content-Type: application/json' \
+    -d "$pending_body" "$BASE/api/walk/pending" || true)
+pending_status=$(printf '%s' "$pending" | tail -n 1)
+if printf '%s' "$pending" | sed '$d' | python3 -c 'import json, re, sys
+body = json.load(sys.stdin)
+for key, length in (("aloft", 128), ("back", 208)):
+    rows = body[key]
+    if len(rows) != 128 or not all(isinstance(r, str) and re.fullmatch("[0-9a-f]{%d}" % length, r) for r in rows):
+        sys.exit(1)' 2>/dev/null && [ "$pending_status" = 200 ]
+then
+    printf '  ok    %-42s 200  aloft 128 x 128, back 128 x 208\n' /api/walk/pending
+else
+    printf '  BAD   %-42s %s   (wanted 200 with aloft 128 x 128 hex and back 128 x 208 hex)\n' \
+        /api/walk/pending "${pending_status:-no answer}"
+    fail=1
+fi
 # A plant's panel, which all ten area pages import: a page that cannot load
 # it cannot load at all.
 check_path /assets/js/plantpanel.js     200 application/javascript
