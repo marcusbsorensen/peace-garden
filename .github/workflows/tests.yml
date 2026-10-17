@@ -282,6 +282,35 @@ jobs:
       # or a sky drawn upside down actually shows.
       - name: The browser's sky is SeedCore's sky
         run: node tools/reference/check_sky.mjs
+      # Zone C (design/space-seeds-2026-10-16/DESIGN.md). The pools file holds
+      # two kinds of value and nothing else: no time, address, token, counter
+      # or order. This runs the store over a throwaway SQLite, then the route's
+      # use of it, and fails if either keeps more than that.
+      - name: The pools keep nothing but the values
+        run: php tools/reference/check_aloft_store.php
+      - name: The launch request carries the slots and the pools answer in kind
+        run: php tools/reference/check_aloft.php
+      # The space flora is drawn by SeedCore and by this port; the pinned
+      # vectors are space_flora_vectors.json. If they disagree one job goes
+      # red and the other stays green, which says which one moved.
+      - name: The space flora reference
+        run: python3 tools/reference/space_flora_reference.py
+      # The Zone C production key must never reach this public repository.
+      # ZoneCProductionKey.swift is ignored and lives on one Mac. These two
+      # steps fail if it is tracked or if the ignore rule stops matching.
+      # Neither prints a key; there is none here to print.
+      - name: No Zone C production key is tracked
+        run: |
+          if git ls-files | grep -q ZoneCProductionKey; then
+            echo "A path containing ZoneCProductionKey is tracked. Remove it from the index and rotate the key."
+            exit 1
+          fi
+      - name: The Zone C production key is still ignored
+        run: |
+          if ! git check-ignore -q App/PeaceGarden/ZoneC/ZoneCProductionKey.swift; then
+            echo "App/PeaceGarden/ZoneC/ZoneCProductionKey.swift is no longer ignored."
+            exit 1
+          fi
       - name: The site's own prose is commissioned, not drifting
         run: python3 tools/strings/check.py
       # The numeral rule, which nothing enforced until 6 September and which
