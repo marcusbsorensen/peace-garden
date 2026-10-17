@@ -14,6 +14,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../Server/.api/LongWalk.php';
 require_once __DIR__ . '/../../Server/.api/Offers.php';
 require_once __DIR__ . '/../../Server/.api/WalkStore.php';
+require_once __DIR__ . '/../../Server/.api/Aloft.php';
 require_once __DIR__ . '/../../Server/.api/backup.php';
 
 $checks = 0;
@@ -374,6 +375,65 @@ check('the option file is an option file', str_starts_with($file, "[client]\n"))
 threw('a password that would break out of the option file is refused', 'cannot go in an option file',
       static fn() => optionFile(['user' => 'gardener', 'password' => 'say "no"'],
                                 ['host' => '127.0.0.1', 'port' => '3306']));
+
+// MARK: The pools stay out
+
+// **Zone C's pools are in no copy** (DESIGN.md §4.4). They are a file of their
+// own, `../peacegarden-data/aloft.sqlite`, and a restore starts them empty. So
+// `KEPT` names neither table nor the file, and a copy taken by this script's own
+// code, beside a pool that holds rows, holds none of them. The pool is put in
+// the same folder as the walk here, which is where the real one lives.
+$names = array_map('strtolower', KEPT);
+check('the kept list names no aloft table', !in_array('aloft', $names, true));
+check('the kept list names no back table', !in_array('back', $names, true));
+check('the kept list names nothing that looks like a pool or the file',
+      array_filter($names, static fn(string $name): bool => str_contains($name, 'aloft')
+          || str_contains($name, 'back') || str_contains($name, 'pool') || str_contains($name, '.sqlite')) === []);
+
+$poolFile = "$room/aloft.sqlite";
+$aloftRow = str_repeat("\x5a\xa5", 32);
+$backRow = str_repeat("\xc3\x3c", 52);
+$pools = Aloft::open($poolFile);
+$pools->putAloft($aloftRow);
+$pools->putBack($backRow);
+unset($pools);
+check('the pool holds rows to be left out', is_file($poolFile));
+
+$poolInto = scratch();
+$ran = [];
+$status = 0;
+exec(sprintf('php %s %s 2>&1', escapeshellarg(dirname(__DIR__, 2) . '/Server/.api/backup.php'),
+     escapeshellarg($poolInto)), $ran, $status);
+check('a copy is taken beside a stocked pool: ' . implode(' ', $ran), $status === 0);
+$taken = glob("$poolInto/walk-*.sql.gz") ?: [];
+check('the copy is the one file', count($taken) === 1 && count(glob("$poolInto/*") ?: []) === 1);
+
+$whole = $taken === [] ? '' : (gzdecode((string) file_get_contents($taken[0])) ?: '');
+check('the copy has no aloft or back line in its preamble', $whole !== ''
+      && preg_match('/^-- rows (aloft|back) /m', $whole) !== 1);
+check('the copy holds no row of either pool', $whole !== ''
+      && !str_contains($whole, $aloftRow) && !str_contains($whole, $backRow));
+
+$marker = "-- A SQLite file follows, not SQL.\n";
+$from = strpos($whole, $marker);
+$to = strrpos($whole, "\n" . COMPLETED . "\n");
+$tables = null;
+if ($from !== false && $to !== false) {
+    $file = "$poolInto/dumped.sqlite";
+    file_put_contents($file, substr($whole, $from + strlen($marker), $to - $from - strlen($marker)));
+    try {
+        $dumped = new PDO("sqlite:$file", null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $tables = $dumped->query("SELECT name FROM sqlite_master WHERE type = 'table'")->fetchAll(PDO::FETCH_COLUMN);
+        unset($dumped);
+    } catch (Throwable) {
+        // Left null, which is what the checks below report.
+    }
+    unlink($file);
+}
+check('the dump holds the walk\'s tables', is_array($tables) && in_array('long_walk', $tables, true));
+check('the dump holds no aloft table and no back table',
+      is_array($tables) && !in_array('aloft', $tables, true) && !in_array('back', $tables, true));
+clear($poolInto);
 
 // MARK: The word
 
