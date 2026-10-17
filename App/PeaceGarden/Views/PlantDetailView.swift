@@ -1,5 +1,6 @@
 import SwiftUI
 import SeedCore
+@_spi(PeaceGarden) import PlantRender
 
 /// One kept plant, and the meeting it came from.
 struct PlantDetailView: View {

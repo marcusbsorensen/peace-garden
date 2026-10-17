@@ -1,5 +1,6 @@
 import SceneKit
 import SeedCore
+@_spi(PeaceGarden) import PlantRender
 
 /// The replayed plant, one SceneKit node per moment, built off the main thread.
 ///

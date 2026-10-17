@@ -1,20 +1,27 @@
 import SwiftUI
 import SceneKit
 import SeedCore
+import UIKit
 
 /// A still of a plant, for the garden grid.
 ///
 /// A grid of live SceneKit views would run several renderers at once for no
 /// benefit; these are rendered once off-screen and cached until the plant
 /// visibly changes.
-struct PlantThumbnail: View {
+public struct PlantThumbnail: View {
     let genome: Genome
     let growth: GrowthModel.State
     var size: CGFloat = 150
 
     @State private var image: UIImage?
 
-    var body: some View {
+    public init(genome: Genome, growth: GrowthModel.State, size: CGFloat = 150) {
+        self.genome = genome
+        self.growth = growth
+        self.size = size
+    }
+
+    public var body: some View {
         ZStack {
             StageBackdrop(palette: genome.palette)
             if let image {
@@ -31,8 +38,8 @@ struct PlantThumbnail: View {
 }
 
 @MainActor
-final class ThumbnailRenderer {
-    static let shared = ThumbnailRenderer()
+public final class ThumbnailRenderer {
+    public static let shared = ThumbnailRenderer()
 
     private let cache = NSCache<NSString, UIImage>()
 
@@ -92,7 +99,9 @@ final class ThumbnailRenderer {
         return "\(genome.seed.hex)-\(bucket)-\(Int(size))"
     }
 
-    func image(genome: Genome, growth: GrowthModel.State, size: CGFloat) -> UIImage? {
+    /// The plant as a transparent still, `size` points square, framed the way a
+    /// garden tile frames it. Cached by plant, growth bucket and size.
+    public func image(genome: Genome, growth: GrowthModel.State, size: CGFloat) -> UIImage? {
         let key = Self.key(genome: genome, growth: growth, size: size) as NSString
         if let cached = cache.object(forKey: key) { return cached }
 

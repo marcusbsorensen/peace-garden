@@ -1,5 +1,6 @@
 import SwiftUI
 import SeedCore
+import PlantRender
 
 /// The standing choices, and the three ways to start again.
 ///

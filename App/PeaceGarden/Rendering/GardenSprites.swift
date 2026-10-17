@@ -3,6 +3,7 @@ import simd
 import SeedCore
 import SwiftUI
 import UIKit
+@_spi(PeaceGarden) import PlantRender
 
 /// A plant as a still, drawn at the garden's own scale.
 ///

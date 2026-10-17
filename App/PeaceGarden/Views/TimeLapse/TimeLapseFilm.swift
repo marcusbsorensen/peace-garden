@@ -2,6 +2,7 @@ import AVFoundation
 import SceneKit
 import SeedCore
 import SwiftUI
+@_spi(PeaceGarden) import PlantRender
 
 /// The time-lapse as a film: its frames, or a twelve-second movie, for the
 /// share sheet to hand on.

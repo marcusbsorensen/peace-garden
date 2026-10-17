@@ -1,5 +1,6 @@
 import SwiftUI
 import SeedCore
+import PlantRender
 
 /// What this person's seed actually is, and what leaves the phone.
 ///

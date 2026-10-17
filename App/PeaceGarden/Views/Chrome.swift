@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+@_spi(PeaceGarden) import PlantRender
 
 /// The app's whole visual vocabulary, in one place.
 ///
@@ -60,7 +61,10 @@ enum Chrome {
     /// Near-black rather than black in the dark, and a warm near-white rather
     /// than white in the light: both give the plant somewhere to sit without
     /// the ground itself becoming the brightest or darkest thing on screen.
-    static let ground = adaptive(dark: .black, light: UIColor(white: 0.965, alpha: 1))
+    ///
+    /// Defined with the stage in PlantRender (`StageBackdrop.ground`), which paints
+    /// it under the plant and has to agree with it; this is that one value.
+    static let ground = StageBackdrop.ground
 
     private static func adaptive(dark: UIColor, light: UIColor) -> Color {
         Color(uiColor: UIColor { $0.userInterfaceStyle == .light ? light : dark })
@@ -415,24 +419,9 @@ enum GardenDaylight: String, CaseIterable, Sendable {
     }
 }
 
-/// How the plant itself is drawn.
-///
-/// Colour has always been the plants' alone in this app — every piece of chrome
-/// is white at four opacities on black, precisely so that the one saturated
-/// thing on screen is the thing you grew. These two alternatives give that up
-/// on purpose, and each is a different reason for wanting to.
-enum StagePlantStyle: String, CaseIterable, Sendable {
-    /// The plant as its seed drew it: its own palette, lit and shaded.
-    case full
-    /// One colour, still lit. The normal and roughness maps stay, so the form
-    /// is all there and only the hue is gone — which is a botanical plate
-    /// rather than a silhouette.
-    case monochrome
-    /// The mesh itself, unlit. What the plant is made of rather than what it
-    /// looks like, and the only view in the app that admits there is geometry
-    /// underneath.
-    case wireframe
-
+/// How the plant itself is drawn is `StagePlantStyle`, in PlantRender. What each
+/// answer is called, and the mark it wears on the seed screen, are the app's.
+extension StagePlantStyle {
     var label: LocalizedStringResource {
         switch self {
         case .full: return "Full colour"
@@ -440,10 +429,6 @@ enum StagePlantStyle: String, CaseIterable, Sendable {
         case .wireframe: return "Wireframe"
         }
     }
-
-    /// Whether the tint is the plant's whole colour, and therefore worth
-    /// letting somebody choose.
-    var isTinted: Bool { self != .full }
 
     /// The system's mark for each answer, on the seed screen's control
     /// (`PlantDrawingToggle`): a palette for the plant's own colours, a drop

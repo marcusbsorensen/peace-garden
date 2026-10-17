@@ -1,24 +1,44 @@
 import SwiftUI
 import SceneKit
 import SeedCore
+import UIKit
+
+/// Something that wants the stage's replay layer: the node a time-lapse hangs its
+/// plant on, and the live plant's opacity, so the two can hand over.
+///
+/// Peace Garden's time-lapse player is the only one. It lives in the app, where
+/// the score it plays and the sky it draws are, so the stage is handed to it
+/// through this rather than the package knowing about it.
+@_spi(PeaceGarden)
+@MainActor
+public protocol PlantStageReplay: AnyObject {
+    /// The scene the replay is drawn in. `PlantSceneView` hands itself over
+    /// when it is given this player.
+    func attach(_ stage: PlantSceneView.Coordinator)
+}
 
 /// The plant itself: full colour on black, turned by dragging.
 ///
 /// The plant rotates rather than the camera, so the lighting stays put and
 /// every side of the flower is lit the way the front is. Vertical drags tilt
 /// the camera instead, within a range that keeps the plant upright.
-struct PlantSceneView: UIViewRepresentable {
+public struct PlantSceneView: UIViewRepresentable {
     /// The one arrival: a seed opening, and the camera drawing back off it.
     ///
     /// Passing this puts the view under someone else's direction for a few
     /// seconds — the camera stops framing the plant and is told where to be
     /// instead. Passing `nil` hands it back.
-    struct Arrival: Equatable {
+    public struct Arrival: Equatable {
         /// `0` holds the camera in tight on the closed seed. `1` is the plant's
         /// own framing, which is where it stays for the rest of its life.
-        var pullBack: Double
+        public var pullBack: Double
         /// `0` is a closed seed. `1` is two halves laid back and gone.
-        var huskOpen: Double
+        public var huskOpen: Double
+
+        public init(pullBack: Double, huskOpen: Double) {
+            self.pullBack = pullBack
+            self.huskOpen = huskOpen
+        }
     }
 
     let genome: Genome
@@ -38,14 +58,61 @@ struct PlantSceneView: UIViewRepresentable {
     /// a screen with nothing written under the plant wants.
     var bandTop: CGFloat?
     /// Plays the plant's life again in place, when asked. See `TimeLapsePlayer`.
-    var timeLapse: TimeLapsePlayer?
+    var timeLapse: (any PlantStageReplay)?
     var onTap: (() -> Void)?
 
-    func makeCoordinator() -> Coordinator {
+    public init(
+        genome: Genome,
+        growth: GrowthModel.State,
+        isInteractive: Bool = true,
+        autoRotates: Bool = true,
+        arrival: Arrival? = nil,
+        style: StagePlantStyle = .full,
+        tint: Color = .white,
+        bandTop: CGFloat? = nil,
+        onTap: (() -> Void)? = nil
+    ) {
+        self.genome = genome
+        self.growth = growth
+        self.isInteractive = isInteractive
+        self.autoRotates = autoRotates
+        self.arrival = arrival
+        self.style = style
+        self.tint = tint
+        self.bandTop = bandTop
+        self.timeLapse = nil
+        self.onTap = onTap
+    }
+
+    /// The same, with a time-lapse player to hand the stage to. Peace Garden's
+    /// own screens use this one; `timeLapse` has no default so that a call
+    /// which leaves it out cannot be ambiguous with the public initialiser.
+    @_spi(PeaceGarden)
+    public init(
+        genome: Genome,
+        growth: GrowthModel.State,
+        isInteractive: Bool = true,
+        autoRotates: Bool = true,
+        arrival: Arrival? = nil,
+        style: StagePlantStyle = .full,
+        tint: Color = .white,
+        bandTop: CGFloat? = nil,
+        timeLapse: (any PlantStageReplay)?,
+        onTap: (() -> Void)? = nil
+    ) {
+        self.init(
+            genome: genome, growth: growth, isInteractive: isInteractive,
+            autoRotates: autoRotates, arrival: arrival, style: style, tint: tint,
+            bandTop: bandTop, onTap: onTap
+        )
+        self.timeLapse = timeLapse
+    }
+
+    public func makeCoordinator() -> Coordinator {
         Coordinator(genome: genome, onTap: onTap)
     }
 
-    func makeUIView(context: Context) -> SCNView {
+    public func makeUIView(context: Context) -> SCNView {
         let view = ResizingSceneView()
         view.onLayout = { [weak coordinator = context.coordinator] size in
             coordinator?.viewSizeChanged(to: size)
@@ -82,7 +149,7 @@ struct PlantSceneView: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: SCNView, context: Context) {
+    public func updateUIView(_ uiView: SCNView, context: Context) {
         context.coordinator.onTap = onTap
         context.coordinator.setStyle(style, tint: tint)
         context.coordinator.setBandTop(bandTop)
@@ -92,7 +159,7 @@ struct PlantSceneView: UIViewRepresentable {
         timeLapse?.attach(context.coordinator)
     }
 
-    static func dismantleUIView(_ uiView: SCNView, coordinator: Coordinator) {
+    public static func dismantleUIView(_ uiView: SCNView, coordinator: Coordinator) {
         coordinator.plantPivot.removeAllActions()
     }
 
@@ -108,11 +175,11 @@ struct PlantSceneView: UIViewRepresentable {
         }
     }
 
-    final class Coordinator: NSObject {
+    public final class Coordinator: NSObject {
         let plantPivot = SCNNode()
         /// Where a time-lapse hangs its replayed plant: on the turntable beside
         /// the live one, so the two turn as one and hand over without a jump.
-        let replayRoot = SCNNode()
+        @_spi(PeaceGarden) public let replayRoot = SCNNode()
         let cameraRig = SCNNode()
         let cameraNode = PlantSceneBuilder.makeCameraNode()
 
@@ -133,7 +200,8 @@ struct PlantSceneView: UIViewRepresentable {
         private var heldBounds: (min: SIMD3<Float>, max: SIMD3<Float>)?
         /// How much of the live plant shows. Below 1 only while a time-lapse
         /// hands the stage over to its replay and back.
-        var livePlantOpacity: CGFloat = 1 {
+        @_spi(PeaceGarden)
+        public var livePlantOpacity: CGFloat = 1 {
             didSet { plantNode?.opacity = livePlantOpacity }
         }
         private var viewSize: CGSize = .zero
@@ -150,7 +218,7 @@ struct PlantSceneView: UIViewRepresentable {
         ///
         /// Only for a screen with no band under the plant. Where there is one,
         /// the plant stands on it and the composition follows from that instead.
-        static let settle: Float = 0.08
+        @_spi(PeaceGarden) public static let settle: Float = 0.08
 
         /// How far above the band the plant is framed to stand, in points.
         ///
@@ -401,13 +469,15 @@ struct PlantSceneView: UIViewRepresentable {
         }
 
         /// A time-lapse takes the stage: the aim holds where it is.
-        func beginTimeLapse() {
+        @_spi(PeaceGarden)
+        public func beginTimeLapse() {
             heldBounds = meshBounds
             applyFraming()
         }
 
         /// And gives it back: the live plant whole, the replay gone.
-        func endTimeLapse() {
+        @_spi(PeaceGarden)
+        public func endTimeLapse() {
             heldBounds = nil
             livePlantOpacity = 1
             for node in replayRoot.childNodes { node.removeFromParentNode() }

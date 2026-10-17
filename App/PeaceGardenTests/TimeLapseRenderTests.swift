@@ -3,6 +3,7 @@ import SwiftUI
 import UIKit
 import XCTest
 @testable import PeaceGarden
+@_spi(PeaceGarden) import PlantRender
 
 /// **The pictures in `design/time-lapse-2026-10-13/`.**
 ///

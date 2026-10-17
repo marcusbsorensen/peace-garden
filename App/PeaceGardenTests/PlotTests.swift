@@ -4,6 +4,7 @@ import UIKit
 import XCTest
 import SeedCore
 @testable import PeaceGarden
+import PlantRender
 
 /// The plot: the projection, the cut, and the one scale every plant is drawn at.
 ///

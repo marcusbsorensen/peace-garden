@@ -19,7 +19,8 @@ import SeedCore
 /// scalar roughness and flat normals give every leaf one uniform sheen, and no
 /// amount of colour detail recovers from that: the eye reads shape from how
 /// light moves across a surface, not from what the surface is coloured.
-enum GradientTexture {
+@_spi(PeaceGarden)
+public enum GradientTexture {
     /// `NSCache` is documented as safe to use from several threads at once, and
     /// has been since it was introduced — it simply predates `Sendable` and has
     /// never been annotated. `nonisolated(unsafe)` says that out loud rather
@@ -40,7 +41,8 @@ enum GradientTexture {
 
     /// Lets go of every bake, when the garden closes: the stage's one plant
     /// bakes its own again in a few milliseconds.
-    static func forget() {
+    @_spi(PeaceGarden)
+    public static func forget() {
         cache.removeAllObjects()
     }
 

@@ -1,6 +1,7 @@
 import SwiftUI
 import SceneKit
 import SeedCore
+@_spi(PeaceGarden) import PlantRender
 
 /// Plays a time-lapse in place, on the plant's own screen.
 ///
@@ -21,7 +22,7 @@ import SeedCore
 /// than the run's own ending.
 @MainActor
 @Observable
-final class TimeLapsePlayer {
+final class TimeLapsePlayer: PlantStageReplay {
     /// Whether a run is under way, for the play glyph. False again the moment
     /// a stop is asked for, though the sky takes a little longer to leave.
     private(set) var isPlaying = false

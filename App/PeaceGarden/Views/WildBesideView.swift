@@ -1,5 +1,6 @@
 import SwiftUI
 import SeedCore
+import PlantRender
 
 /// The three things a gardener may show beside a plant in the Wild Fields,
 /// as three small switches in a row: their name, where they met, when they

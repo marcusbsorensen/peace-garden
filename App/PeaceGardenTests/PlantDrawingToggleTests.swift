@@ -2,6 +2,7 @@ import SwiftUI
 import UIKit
 import XCTest
 @testable import PeaceGarden
+import PlantRender
 
 /// How the plant is drawn, on the seed screen as well as in Settings (Marcus,
 /// 13 October): one setting, two doors.
