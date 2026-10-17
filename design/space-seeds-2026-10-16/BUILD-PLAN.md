@@ -8,7 +8,7 @@
 - **Cloud.** S1–S3, S5, W1, W2, T1's language routines and X1 need only PHP, Python or Node, so they can run as cloud routines (`~/.claude/CLAUDE.md`, "Running work in the cloud": push first, one routine per job, strip the connectors, set the model to Sonnet because the cloud default is Opus). Xcode work is local.
 - **No polling.** An agent starts a long job with a log and a clock file (`rc=`, `DONE`) and ends its turn.
 - **One branch per package**, `claude/zonec-<id>`, committed and pushed after every step. The coordinator merges. No agent pushes to main or deploys. Peace Garden never edits the Hub's or Autonaut's repos.
-- **Step 0 (Marcus):** merge `claude/space-seeds-design` to main (docs only), so cloud routines, which clone from GitHub, can read `DESIGN.md` and this plan.
+- **Step 0:** no merge to main is needed. Every package branches from `origin/claude/space-seeds-design`, which cloud routines check out after cloning.
 - **Traps for agents.** The token guard blocks bare `grep`, `cat`, `curl` and unbounded `git show`. The Xcode project is gitignored: `xcodegen generate` after every merge. Check `df -h /System/Volumes/Data` before Xcode work (34 GB free at 97% on 16 October). Live PHP is `php83` over ssh. Questions to Marcus are numbered, lettered, recommendation first, with pictures for anything visual.
 - **Single owners.** No two packages that can run together touch a file:
   - `Localizable.xcstrings`: T1 (everyone else writes English literals). `GardenModel.swift`: A3, then A5. `PlantStageView.swift`: A6.
@@ -71,7 +71,7 @@
 
 **A0. App Group and transit folder** · M · Sonnet · needs: nothing (G6 only for a signed device build)
 - Changed: `App/PeaceGarden/Resources/PeaceGarden.entitlements` (`group.com.interfulgent.suite`), `App/PeaceGarden/Resources/PrivacyInfo.xcprivacy` (file-timestamp category, reason C617.1, beside the UserDefaults entry at 57–70; R5).
-- New: `App/PeaceGarden/ZoneC/SuiteGroup.swift` (the container behind a protocol so tests inject a temp directory; `NSFileCoordinator`; atomic writes; dates set to 1 January 2001 on files and directories and read back; `isExcludedFromBackup` on `Seeds/v1`), `SuiteTransit.swift`, `App/PeaceGardenTests/SuiteTransitTests.swift`.
+- New: `App/PeaceGarden/ZoneC/SuiteGroup.swift` (the container behind a protocol so tests inject a temp directory; `NSFileCoordinator`; atomic writes staged as `Seeds/v1/tmp/peacegarden-<random>`, dated and flagged there, then renamed into `in/` (DESIGN §3, agreed with Autonaut 17 October), own `peacegarden-*` leftovers cleared at launch, `tmp/` never read; dates set to 1 January 2001 on files and on `Presence/v1`, `out`, `in` and `tmp` after each write, and read back; `isExcludedFromBackup` on `Seeds/v1`), `SuiteTransit.swift`, `App/PeaceGardenTests/SuiteTransitTests.swift`.
 - `SuiteTransit` takes `out/<random>` only if it is exactly `{"v":1,"r":"<32 lowercase hex>"}` (else deletes it unread); writes `in/<random>` as `{"v":1,"seed":"<64 hex>"}` only while fewer than 3 wait; keeps the `exchange` marker; writes `Presence/v1/peacegarden` only when missing; reads `Presence/v1/autonaut`.
 - Tests: strict parse (extra key, uppercase, short, wrong version all deleted); cap of 3; a second launch leaves the presence file's dates alone; every file and directory reads back 1 January 2001, and the test records what `st_ctime` shows (R6); backup flag set; the code writes only its own files and reads only `out/`, `Presence/v1/autonaut` and its own.
 
@@ -198,6 +198,8 @@
 9. **"A start" is a cold start.** The request runs from `.task` on the root view (`PeaceGardenApp.swift:42`), which does not run again when the app comes back from suspension. Phones that rarely cold-start send fewer than the 2 a day that §5.3's table and the 60-launch record life assume (DESIGN.md:317). Check on a real phone in TestFlight; 15A already schedules a revisit.
 
 ## 6. Decisions for Marcus (recommendation first)
+
+**Decided 17 October: 1A, 2A, 3A.** Building starts now: server and words as cloud routines, app packages locally, two at a time.
 
 1. **Ship order.**
    - A (recommended): build 11 carries the padded request, the relabelled switch and the privacy text, with Zone C dormant (no door without Autonaut's presence file); the flora and the Zone C view follow in build 12. The crowd exists before the first space seed, and G1 leaves the critical path.

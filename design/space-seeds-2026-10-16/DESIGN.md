@@ -89,7 +89,12 @@ Seeds/v1/
   exchange                  written by Peace Garden while its launch request is switched on
   out/<random>              a seed the person has sent; Autonaut writes, Peace Garden takes
   in/<random>               a seed found for the person; Peace Garden writes, Autonaut takes
+  tmp/<app>-<random>        staging: each app writes here, sets dates and the backup flag, then renames into out/ or in/
 ```
+
+**Every write is staged (agreed with Autonaut, 17 October).** A file is written whole under `Seeds/v1/tmp/<app>-<random>` (`autonaut-` or `peacegarden-`), given the fixed dates and the no-backup flag, then renamed into `out/` or `in/`. So a file in `out/` or `in/` is always complete, and a malformed one can be deleted on sight. Neither app reads `tmp/`; each clears only its own prefix at launch. Because every date is fixed, no reader can tell a file's age: nothing may depend on it. Both apps also set the fixed dates on `Presence/v1`, `Seeds/v1/out`, `in` and `tmp` after each write, since a write changes its directory's date.
+
+**On a Mac** Autonaut uses the team-prefixed `R94VDZ56RY.group.com.interfulgent.suite`. Peace Garden is iOS only; run on an Apple-silicon Mac as an iPad app it keeps the iOS id, never sees Autonaut's container, and Zone C stays shut there. A future Mac build would take the prefixed id.
 
 | File | Content, and nothing else |
 |---|---|
