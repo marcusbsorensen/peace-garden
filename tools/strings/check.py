@@ -24,7 +24,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 CATALOGUES = ROOT / "Server/strings"
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from commission import (AREAS, CLAIMS, FRONT, MEANINGS, PRIVACY, UPDATE,  # noqa: E402
-                        WEAR, WILD, english)
+                        WEAR, WILD, ZONEC, english)
 
 # How much longer than the English a string may be before the layout is at risk.
 #
@@ -437,6 +437,10 @@ def main():
                  # 2026), a group of its own as the ninth is.
                  + problems_for(code, catalogue, source, UPDATE,
                                 "the update check")
+                 # And the eleventh, on what the pools keep (Zone C, October
+                 # 2026), a group of its own like the ninth and tenth.
+                 + problems_for(code, catalogue, source, ZONEC,
+                                "what the pools keep")
                  + meaning_problems_for(code, catalogue, app)
                  + avoid_problems_for(code, catalogue, app)
                  + area_problems_for(catalogue, source))
