@@ -276,9 +276,8 @@ PRIVACY = {
             "Say what the two values are for, or name Autonaut. `privacy11` "
             "says what is kept; this sentence says only what is sent.",
             "Say *a handful* is a number. It is a few, as the English says.",
-            "Name the setting differently from the app's own switch, if your "
-            "language has the app. The switch reads *Ask the garden for news "
-            "when it opens*.",
+            "Name the setting with the app's own switch label, if your "
+            "language has the app. The switch reads *News from the garden*.",
         ],
     },
     "privacy5": {
@@ -1133,7 +1132,7 @@ ZONEC = {
             "pools, one of 64-byte values and one of 104-byte values.",
             "Each value is kept alone, with no time, address or order.",
             "A value stays until newer ones push it out.",
-            "The pools are in no backup.",
+            "The garden's nightly backup leaves the pools out.",
             "A reply opens only on the phone that sent its seed.",
             "Seeds from Autonaut travel this way too.",
             "To the web garden, every value is random numbers.",

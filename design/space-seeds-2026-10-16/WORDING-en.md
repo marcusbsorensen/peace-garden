@@ -1,5 +1,7 @@
 # Zone C: the English wording
 
+**Read and decided by Marcus, 17 October (G2a):** privacy7 and the About paragraph as written; privacy11 with "The garden's nightly backup leaves the pools out." (a line on 20i's snapshots follows its answer, 8A); the switch label *News from the garden* with the note "The app asks the web garden each time it starts."; the Zone C row *Zone C* / "Seeds can pass between this app and Autonaut."
+
 Package W1, 17 October 2026. This is the exact English to read before any translation. Voice: British English, short sentences, each thing said as what it is and does. Settings text is a plain label and one short line; the reasoning sits on the privacy page and in About.
 
 Nothing here is translated yet. `privacy7` and `privacy11` are already in `Server/assets/js/strings.js`. The rest is a draft, and the app's Swift is not touched by W1 (A5 writes it).
@@ -22,7 +24,7 @@ Note: "With news from the garden on" names the relabelled switch in section 3 by
 
 *Lives in:* `Server/assets/js/strings.js`, shown on `/privacy` straight after `privacy7`. New. It names Autonaut once, plainly.
 
-> The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The pools are in no backup. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+> The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
 
 ## 3. The switch: label and note (draft)
 
@@ -35,7 +37,7 @@ Note: "With news from the garden on" names the relabelled switch in section 3 by
 
 **Draft**
 
-> Ask the garden for news when it opens
+> News from the garden
 > The app asks the web garden each time it starts.
 
 Other lines for the note, if that one is wrong:

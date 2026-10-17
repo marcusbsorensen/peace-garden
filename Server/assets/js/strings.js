@@ -608,7 +608,7 @@ export const EN = Object.freeze({
   // uses it. The web garden holds no key and cannot tell a seed or a reply
   // from random numbers, which is what the last sentence says.
   privacy11:
-    "The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The pools are in no backup. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.",
+    "The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.",
   // Release, since 1 October 2026: `WildRelease` in SeedCore is what is sent,
   // `router.php`'s release route what is checked, and `WildStore.php` what is
   // kept — the seed and the two parents, and no column for anything else. The
