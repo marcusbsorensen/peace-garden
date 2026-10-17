@@ -143,6 +143,38 @@ struct SuiteTransit: Sendable {
         try group.remove("\(SuiteGroup.outFolder)/\(seed.name)")
     }
 
+    /// Deletes everything waiting in `out/` and in `in/`, well-formed or not.
+    /// For "Reset everything": a seed the person sent, or one Peace Garden found
+    /// for them, belongs to the garden that is being emptied. Returns how many
+    /// files went.
+    ///
+    /// A file that will not go does not stop the others. The first failure is
+    /// thrown once every folder has been tried.
+    @discardableResult
+    func eraseWaitingSeeds() throws -> Int {
+        var removed = 0
+        var firstFailure: (any Error)?
+        for folder in [SuiteGroup.outFolder, SuiteGroup.inFolder] {
+            let names: [String]
+            do {
+                names = try group.names(in: folder)
+            } catch {
+                firstFailure = firstFailure ?? error
+                continue
+            }
+            for name in names {
+                do {
+                    try group.remove("\(folder)/\(name)")
+                    removed += 1
+                } catch {
+                    firstFailure = firstFailure ?? error
+                }
+            }
+        }
+        if let firstFailure { throw firstFailure }
+        return removed
+    }
+
     /// The sixteen bytes in an `out` file, or nil unless it is exactly
     /// `{"v":1,"r":"<32 lowercase hex>"}` in the sense above.
     static func parseSentSeed(_ data: Data) -> Data? {

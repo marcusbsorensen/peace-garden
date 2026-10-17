@@ -124,6 +124,11 @@ struct AboutView: View {
                     .foregroundStyle(Chrome.sectionLabel)
                 paragraph("A seed planted while this is on carries the coordinates the phone measured, to five decimal places. Nothing is looked up and no place is named — the numbers are the honest record, and a map can say the rest.")
             }
+
+            // What the app asks of the web garden on its own, and where Zone C
+            // is kept (Marcus, 17 October 2026, word for word). `privacy7` and
+            // `privacy11` on the website say the same, and the two should agree.
+            paragraph("Each time the app starts, it asks the web garden for news. The request carries two random-looking values, and the answer brings back a handful of each. Seeds that reach you from Autonaut, and the plants they grow, are kept with your garden in your phone's backups.")
         }
     }
 

@@ -17,6 +17,10 @@ final class AboutSheetTests: XCTestCase {
     private static let meeting = "When you meet someone, your phones connect directly, encrypted, and each hands the other its seed, when that seed was made, its plant's name, the name you chose to show, whether a place may be kept with the meeting, and two random numbers: one that makes the new plant, and one the other phone can use later to offer that plant to the web garden. Each phone keeps both second numbers with the plant, and a number for the meeting made from the first two."
     private static let coordinates = "A seed planted while this is on carries the coordinates the phone measured, to five decimal places. Nothing is looked up and no place is named — the numbers are the honest record, and a map can say the rest."
 
+    /// The paragraph on the request at each start (Marcus, 17 October 2026,
+    /// word for word), which follows the one on a logged place.
+    private static let asking = "Each time the app starts, it asks the web garden for news. The request carries two random-looking values, and the answer brings back a handful of each. Seeds that reach you from Autonaut, and the plants they grow, are kept with your garden in your phone's backups."
+
     override func setUp() async throws {
         try await super.setUp()
         host = AccessibilityHost()
@@ -88,6 +92,24 @@ final class AboutSheetTests: XCTestCase {
         XCTAssertTrue(close.accessibilityActivate())
         try await Task.sleep(for: .milliseconds(200))
         XCTAssertTrue(closed)
+    }
+
+    /// **The request at each start is said under Privacy, after the logged
+    /// place**, and Settings keeps to its one short line.
+    func testThePrivacyPartSaysWhatTheAppAsksAtEachStart() async throws {
+        try await host.show(AboutView(startsAt: .privacy) {})
+        try await assertTheSheetShowsPrivacy()
+        let found = host.elements()
+        let coordinates = try XCTUnwrap(found[String(localized: String.LocalizationValue(Self.coordinates))])
+        let asking = try XCTUnwrap(found[String(localized: String.LocalizationValue(Self.asking))],
+                                   "the paragraph is on the sheet: \(found.keys.sorted())")
+        XCTAssertGreaterThan(asking.accessibilityFrame.minY, coordinates.accessibilityFrame.minY,
+                             "after the paragraph on a logged place")
+    }
+
+    func testSettingsDoesNotCarryThatParagraph() async throws {
+        try await host.show(settings())
+        XCTAssertNil(host.elements()[String(localized: String.LocalizationValue(Self.asking))])
     }
 
     /// The account is the catalogue's translated key, which says *made*, and

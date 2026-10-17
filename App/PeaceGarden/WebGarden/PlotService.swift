@@ -56,9 +56,9 @@ struct PlotService: Sendable {
     ///
     /// **It is prompted, not polled.** The request is made when a gardener
     /// opens the screen that asks the question, and never otherwise. That is
-    /// what keeps it clear of the *Alert me when a joint seed is shared*
-    /// switch, which exists to stop an **unprompted** request — `pending` is
-    /// the one a phone makes on its own, and this is not.
+    /// what keeps it clear of the *News from the garden* switch, which exists
+    /// to stop an **unprompted** request — `pending` is the one a phone makes
+    /// on its own, and this is not.
     ///
     /// An area this build has never heard of is dropped rather than guessed at.
     /// `Area.init(from:)` reads an unknown name as the Long Walk, which is the

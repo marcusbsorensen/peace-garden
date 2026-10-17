@@ -29,6 +29,26 @@ final class SettingsClarityTests: XCTestCase {
         XCTAssertEqual(PlantingLocationMode.custom.rawValue, "custom")
     }
 
+    /// Stored in people's preferences; the label moved on 17 October 2026 and
+    /// the key did not, so nobody's choice did either (A5). Zone C's own switch
+    /// has a key of its own and is off until it is turned on.
+    func testTheTwoSwitchesKeepTheirStoredNames() {
+        XCTAssertEqual(Sharing.invitationsKey, "sharing.invitations.v1")
+        XCTAssertEqual(ZoneCExchange.enabledKey, "zonec.enabled.v1")
+        XCTAssertTrue(Sharing.invitationsDefault)
+
+        let before = UserDefaults.standard.object(forKey: ZoneCExchange.enabledKey)
+        defer {
+            if let before {
+                UserDefaults.standard.set(before, forKey: ZoneCExchange.enabledKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: ZoneCExchange.enabledKey)
+            }
+        }
+        UserDefaults.standard.removeObject(forKey: ZoneCExchange.enabledKey)
+        XCTAssertFalse(ZoneCExchange.switchFromDefaults(), "consent cannot start on")
+    }
+
     /// The sun is orange and the moon yellow, and the middle answer has both.
     func testEachLightTakesItsOwnColour() {
         XCTAssertEqual(GardenDaylight.always.parts.map { $0.light }, [.sun])

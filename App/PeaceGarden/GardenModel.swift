@@ -22,6 +22,11 @@ final class GardenModel {
     private let store: GardenStore
     private var clock: Task<Void, Never>?
 
+    /// The suite's shared folder, as Zone C reaches it: the folders, the two
+    /// markers, and the seeds that wait in `out/` and `in/`. Held so that a test
+    /// can point it at a temporary directory instead of the real App Group.
+    let suite: SuiteTransit
+
     /// The phone's side of the shared garden. Held rather than made per call so
     /// a test can hand the model a service that never touches a network.
     let plots: PlotService
@@ -30,8 +35,9 @@ final class GardenModel {
     /// leaves the battery alone.
     private static let tickInterval: Duration = .seconds(20)
 
-    init(store: GardenStore, plots: PlotService? = nil) {
+    init(store: GardenStore, plots: PlotService? = nil, suite: SuiteTransit = SuiteTransit()) {
         self.store = store
+        self.suite = suite
 #if DEBUG
         // A developer's own service, when one is named on the command line.
         self.plots = plots ?? PlotService(origin: Developer.shared.plotService ?? PlotService.origin)
@@ -581,7 +587,7 @@ final class GardenModel {
         // other gardener chose. Same request, same switch.
         let tokens = garden.plants.compactMap(\.tokens?.oursHex)
             + (garden.released ?? []).map(\.tokens.oursHex)
-        let exchange = zoneC ?? ZoneCExchange(besideGardenAt: store)
+        let exchange = zoneC ?? ZoneCExchange(transit: suite, store: zoneCStore)
         guard let heard = try? await exchange.ask(plots: plots, tokens: tokens) else { return }
 
         for notice in heard.wild { hear(notice) }
@@ -664,12 +670,49 @@ final class GardenModel {
     ///
     /// Leaves no identity behind, so the app returns to first light and the
     /// next seed is minted the way the first one was.
+    ///
+    /// **Zone C goes with it.** Its own seed, its records and its plants are in
+    /// this phone's backups beside the garden, and a seed still waiting in the
+    /// suite's `out/` or `in/` is the garden's too, so all of them are erased.
+    /// Neither switch moves: whether the app asks for news and whether Zone C is
+    /// on are the person's choices, not part of the garden. Best effort, as the
+    /// rest of a reset is quiet: a file that will not go is left for the next
+    /// reset rather than stopping this one.
     func resetEverything() {
         garden = Garden()
         incoming = .none
         pendingLink = nil
         isArriving = false
         persist()
+        try? zoneCStore.erase()
+        _ = try? suite.eraseWaitingSeeds()
+    }
+
+    /// Zone C's own file, beside the garden's.
+    private var zoneCStore: ZoneCStore { ZoneCStore(besideGardenAt: store) }
+
+    // MARK: - The suite's folder
+
+    /// At each launch: makes the suite's folders and Peace Garden's presence
+    /// marker if they are missing, and brings `Seeds/v1/exchange` in line with
+    /// the two switches. It is there only while **both** "News from the garden"
+    /// and Zone C are on, and deleted otherwise, so Autonaut offers "Send as a
+    /// seed" only to a phone that will take the seed.
+    ///
+    /// The presence marker does not follow either switch (`SuiteTransit.prepare`).
+    /// Quiet about trouble, as the rest of Zone C is: a phone without the suite's
+    /// folder has nothing to bring in line.
+    ///
+    /// Run again when either switch is turned over in Settings, so that a choice
+    /// takes effect at once and not at the next start. The file work runs off
+    /// the main actor.
+    func reconcileSuite() async {
+        let suite = suite
+        let bothAreOn = Sharing.wantsInvitations && ZoneCExchange.switchFromDefaults()
+        await Task.detached(priority: .utility) {
+            try? suite.prepare()
+            try? suite.setExchangeMarker(present: bothAreOn)
+        }.value
     }
 
     /// Forgets every plant grown with somebody, and keeps this person's seed.
