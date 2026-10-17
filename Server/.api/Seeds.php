@@ -27,6 +27,16 @@ final class Seeds
         return is_string($value) && preg_match('/\A[0-9a-f]{32}\z/', $value) === 1;
     }
 
+    /**
+     * Lowercase hex of exactly `$length` characters: a pool slot, 128 for a
+     * space seed's row and 208 for a sealed return's. Length-checked here so a
+     * short or long slot is the same 400 a short token is.
+     */
+    public static function isHexOfLength(mixed $value, int $length): bool
+    {
+        return is_string($value) && strlen($value) === $length && preg_match('/\A[0-9a-f]+\z/', $value) === 1;
+    }
+
     /** SHA-256 over the domain, a zero byte, then each part with a big-endian length. */
     public static function digest(string $domain, string ...$parts): string
     {

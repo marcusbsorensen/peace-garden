@@ -245,6 +245,73 @@ final class ZoneCCryptoTests: XCTestCase {
         }
     }
 
+    /// **The top bit is not the whole of it** (A2 review, finding 5). A real
+    /// key's u-coordinate is canonical (below p = 2²⁵⁵ - 19, which is why its
+    /// top bit is clear) and lies on the curve rather than on its twist. About
+    /// half of all field elements are on the twist, so 32 random bytes with the
+    /// top bit cleared would still sort a pool if padding were made that way:
+    /// u³ + 486662u² + u is a square modulo p for a key and for half of those.
+    /// Padding is built from real keys, so none of it can be told apart; this
+    /// test would catch a later "fix" that clears the top bit of random bytes
+    /// instead.
+    ///
+    /// The curve check is Euler's criterion in a small 256-bit helper at the
+    /// foot of this file. It is checked first against values made in Python,
+    /// then run on a control (random bytes with the top bit cleared, about half
+    /// of which are on the curve) and then on every kind of key half a pool row
+    /// carries.
+    func testPaddingKeysLieOnTheCurveAndRandomBytesWithTheTopBitClearedOftenDoNot() throws {
+        // The helper, against values made elsewhere: u = 0 to 11 as Python's
+        // pow(z, (p - 1) / 2, p) says, p - 1 (the point of order 4), and a
+        // long value that is on the curve.
+        let expected: [UInt32: Bool] = [
+            0: true, 1: true, 2: false, 3: false, 4: true, 5: false,
+            6: true, 7: true, 8: true, 9: true, 10: true, 11: true,
+        ]
+        for (u, onCurve) in expected {
+            XCTAssertEqual(Field25519.isOnCurve(Field25519(small: u)), onCurve, "u = \(u)")
+        }
+        var pMinusOne = Field25519.p
+        pMinusOne.limbs[0] -= 1
+        XCTAssertFalse(Field25519.isOnCurve(pMinusOne), "p - 1")
+        let long = Field25519(littleEndian: Data(repeating: 0xd1, count: 31) + [0x51])
+        XCTAssertTrue(long.isBelowP)
+        XCTAssertTrue(Field25519.isOnCurve(long))
+        // Fermat's little theorem: a^(p-1) = 1, which only holds if the
+        // multiplication and the reduction are right.
+        XCTAssertEqual(Field25519(small: 7).raised(to: Field25519.pMinusOne), .one)
+        XCTAssertFalse(Field25519(littleEndian: Data(repeating: 0xff, count: 32)).isBelowP)
+
+        func isCanonicalAndOnCurve(_ key: Data) -> Bool {
+            let u = Field25519(littleEndian: key)
+            return u.isBelowP && Field25519.isOnCurve(u)
+        }
+
+        // The control: random bytes with the top bit cleared are canonical
+        // (all but about 2⁻²⁵⁴ of them) and on the curve about half the time.
+        var randomOnCurve = 0
+        let trials = 300
+        for _ in 0..<trials {
+            var row = random(32)
+            row[31] &= 0x7f
+            if isCanonicalAndOnCurve(row) { randomOnCurve += 1 }
+        }
+        XCTAssertGreaterThan(randomOnCurve, trials / 4, "the control no longer fails random bytes half the time")
+        XCTAssertLessThan(randomOnCurve, trials * 3 / 4, "the control no longer passes random bytes half the time")
+
+        // And every key half a pool row carries is on the curve, canonical.
+        let seedKey = Curve25519.KeyAgreement.PrivateKey()
+        let spaceSeed = newSpaceSeed()
+        for _ in 0..<100 {
+            XCTAssertTrue(isCanonicalAndOnCurve(ZoneCSlots.seedPadding().suffix(32)), "aloft padding")
+            XCTAssertTrue(isCanonicalAndOnCurve(ZoneCSlots.returnPadding().prefix(32)), "back padding")
+            let sealed = try ZoneCReturn.seal(payload, to: seedKey.publicKey, spaceSeed: spaceSeed)
+            XCTAssertTrue(isCanonicalAndOnCurve(sealed.prefix(32)), "a real return's ephemeral key")
+            let slot = try XCTUnwrap(ZoneCSlots.seedSlot(spaceSeed: spaceSeed, seedKey: seedKey))
+            XCTAssertTrue(isCanonicalAndOnCurve(slot.suffix(32)), "a real seed's key")
+        }
+    }
+
     func testTwoPaddingsDiffer() {
         XCTAssertNotEqual(ZoneCSlots.seedPadding(), ZoneCSlots.seedPadding())
         XCTAssertNotEqual(ZoneCSlots.returnPadding(), ZoneCSlots.returnPadding())
@@ -369,6 +436,49 @@ final class ZoneCCryptoTests: XCTestCase {
         )
     }
 
+    /// **Every weak public key, not only zero.** `splitSeedSlot` takes any 32
+    /// bytes as a seed key and CryptoKit does not check that a point is a good
+    /// one. What protects a finder is that sealing to a low-order point fails
+    /// because the shared secret is all zero (RFC 9180 section 7.1.4, RFC 7748
+    /// section 6.1); had it sealed, the secret would be known to everyone and
+    /// the finder's own seed readable by anyone holding the pool (A2 review,
+    /// finding 4). So the whole blocklist is walked, each with the top bit of
+    /// the last byte set as well (RFC 7748 masks it): 0 and 1, the two points
+    /// of order 8, and p - 1, p and p + 1, which are the same classes written
+    /// non-canonically. All fourteen were checked to be refused by an
+    /// independent X25519 (OpenSSL) before they were listed.
+    func testSealingToAnyWeakPublicKeyThrows() throws {
+        func little(_ lowest: UInt8, fill: UInt8 = 0, last: UInt8 = 0) -> Data {
+            Data([lowest] + [UInt8](repeating: fill, count: 30) + [last])
+        }
+        let weakKeys: [(name: String, key: Data)] = [
+            ("0", little(0x00)),
+            ("1", little(0x01)),
+            ("order 8, first", bytes("e0eb7a7c3b41b8ae1656e3faf19fc46ada098deb9c32b1fd866205165f49b800")),
+            ("order 8, second", bytes("5f9c95bca3508c24b1d0b1559c83ef5b04445cc4581c8e86d8224eddd09f1157")),
+            ("p - 1", little(0xec, fill: 0xff, last: 0x7f)),
+            ("p", little(0xed, fill: 0xff, last: 0x7f)),
+            ("p + 1", little(0xee, fill: 0xff, last: 0x7f)),
+        ]
+
+        // The control: a good key seals, so a loop of throws is not a seal that
+        // always fails.
+        let good = Curve25519.KeyAgreement.PrivateKey()
+        XCTAssertNoThrow(try ZoneCReturn.seal(payload, to: good.publicKey, spaceSeed: newSpaceSeed()))
+
+        for (name, key) in weakKeys {
+            for topBitSet in [false, true] {
+                var bytes = key
+                if topBitSet { bytes[31] |= 0x80 }
+                let weakKey = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: bytes)
+                XCTAssertThrowsError(
+                    try ZoneCReturn.seal(payload, to: weakKey, spaceSeed: newSpaceSeed()),
+                    "sealed to the weak key \(name)\(topBitSet ? " with the top bit set" : "")"
+                )
+            }
+        }
+    }
+
     /// RFC 9180 appendix A.2.1: DHKEM(X25519, HKDF-SHA256), HKDF-SHA256,
     /// ChaCha20-Poly1305, base mode. The RFC's own ciphertexts, opened through
     /// the same `ciphersuite` constant the app seals with. CryptoKit cannot
@@ -408,16 +518,52 @@ final class ZoneCCryptoTests: XCTestCase {
         XCTAssertEqual(sequence1, plaintext)
     }
 
+    /// **A return sealed outside the app, in the app's own framing.** The RFC
+    /// vector above pins the suite, the key schedule and the AEAD, but not what
+    /// Zone C puts around them: the info string (`peacegarden.zonec.back.v1`
+    /// then the space seed, in that order, with nothing between) and the 56-byte
+    /// payload. Every other return test seals and opens through the same
+    /// `info(for:)`, so a reordered info string would pass them all while
+    /// returns from the old build and the new build stopped opening for each
+    /// other. This one was made by a hand-written RFC 9180 key schedule in
+    /// Python (A2 review, finding 3), which also opens both of the RFC's own
+    /// ciphertexts, and is opened here by the real `ZoneCReturn.open`.
+    ///
+    /// Inputs: the recipient's private key is SHA-256 of
+    /// `peacegarden.zonec.test-seed-key.v1`; the ephemeral key was SHA-256 of
+    /// `peacegarden.zonec.test-ephemeral.v1`; the space seed is `r` then its
+    /// mark under the test K (the first vector in `testAMarkIs...`); no
+    /// associated data. Both keys come from public labels and guard nothing.
+    func testAReturnMadeOutsideTheAppOpensSoTheFramingIsPinned() throws {
+        let seedKey = try Curve25519.KeyAgreement.PrivateKey(
+            rawRepresentation: Data(SHA256.hash(data: Data("peacegarden.zonec.test-seed-key.v1".utf8)))
+        )
+        let spaceSeed = try XCTUnwrap(ZoneCMark.spaceSeed(from: bytes("000102030405060708090a0b0c0d0e0f"), key: testK))
+        XCTAssertEqual(spaceSeed, bytes("000102030405060708090a0b0c0d0e0f939fc180ccde6a689d4782f1d286460b"))
+        XCTAssertEqual(payload.bytes, Data(repeating: 0x11, count: 32) + Data(repeating: 0x22, count: 16)
+                       + Data(repeating: 0x33, count: 8), "the payload the vector was made from")
+
+        let sealed = bytes(
+            "b92453afc2b9a737652487217cfedcf522e4675314e137c8cf040b70aa18ec70"
+            + "3d8e3bffb6e68de987748cc0c4f53686bdca2ef8751a75f919dc770ac81fb4d2"
+            + "cf84a9d5328217f32d85616cb190434713f2130c7f6c490ed0cff1f87c4f24bd"
+            + "2460b60ebd2ba9c2"
+        )
+        XCTAssertEqual(sealed.count, 104)
+        XCTAssertEqual(ZoneCReturn.open(sealed, with: seedKey, spaceSeed: spaceSeed), payload)
+
+        // And it is the framing that opens it: the same bytes under the space
+        // seed's halves swapped, or with nothing but the mark, are no return.
+        let swapped = spaceSeed.suffix(16) + spaceSeed.prefix(16)
+        XCTAssertNil(ZoneCReturn.open(sealed, with: seedKey, spaceSeed: swapped))
+    }
+
     // MARK: - Cost
 
-    /// A sender tries each live record's key on every row of the answer: at
-    /// most 8 records × 128 rows, one key agreement apiece. The design said "a
-    /// few tens of milliseconds, off the main thread", and this holds it to 100.
-    ///
-    /// Best of five passes after one unmeasured, because this runs on a shared
-    /// Mac and a pass that lost its core says nothing about the code. The
-    /// pass-by-pass times are printed.
-    func testAThousandAndTwentyFourOpeningsTakeUnderAHundredMilliseconds() throws {
+    /// 8 records, 128 rows, one genuine return among the padding, and a pass
+    /// that tries every record's key on every row, as a sender does at each
+    /// answer.
+    private func openingFixture() throws -> (rows: Int, pass: () -> (milliseconds: Double, opened: [ZoneCReturn.Payload])) {
         let records = 8
         let rowCount = 128
         let keys = (0..<records).map { _ in Curve25519.KeyAgreement.PrivateKey() }
@@ -426,12 +572,13 @@ final class ZoneCCryptoTests: XCTestCase {
         // One genuine return among the padding, for record 5 at row 77.
         var rows = (0..<rowCount).map { _ in ZoneCSlots.returnPadding() }
         rows[77] = try ZoneCReturn.seal(payload, to: keys[5].publicKey, spaceSeed: spaceSeeds[5])
+        let all = rows
 
-        func pass() -> (milliseconds: Double, opened: [ZoneCReturn.Payload]) {
+        return (records * rowCount, {
             var opened: [ZoneCReturn.Payload] = []
             let start = DispatchTime.now().uptimeNanoseconds
             for record in 0..<records {
-                for row in rows {
+                for row in all {
                     if let found = ZoneCReturn.open(row, with: keys[record], spaceSeed: spaceSeeds[record]) {
                         opened.append(found)
                     }
@@ -439,18 +586,212 @@ final class ZoneCCryptoTests: XCTestCase {
             }
             let elapsed = DispatchTime.now().uptimeNanoseconds - start
             return (Double(elapsed) / 1_000_000, opened)
-        }
+        })
+    }
 
-        _ = pass()
+    /// A sender tries each live record's key on every row of the answer: at
+    /// most 8 records × 128 rows, one key agreement apiece (`DESIGN.md` §5).
+    /// About 90 ms on a Mac, a few hundred on the oldest phone the app runs on,
+    /// off the main thread.
+    ///
+    /// **The bound is 300 ms, and it is there for an order of magnitude**, not
+    /// for the last 10%: a key generated for every row, or the work done on the
+    /// main thread, would show here at a second or more. It used to be 100 ms,
+    /// which a parallel build, Spotlight or a warm laptop could break with the
+    /// code unchanged (A2 review, finding 1). The real figure is tracked by
+    /// `testTheCostOfTheOpeningsIsMeasured`.
+    ///
+    /// Best of five passes after one unmeasured, because this runs on a shared
+    /// Mac and a pass that lost its core says nothing about the code. The
+    /// pass-by-pass times are printed.
+    func testAThousandAndTwentyFourOpeningsTakeUnderThreeHundredMilliseconds() throws {
+        let fixture = try openingFixture()
+        XCTAssertEqual(fixture.rows, 1_024)
+
+        _ = fixture.pass()
         var times: [Double] = []
         for _ in 0..<5 {
-            let result = pass()
+            let result = fixture.pass()
             XCTAssertEqual(result.opened, [payload], "exactly the one genuine return opens")
             times.append(result.milliseconds)
         }
         let best = times.min()!
         print("ZoneC 1,024 openings, ms per pass:", times.map { String(format: "%.1f", $0) }.joined(separator: ", "),
               "| best:", String(format: "%.1f", best))
-        XCTAssertLessThan(best, 100, "1,024 openings took \(best) ms at best")
+        XCTAssertLessThan(best, 300, "1,024 openings took \(best) ms at best")
+    }
+
+    /// The real figure, kept where it can be read and compared: Xcode's own
+    /// measurement of the same pass, with the clock as its metric. It asserts
+    /// nothing, since a baseline stored in the project would not survive
+    /// `xcodegen generate` and one that failed under load would be the flake
+    /// finding 1 removed. `xcodebuild` prints each run's average
+    /// ("Clock Monotonic Time") in the test log, and the result bundle keeps
+    /// them; compare those across builds and across machines.
+    func testTheCostOfTheOpeningsIsMeasured() throws {
+        let fixture = try openingFixture()
+        _ = fixture.pass()
+        measure(metrics: [XCTClockMetric()]) {
+            _ = fixture.pass()
+        }
+    }
+}
+
+// MARK: - Arithmetic modulo 2²⁵⁵ − 19, for one question
+
+/// Whether a 32-byte string is the u-coordinate of a point on Curve25519 itself
+/// and not on its twist, which is the question the padding must answer the way
+/// a real key does. A u is on the curve when u³ + 486662u² + u is a square modulo
+/// p = 2²⁵⁵ − 19, and Euler's criterion says it is a square when raising it to
+/// (p − 1) / 2 gives 1 (or it is 0).
+///
+/// Eight 32-bit limbs, little-endian, and nothing constant-time: a test helper
+/// for public values and for nothing else.
+private struct Field25519: Equatable {
+    var limbs: [UInt32]
+
+    static let zero = Field25519(small: 0)
+    static let one = Field25519(small: 1)
+
+    /// p = 2²⁵⁵ − 19.
+    static let p: Field25519 = {
+        var limbs = [UInt32](repeating: 0xffff_ffff, count: 8)
+        limbs[0] = 0xffff_ffed
+        limbs[7] = 0x7fff_ffff
+        return Field25519(limbs: limbs)
+    }()
+
+    init(limbs: [UInt32]) {
+        precondition(limbs.count == 8)
+        self.limbs = limbs
+    }
+
+    init(small: UInt32) {
+        var limbs = [UInt32](repeating: 0, count: 8)
+        limbs[0] = small
+        self.limbs = limbs
+    }
+
+    /// The 32 bytes as a little-endian number. Not reduced: the caller says
+    /// whether it is below p.
+    init(littleEndian bytes: Data) {
+        precondition(bytes.count == 32)
+        let bytes = Array(bytes)
+        var limbs = [UInt32](repeating: 0, count: 8)
+        for index in 0..<32 {
+            let shift = UInt32(8 * (index % 4))
+            limbs[index / 4] |= UInt32(bytes[index]) << shift
+        }
+        self.limbs = limbs
+    }
+
+    var isBelowP: Bool { Self.compare(limbs, Self.p.limbs) < 0 }
+
+    /// -1, 0 or 1, most significant limb first.
+    private static func compare(_ a: [UInt32], _ b: [UInt32]) -> Int {
+        for index in stride(from: 7, through: 0, by: -1) where a[index] != b[index] {
+            return a[index] < b[index] ? -1 : 1
+        }
+        return 0
+    }
+
+    /// `limbs - p`, for a value known to be at least p.
+    private static func subtractP(_ value: [UInt32]) -> [UInt32] {
+        var result = value
+        var borrow: Int64 = 0
+        for index in 0..<8 {
+            let difference = Int64(value[index]) - Int64(p.limbs[index]) - borrow
+            result[index] = UInt32(truncatingIfNeeded: difference)
+            borrow = difference < 0 ? 1 : 0
+        }
+        return result
+    }
+
+    /// Any number of limbs, down to below p. 2²⁵⁶ ≡ 38 (mod p), so whatever is
+    /// above the eighth limb is multiplied by 38 and added back until nothing is
+    /// left up there.
+    private static func reduce(_ wide: [UInt32]) -> Field25519 {
+        var value = wide
+        while value.count > 8, value[8...].contains(where: { $0 != 0 }) {
+            let high = Array(value[8...])
+            let width = max(8, high.count) + 1
+            var next = [UInt32](repeating: 0, count: width)
+            var carry: UInt64 = 0
+            for index in 0..<width {
+                let low = index < 8 ? UInt64(value[index]) : 0
+                let top = index < high.count ? UInt64(high[index]) : 0
+                let sum = low + 38 * top + carry
+                next[index] = UInt32(truncatingIfNeeded: sum)
+                carry = sum >> 32
+            }
+            value = next
+        }
+        var limbs = Array(value.prefix(8))
+        while compare(limbs, p.limbs) >= 0 { limbs = subtractP(limbs) }
+        return Field25519(limbs: limbs)
+    }
+
+    static func + (a: Field25519, b: Field25519) -> Field25519 {
+        var sum = [UInt32](repeating: 0, count: 9)
+        var carry: UInt64 = 0
+        for index in 0..<8 {
+            let total = UInt64(a.limbs[index]) + UInt64(b.limbs[index]) + carry
+            sum[index] = UInt32(truncatingIfNeeded: total)
+            carry = total >> 32
+        }
+        sum[8] = UInt32(carry)
+        return reduce(sum)
+    }
+
+    static func * (a: Field25519, b: Field25519) -> Field25519 {
+        var product = [UInt32](repeating: 0, count: 16)
+        for row in 0..<8 {
+            var carry: UInt64 = 0
+            for column in 0..<8 {
+                let total = UInt64(product[row + column])
+                    + UInt64(a.limbs[row]) * UInt64(b.limbs[column]) + carry
+                product[row + column] = UInt32(truncatingIfNeeded: total)
+                carry = total >> 32
+            }
+            product[row + 8] = UInt32(carry)
+        }
+        return reduce(product)
+    }
+
+    /// `self` to a power given as eight limbs, square-and-multiply.
+    func raised(to exponent: [UInt32]) -> Field25519 {
+        var result = Field25519.one
+        for limb in exponent.reversed() {
+            for bit in stride(from: 31, through: 0, by: -1) {
+                result = result * result
+                if (limb >> UInt32(bit)) & 1 == 1 { result = result * self }
+            }
+        }
+        return result
+    }
+
+    /// p − 1 and (p − 1) / 2.
+    static let pMinusOne: [UInt32] = {
+        var limbs = p.limbs
+        limbs[0] -= 1
+        return limbs
+    }()
+
+    static let halfPMinusOne: [UInt32] = {
+        var half = [UInt32](repeating: 0, count: 8)
+        for index in 0..<8 {
+            var limb = pMinusOne[index] >> 1
+            if index < 7 { limb |= pMinusOne[index + 1] << 31 }
+            half[index] = limb
+        }
+        return half
+    }()
+
+    /// Whether `u` is the u-coordinate of a point on Curve25519 (and not only
+    /// of its twist). `u` must be below p.
+    static func isOnCurve(_ u: Field25519) -> Bool {
+        let a = Field25519(small: 486_662)
+        let right = u * (u * u + a * u + Field25519.one)
+        return right == Field25519.zero || right.raised(to: halfPMinusOne) == Field25519.one
     }
 }
