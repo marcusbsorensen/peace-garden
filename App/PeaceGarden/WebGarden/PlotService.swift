@@ -93,23 +93,55 @@ struct PlotService: Sendable {
     /// plant one of these meetings grew that either gardener released, with
     /// what each chose to show beside it. One poll, so the one switch stops
     /// both.
-    func pending(tokens: [String]) async throws -> Pending {
-        guard !tokens.isEmpty else { return Pending() }
+    ///
+    /// **An empty bag is still asked** (Zone C, `DESIGN.md` §4.1). Every phone
+    /// with the switch on sends this request at each start, with meetings or
+    /// without, so the phones that carry a space seed are not the few that
+    /// send an empty bag. The service already takes one.
+    ///
+    /// **Every request carries the two slots**, `aloft` and `back`, always the
+    /// same length (§4.2). `slots` says what each carries, by the request's
+    /// number: a garden of more than 128 meetings asks twice, and a seed or a
+    /// return goes in the first request only. Left alone, every request carries
+    /// padding. `answered` is told when a request has been answered and the
+    /// answer read, which is the only moment a seed may leave `out/`.
+    func pending(
+        tokens: [String],
+        slots: @Sendable (_ request: Int) -> AskingSlots = { _ in AskingSlots.padding() },
+        answered: @Sendable (_ request: Int) -> Void = { _ in }
+    ) async throws -> Pending {
         var heard = Pending()
         // The service takes 128 at a time; a long-standing garden asks twice.
-        for batch in stride(from: 0, to: tokens.count, by: Self.batch) {
-            let some = Array(tokens[batch..<min(batch + Self.batch, tokens.count)])
-            let reply = try await ask("/api/walk/pending", Asking(tokens: some))
+        // An empty bag is one request with nothing in it.
+        let starts = tokens.isEmpty ? [0] : Array(stride(from: 0, to: tokens.count, by: Self.batch))
+        for (request, start) in starts.enumerated() {
+            let some = Array(tokens[start..<min(start + Self.batch, tokens.count)])
+            let carried = slots(request)
+            let reply = try await ask(
+                "/api/walk/pending",
+                Asking(tokens: some, aloft: carried.aloft, back: carried.back)
+            )
+            answered(request)
             heard.offers += reply.offers ?? []
             heard.wild += reply.wild ?? []
+            heard.aloft += AskingSlots.rows(reply.aloft?.text, as: .aloft)
+            heard.back += AskingSlots.rows(reply.back?.text, as: .back)
         }
         return heard
     }
 
-    /// What `pending` hears: the asking's rows and the Wild Fields'.
+    /// What `pending` hears: the asking's rows and the Wild Fields', and the
+    /// two bundles of Zone C.
     struct Pending: Sendable, Equatable {
         var offers: [SharedOffer] = []
         var wild: [WildNotice] = []
+        /// The rows of the `aloft` bundle: 64 bytes each, a space seed and its
+        /// seed key or padding, nothing a phone can tell apart until it checks
+        /// the mark. Empty from a service that sends none.
+        var aloft: [Data] = []
+        /// The rows of the `back` bundle: 104 bytes each, a sealed return or
+        /// padding. Empty from a service that sends none.
+        var back: [Data] = []
     }
 
     /// Yes or no, from the gardener the offer was addressed to.
@@ -186,7 +218,26 @@ struct PlotService: Sendable {
         var beside: WildNotice?
         /// Every released plant touching the tokens `pending` asked with.
         var wild: [WildNotice]?
+        /// Zone C's two bundles. Absent from a service that has none, and never
+        /// the reason a reply cannot be read: see `SlotBundle`.
+        var aloft: SlotBundle?
+        var back: SlotBundle?
         var error: String?
+    }
+
+    /// A bundle as the service writes it: one string of hex, row after row.
+    ///
+    /// **It cannot fail to decode.** `Reply` is read as a whole, so a bundle of
+    /// the wrong type would have made an answer that also carries offers and
+    /// the Wild Fields' notices unreadable, and the phone would have lost those
+    /// for the sake of rows it can do without. A bundle that is not a string
+    /// reads as no rows.
+    private struct SlotBundle: Decodable {
+        var text: String?
+
+        init(from decoder: any Decoder) throws {
+            text = try? decoder.singleValueContainer().decode(String.self)
+        }
     }
 
     private struct Planted: Decodable { var seed: String }
@@ -202,7 +253,13 @@ struct PlotService: Sendable {
         var areas: [Row]
     }
 
-    private struct Asking: Encodable { var tokens: [String] }
+    private struct Asking: Encodable {
+        var tokens: [String]
+        /// 128 hex characters, always: a space seed on its way up, or padding.
+        var aloft: String
+        /// 208 hex characters, always: a sealed return, or padding.
+        var back: String
+    }
     private struct Answering: Encodable { var seed: String; var to: String; var yes: Bool }
     private struct Withdrawing: Encodable { var seed: String; var token: String }
     private struct Beside: Encodable { var seed: String; var token: String; var shown: WildShowing }
@@ -292,6 +349,70 @@ struct OpenAreas: Sendable, Equatable {
     static let builtIn = OpenAreas(areas: Set(Area.open))
 
     func has(_ area: Area) -> Bool { areas.contains(area) }
+}
+
+// MARK: - Zone C's two slots
+
+/// What a request of the asking carries in `aloft` and `back`, as the service
+/// reads them: lowercase hex, exactly 128 and 208 characters. A real seed or a
+/// real return and padding are the same length and the same shape, and nothing
+/// on the wire says which is which (`ZoneCSlots`, `DESIGN.md` §4.2).
+struct AskingSlots: Sendable, Equatable {
+    let aloft: String
+    let back: String
+
+    /// Nil unless the bytes are exactly 64 and 104, so a request can never go
+    /// out with a slot the service would refuse, or one that tells it apart.
+    init?(aloft: Data, back: Data) {
+        guard let aloftText = ZoneCSlots.hex(aloft, as: .aloft),
+              let backText = ZoneCSlots.hex(back, as: .back) else { return nil }
+        self.aloft = aloftText
+        self.back = backText
+    }
+
+    /// Nothing to send: both slots padding, made from real keys so that they
+    /// have the shape of the real thing.
+    static func padding(
+        keys: ZoneCSlots.KeyGenerator = ZoneCSlots.freshKey,
+        random: ZoneCSlots.RandomBytes = ZoneCSlots.systemRandom
+    ) -> AskingSlots {
+        guard let slots = AskingSlots(
+            aloft: ZoneCSlots.seedPadding(keys: keys, random: random),
+            back: ZoneCSlots.returnPadding(keys: keys, random: random)
+        ) else {
+            // Both come from `ZoneCSlots` at the lengths it checks itself.
+            preconditionFailure("padding is not the length of a slot")
+        }
+        return slots
+    }
+
+    /// The most rows read from one bundle in one answer. The service sends 128
+    /// to start and may raise it for everyone at once; this keeps a service
+    /// that sends far more from costing this phone far more than it was told to
+    /// expect.
+    static let rowLimit = 1_024
+
+    /// The rows of a bundle, each as bytes.
+    ///
+    /// **A bundle is read whole or not at all.** Rows are cut at fixed widths,
+    /// so a bundle whose length is not a whole number of rows cannot be cut
+    /// where its rows begin, and is read as empty rather than as rows shifted
+    /// out of place. A row that is not lowercase hex is passed over. Neither is
+    /// an error: an older service sends no bundle, and the phone carries on
+    /// with the rest of the answer.
+    static func rows(_ text: String?, as slot: ZoneCSlots.Slot) -> [Data] {
+        guard let text, !text.isEmpty, text.utf8.count.isMultiple(of: slot.hexLength) else { return [] }
+        let characters = Array(text.utf8)
+        var rows: [Data] = []
+        var start = 0
+        while start < characters.count, rows.count < rowLimit {
+            let end = start + slot.hexLength
+            let row = String(decoding: characters[start..<end], as: UTF8.self)
+            if let bytes = ZoneCSlots.bytes(fromHex: row, as: slot) { rows.append(bytes) }
+            start = end
+        }
+        return rows
+    }
 }
 
 // MARK: - Sending it

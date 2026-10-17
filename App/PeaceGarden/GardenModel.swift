@@ -545,6 +545,10 @@ final class GardenModel {
         return left
     }
 
+    /// Whether the asking has run in this process. Not drawn from, and not
+    /// written down: a new start is a new process.
+    @ObservationIgnored private var hasAskedThisStart = false
+
     /// Asks the service whether anything has happened to any of this garden's
     /// meetings, and writes down what it says.
     ///
@@ -554,16 +558,31 @@ final class GardenModel {
     /// has avoided everywhere else, and off is the reason the service can
     /// honestly be told nothing.
     ///
+    /// **A garden with no meetings asks too** (Zone C, `DESIGN.md` §4.1). The
+    /// request carries two fixed-size slots, and the phones that use them hide
+    /// among the phones that do not, so every phone with the switch on sends
+    /// the same request at each start: an empty bag is no reason to stay quiet.
+    ///
+    /// **Once per start.** A start is a cold start, so this asks once for the
+    /// life of the process. A view made again, or a second window, finds that
+    /// it has already been asked and asks nothing, so the sixty launches a
+    /// sent seed's record lasts are sixty starts and not sixty screens.
+    ///
     /// Quiet about failure. Nobody asked for this — it runs when the app opens
     /// — so a phone with no signal simply learns nothing this time.
-    func catchUpOnTheAsking() async {
+    ///
+    /// - Parameter zoneC: what Zone C does with the request. Leave it alone
+    ///   outside tests: the app's own is made beside the garden's file.
+    func catchUpOnTheAsking(zoneC: ZoneCExchange? = nil) async {
         guard Sharing.wantsInvitations else { return }
+        guard !hasAskedThisStart else { return }
+        hasAskedThisStart = true
         // The released plants' tokens too, so the releaser hears what the
         // other gardener chose. Same request, same switch.
         let tokens = garden.plants.compactMap(\.tokens?.oursHex)
             + (garden.released ?? []).map(\.tokens.oursHex)
-        guard !tokens.isEmpty else { return }
-        guard let heard = try? await plots.pending(tokens: tokens) else { return }
+        let exchange = zoneC ?? ZoneCExchange(besideGardenAt: store)
+        guard let heard = try? await exchange.ask(plots: plots, tokens: tokens) else { return }
 
         for notice in heard.wild { hear(notice) }
         for offer in heard.offers {

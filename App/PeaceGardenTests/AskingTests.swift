@@ -19,8 +19,18 @@ final class AskingTests: XCTestCase {
     // MARK: A service that never leaves the room
 
     /// Answers whatever it is told to, and remembers every request it was given.
-    private final class Stub: PlotTransport, @unchecked Sendable {
+    ///
+    /// Not private, so that `ZoneCExchangeTests` stands the service in with the
+    /// same transport rather than another that could drift from it.
+    final class Stub: PlotTransport, @unchecked Sendable {
         var replies: [String: (status: Int, body: String)] = [:]
+        /// Answers for the next requests, in order, ahead of `replies`.
+        var script: [(status: Int, body: String)] = []
+        /// A phone that cannot reach the service: the request is remembered and
+        /// then times out, which is what a lost answer looks like from here.
+        var unreachable = false
+        /// Called with each request as it goes out, before anything answers it.
+        var onSend: (@Sendable (URLRequest) -> Void)?
         private(set) var asked: [String] = []
         private(set) var bodies: [String] = []
         private(set) var methods: [String] = []
@@ -30,7 +40,9 @@ final class AskingTests: XCTestCase {
             asked.append(path)
             methods.append(request.httpMethod ?? "")
             bodies.append(String(decoding: request.httpBody ?? Data(), as: UTF8.self))
-            let answer = replies[path] ?? (status: 200, body: "{}")
+            onSend?(request)
+            if unreachable { throw URLError(.timedOut) }
+            let answer = script.isEmpty ? (replies[path] ?? (status: 200, body: "{}")) : script.removeFirst()
             let response = HTTPURLResponse(
                 url: request.url!, statusCode: answer.status, httpVersion: nil, headerFields: nil
             )!
@@ -318,11 +330,19 @@ final class AskingTests: XCTestCase {
         XCTAssertTrue(stub.asked.isEmpty, "off has to stop the question, not the answer")
     }
 
+    /// **Flipped on 17 October 2026 (Zone C, package A3).** A garden with
+    /// nothing to ask about used to ask nothing. Now it sends the same request
+    /// as any other, with an empty bag, because the phones that carry a space
+    /// seed hide among the phones that carry none (`DESIGN.md` §4.1).
     @MainActor
-    func testAGardenWithNothingToAskAboutAsksNothing() async {
+    func testAGardenWithNothingToAskAboutAsksAllTheSame() async throws {
         let model = model(with: [hybrid(remembersTheMeeting: false)])
         await model.catchUpOnTheAsking()
-        XCTAssertTrue(stub.asked.isEmpty)
+        XCTAssertEqual(stub.asked, ["/api/walk/pending"])
+        let body = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: Data(stub.bodies[0].utf8)) as? [String: Any]
+        )
+        XCTAssertEqual(body["tokens"] as? [String], [], "an empty bag, not a missing one")
     }
 
     @MainActor
