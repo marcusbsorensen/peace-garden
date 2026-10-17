@@ -28,7 +28,7 @@
     - Autonaut hides both "Send as a seed" and the space garden when Peace Garden is absent, and checks presence through the App Group;
     - Autonaut has zero network code and no Xcode project yet;
     - if Autonaut is deleted, what has grown in Zone C stays.
-  - **Design decided (16 October):** `design/space-seeds-2026-10-16/DESIGN.md` on branch `claude/space-seeds-design` (`93c52d6`), not merged and not built.
+  - **Design decided (16 October):** `design/space-seeds-2026-10-16/DESIGN.md` on branch `claude/space-seeds-design` (`93c52d6`, now `c7c7602`), not merged; building began 17 October.
     - Marcus answered: 1–5A, 6B, 7 (cross with the finder's own seed), 8A, 9B (kept after he was told the iCloud consequence), 10B, 11A, 12A, 13A, 14A, 15A.
     - In short:
       - space seeds and returns ride in two fixed slots of `POST /api/walk/pending`, sent by every phone at every start, into two SQLite pools on the server;
@@ -37,7 +37,10 @@
       - Autonaut's side is unchanged.
     - The Hub accepted the App Group layout: `group.com.interfulgent.suite`; `Seeds/v1/out|in|exchange`; `Presence/v1/<app>`, written only when missing; fixed file dates on every file.
     - Autonaut's A1–A7 are settled.
-    - **Next:** the build plan (app, server, site, privacy copy in all languages, a DPIA row with the Hub), and asking 20i how often it snapshots the web space (8A). Test SQLite locking at 20i before relying on it.
+    - **Build plan (17 October):** `design/space-seeds-2026-10-16/BUILD-PLAN.md` on `claude/space-seeds-design` (`c7c7602`): 22 packages, gates G1–G8. Marcus chose 1A (build 11 carries the padded request, switch and privacy text with Zone C dormant; flora and the Zone C view in build 12), 2A (store the last find's day), 3A (small population run first), and to start building: server and words as cloud routines, app packages locally, two at a time.
+    - **Agreed with Autonaut (17 October):** staged writes via `Seeds/v1/tmp/<app>-<random>` then rename; malformed files deleted on sight; directory dates fixed too; Peace Garden is iOS only, so Zone C stays shut on a Mac. Flora kinds are with Marcus via the Autonaut session.
+    - **Wave 1 running (17 October, about 00:25 UTC):** cloud routines S1 pools (`trig_015MavPcGnuLHcCJU49NYqSa`, branch `claude/zonec-s1`) and W1 English privacy text (`trig_017gmhE6re8qx7b27VEcSmRg`, `claude/zonec-w1`, writes `WORDING-en.md` for Marcus's G2a read); local A0 (`.claude/worktrees/zonec-a0`) and A2 (`.claude/worktrees/zonec-a2`) on scratch simulator `D5BC11B1-4A87-49EF-8F90-966720999885`, to delete after the app waves. DPIA row draft sent to the Hub. Next: A1, then wave 2 (S2, S5, A3, F0); an Opus read of A2's diff.
+    - **Waiting on Marcus:** send the 20i ticket (snapshots, excluding `~/peacegarden-data/`, NFS and `fcntl` locks; 8A, G5).
 
 ## Paused here (14 October, late evening)
 Marcus paused development because the work account's (hello@uncubed.app) credit is running out. He'll carry on from his personal account. Nothing is running, and there are no worktrees or agent branches left except main.
