@@ -495,10 +495,17 @@ the service's own files unreachable, as it does `.pages/`.
   - `POST /api/walk/offer` — `{to, from, plant}`. One gardener offers a plant,
     addressed to the sixteen bytes the other minted at their meeting. It plants
     nothing.
-  - `POST /api/walk/pending` — `{tokens: […]}`, at most 128. Everything touching
-    those tokens either way round: offers made to this phone, and the state of
-    offers made from it. This is the request the app's *Alert me when a joint
-    seed is shared* switch turns **off entirely**.
+  - `POST /api/walk/pending` — `{tokens: […]}`, at most 128, and two optional
+    slots, `aloft` (128 lower-case hex, 64 bytes) and `back` (208, 104 bytes).
+    Everything touching those tokens either way round: offers made to this
+    phone, and the state of offers made from it. This is the request the app's
+    *Alert me when a joint seed is shared* switch turns **off entirely**. A
+    slot of any other length or alphabet is a 400. The answer always carries
+    two bundles as well: `aloft`, 128 rows of 128 hex, and `back`, 128 rows of
+    208, drawn from the Zone C pools and padded where a pool holds fewer. They
+    are the same length whatever the pools hold, and with or without slots. A
+    slot is stored after the bundles are drawn, so a phone never gets its own
+    back. See *Zone C pools*, below.
   - `POST /api/walk/answer` — `{seed, to, yes}`. Only the token an offer was
     addressed to can answer it. Yes plants it by the rule; no is final, because
     there is one offer per plant.
@@ -550,7 +557,8 @@ the service's own files unreachable, as it does `.pages/`.
 
   **One gardener** is the meeting token the request carries (`from` for an
   offer, `to` for an answer, `token` for a withdrawal, a release or a name,
-  the whole bag for `pending`, the seed for a release with no token), at the
+  the whole bag for `pending`, whatever its slots hold, the seed for a release
+  with no token), at the
   hourly 20, 60, 30, 240 and 10 scaled to the window, as the address's
   allowance was until then. **One address** is everybody behind it,
   `Limits::CROWD` (five) times that; an IPv6 address counts as its /64, which
@@ -625,7 +633,8 @@ the service's own files unreachable, as it does `.pages/`.
   - `POST /api/wild/answer` — `{seed, token, shown}`: either gardener's whole
     choice, so a first answer, a change and a withdrawal are one request.
     `404` alike for no such plant and somebody else's token. 55 a window.
-  - `POST /api/walk/pending` also answers `wild`: every released plant
+  - `POST /api/walk/pending` also answers `aloft` and `back`, the two Zone C
+    bundles (see *Zone C pools*), and `wild`: every released plant
     touching the tokens asked with, as that phone is told it (`released`,
     `yours` and `theirs` as yes and no, and `shown`). One poll, behind the
     same *Alert me* switch.
@@ -907,3 +916,36 @@ check to fail, so the check is known to be a check.
 
 `tools/reference/check_backup.php` is the part that runs in CI: the reading-back,
 the pruning, and the refusal to put a password on a command line.
+
+## Zone C pools
+
+Zone C is the route a space seed takes between Peace Garden and Autonaut. It
+needs two pools on the server. This is what they are.
+
+- **`aloft`** holds rows of 64 bytes. A row is a space seed and its key, or
+  padding. **`back`** holds rows of 104 bytes. A row is a sealed return, or
+  padding. A row in either looks like random bytes. The pools keep no time, no
+  address, no token and no order of arrival.
+- **Where the file lives.** `../peacegarden-data/aloft.sqlite`, beside
+  `public_html` and never inside it. The folder is made on first use, with mode
+  0700, and the file with mode 0600. It is a SQLite file of its own, not a
+  table in the 20i database. `'aloft'` in `.api/config.php` names another
+  path, which is how the tests point it at a throwaway file.
+- **What it does.** Each `pending` request draws 128 rows at random from each
+  pool, topped up with padding when a pool holds fewer. Then it stores the
+  request's own slots. Each pool holds 2,048 rows. A row put in over that
+  pushes out one row chosen at random, so no row's age is written anywhere.
+  A pool that is locked for more than a second, or will not open, answers
+  with padding and drops what was put. It never fails the request.
+- **It is in no copy.** `KEPT` in `.api/backup.php` names neither table, and the
+  nightly copy does not look in the file. A restore therefore starts both pools
+  empty. A seed not yet found, and a return not yet read, are lost. Padding
+  fills the bundles until the pools fill again. Nothing needs doing.
+  `tools/reference/check_backup.php` proves it in CI.
+- **`deploy.sh --delete` never reaches it.** The upload is
+  `Server/` into `public_html/`. `../peacegarden-data` is a sibling of
+  `public_html`, outside the upload, so the delete cannot see it. A deploy
+  leaves the pools as they are.
+- **Checked by** `tools/reference/check_aloft.php` and `check_aloft_store.php`,
+  in CI, and by the pending row in `tools/deploy.sh --check`, which asks the
+  live route for both bundles at their fixed lengths.
