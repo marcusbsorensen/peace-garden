@@ -68,6 +68,22 @@
 				<string>CA92.1</string>
 			</array>
 		</dict>
+		<dict>
+			<!-- File dates, size and kind inside the suite's App Group
+			     container, which C617.1 names: "the app container, app group
+			     container, or CloudKit container". Zone C sets every file and
+			     folder it touches there to 1 January 2001 and reads that date
+			     back, so that the folder cannot say when someone was in
+			     Autonaut (`SuiteGroup`). It reads the size of a seed file
+			     before it opens it. Nothing here is shown to anyone, and
+			     nothing leaves the phone. -->
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>C617.1</string>
+			</array>
+		</dict>
 	</array>
 </dict>
 </plist>
