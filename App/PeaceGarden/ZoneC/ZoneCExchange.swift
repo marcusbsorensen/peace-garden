@@ -25,6 +25,16 @@ import SeedCore
 /// `Sharing.wantsInvitations`) is the caller's and still stops the request
 /// altogether.
 ///
+/// ## A Debug build and the real service
+///
+/// A Debug build signs marks with the test K, which is published in this
+/// repository (`ZoneCKey`). A row made with it is recognisable to anyone who
+/// holds a copy of the pool, with no app to take apart. So **a Debug build that
+/// talks to the production origin sends padding in `aloft` and never opens
+/// `out/`**, and its seed waits where it is. The check is on the host being
+/// asked, not on the build alone, so a Debug build aimed at a local server
+/// carries seeds as usual and a Release build always does.
+///
 /// ## A seed that leaves (R2)
 ///
 /// A request can be lost after the service has stored its slot, and the app
@@ -36,9 +46,14 @@ import SeedCore
 /// after the answer, the next launch would draw a new key, put a second row in
 /// the pool for one seed, and a finder who met both would grow two plants.
 ///
-/// - The `out` file is deleted only after the request carrying it was answered.
+/// - The `out` file is deleted only after the request carrying it was answered
+///   **with an `aloft` bundle**. A service that does not know the slots answers
+///   200 and stores nothing, so a 200 alone does not show that the seed
+///   arrived. The file stays, the record and its key stay, and the next launch
+///   sends the same row again. A return's send is counted on an answer with a
+///   `back` bundle, for the same reason.
 /// - A launch is counted against the records, and a return's send against the
-///   return, only then too.
+///   return, only after an answer.
 /// - Only the first request of a launch carries a seed or a return. A garden of
 ///   more than 128 meetings sends two, and the second carries padding.
 ///
@@ -61,6 +76,31 @@ struct ZoneCExchange: Sendable {
     @Sendable
     static func switchFromDefaults() -> Bool {
         UserDefaults.standard.object(forKey: enabledKey) as? Bool ?? false
+    }
+
+    /// Whether this is a Debug build. Named so that a test can say which way a
+    /// build stands; the answer is fixed at compile time.
+    static let isDebugBuild: Bool = {
+        #if DEBUG
+        return true
+        #else
+        return false
+        #endif
+    }()
+
+    /// Whether a build may put a real seed in the pool behind `origin`: a Debug
+    /// build may not put one in the production pool, where its test-K mark would
+    /// single the row out. Any address that is the production host or below it,
+    /// or that has no host to read, counts as production.
+    static func mayCarrySeeds(to origin: URL, inDebugBuild: Bool = ZoneCExchange.isDebugBuild) -> Bool {
+        !(inDebugBuild && isProduction(origin))
+    }
+
+    private static func isProduction(_ origin: URL) -> Bool {
+        guard let host = origin.host(percentEncoded: false)?.lowercased(),
+              let production = PlotService.origin.host(percentEncoded: false)?.lowercased()
+        else { return true }
+        return host == production || host.hasSuffix(".\(production)")
     }
 
     let transit: SuiteTransit
@@ -91,9 +131,14 @@ struct ZoneCExchange: Sendable {
     }
 
     /// Zone C as the app has it: its own store beside the garden's file, the
-    /// suite's real folder, and the switch in `UserDefaults`.
-    init(besideGardenAt garden: GardenStore) {
-        self.init(store: ZoneCStore(besideGardenAt: garden))
+    /// suite's folder (the real one unless told otherwise), the switch in
+    /// `UserDefaults`, and the engine (`ZoneCEngine`) behind the bundles. The
+    /// engine is reached only while the switch is on, which it is not until the
+    /// person turns it on. `GardenModel` makes its exchange this way, with the
+    /// suite it holds.
+    init(besideGardenAt garden: GardenStore, transit: SuiteTransit = SuiteTransit()) {
+        let store = ZoneCStore(besideGardenAt: garden)
+        self.init(transit: transit, store: store, bundles: ZoneCEngine(store: store, transit: transit))
     }
 
     // MARK: - One launch
@@ -106,7 +151,10 @@ struct ZoneCExchange: Sendable {
         // answer, so a switch turned over while the request is out cannot
         // leave a seed half taken.
         let zoneCIsOn = isOn()
-        let first = firstRequest(zoneCIsOn: zoneCIsOn)
+        let first = firstRequest(
+            zoneCIsOn: zoneCIsOn,
+            mayCarrySeed: Self.mayCarrySeeds(to: plots.origin)
+        )
         let answered = Answered()
         let keys = self.keys
         let random = self.random
@@ -118,8 +166,8 @@ struct ZoneCExchange: Sendable {
                 slots: { request in
                     request == 0 ? first.slots : AskingSlots.padding(keys: keys, random: random)
                 },
-                answered: { request in
-                    if request == 0 { answered.mark() }
+                answered: { request, bundles in
+                    if request == 0 { answered.mark(bundles) }
                 }
             ))
         } catch {
@@ -128,11 +176,11 @@ struct ZoneCExchange: Sendable {
 
         // The first request was answered, even if a later one was not: the
         // seed and the return it carried have arrived, and the launch counts.
-        if answered.isMarked {
+        if let carried = answered.bundles {
             if zoneCIsOn, case .success(let heard) = outcome {
                 await bundles.receive(aloft: heard.aloft, back: heard.back)
             }
-            conclude(first)
+            conclude(first, carried: carried)
         }
         return try outcome.get()
     }
@@ -147,8 +195,8 @@ struct ZoneCExchange: Sendable {
         var returnSpaceSeed: Data?
     }
 
-    private func firstRequest(zoneCIsOn: Bool) -> FirstRequest {
-        let sending = zoneCIsOn ? seedToSend() : nil
+    private func firstRequest(zoneCIsOn: Bool, mayCarrySeed: Bool) -> FirstRequest {
+        let sending = zoneCIsOn && mayCarrySeed ? seedToSend() : nil
         let returning = zoneCIsOn ? returnToSend() : nil
         let slots = AskingSlots(
             aloft: sending?.slot ?? ZoneCSlots.seedPadding(keys: keys, random: random),
@@ -205,30 +253,33 @@ struct ZoneCExchange: Sendable {
 
     // MARK: - After the answer
 
-    /// The first request of the launch was answered. The seed it carried is
-    /// the service's now, so its file goes; the launch is counted against every
-    /// record, which is what ends them; and the return it carried has been
-    /// sent once more.
+    /// The first request of the launch was answered. If the answer carried an
+    /// `aloft` bundle, the seed it carried is the service's now, so its file
+    /// goes; if it carried a `back` bundle, the return it carried has been sent
+    /// once more. An answer without them came from a service that ignored the
+    /// slots, and the seed and the return are kept for the next launch. The
+    /// launch is counted against every record, which is what ends them.
     ///
     /// The launch is counted whether or not Zone C is on. A record counts the
     /// phone's own launch requests, and one that went with padding is one.
-    private func conclude(_ first: FirstRequest) {
-        if let seed = first.seed { try? transit.finish(seed) }
+    private func conclude(_ first: FirstRequest, carried: PlotService.Bundles) {
+        if let seed = first.seed, carried.aloft { try? transit.finish(seed) }
         try? store.update { state in
             state.countLaunch()
-            if let spaceSeed = first.returnSpaceSeed {
+            if let spaceSeed = first.returnSpaceSeed, carried.back {
                 state.countReturnSent(forSpaceSeed: spaceSeed)
             }
         }
     }
 }
 
-/// Whether the first request was answered. Written from wherever `pending`
-/// runs, read once it has finished.
+/// What the first request's answer carried, once it has been answered. Written
+/// from wherever `pending` runs, read once it has finished.
 private final class Answered: @unchecked Sendable {
     private let lock = NSLock()
-    private var marked = false
+    private var carried: PlotService.Bundles?
 
-    func mark() { lock.withLock { marked = true } }
-    var isMarked: Bool { lock.withLock { marked } }
+    func mark(_ bundles: PlotService.Bundles) { lock.withLock { carried = bundles } }
+    /// Nil until the first request has been answered.
+    var bundles: PlotService.Bundles? { lock.withLock { carried } }
 }

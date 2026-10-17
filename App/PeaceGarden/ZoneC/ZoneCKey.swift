@@ -14,10 +14,18 @@ import Foundation
 /// design needs is a K that never reaches the repository.
 ///
 /// **A Debug build or a test uses a fixed test K instead.** It is in the open
-/// on purpose, and it means a Debug build and a Release build do not recognise
-/// each other's space seeds. That is the right way round: a build from Xcode
-/// can never pass a seed into the real pool as if it were real, or take one
-/// out.
+/// on purpose, and that has a benefit and a cost.
+///
+/// The benefit: a Debug build and a Release build do not recognise each other's
+/// space seeds, so a build from Xcode cannot take a real seed out of the pool or
+/// have its own taken for one.
+///
+/// The cost: the test K is public, so a row marked with it is recognisable to
+/// anyone who holds a copy of the pool (20i, a breach, a subpoena, a server
+/// altered to log), without taking an app apart. A Debug build whose seed
+/// reached the production pool would be that row. So `ZoneCExchange` sends
+/// only padding in `aloft` from a Debug build that talks to the production
+/// origin (`PlotService.origin`), and leaves the seed in `out/`.
 enum ZoneCKey {
     /// K is 32 bytes: the length of SHA-256's output, which is the least that
     /// HMAC-SHA256 wants, and what `make_key.sh` draws.
