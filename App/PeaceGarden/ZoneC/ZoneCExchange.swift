@@ -25,6 +25,16 @@ import SeedCore
 /// `Sharing.wantsInvitations`) is the caller's and still stops the request
 /// altogether.
 ///
+/// ## A Debug build and the real service
+///
+/// A Debug build signs marks with the test K, which is published in this
+/// repository (`ZoneCKey`). A row made with it is recognisable to anyone who
+/// holds a copy of the pool, with no app to take apart. So **a Debug build that
+/// talks to the production origin sends padding in `aloft` and never opens
+/// `out/`**, and its seed waits where it is. The check is on the host being
+/// asked, not on the build alone, so a Debug build aimed at a local server
+/// carries seeds as usual and a Release build always does.
+///
 /// ## A seed that leaves (R2)
 ///
 /// A request can be lost after the service has stored its slot, and the app
@@ -66,6 +76,31 @@ struct ZoneCExchange: Sendable {
     @Sendable
     static func switchFromDefaults() -> Bool {
         UserDefaults.standard.object(forKey: enabledKey) as? Bool ?? false
+    }
+
+    /// Whether this is a Debug build. Named so that a test can say which way a
+    /// build stands; the answer is fixed at compile time.
+    static let isDebugBuild: Bool = {
+        #if DEBUG
+        return true
+        #else
+        return false
+        #endif
+    }()
+
+    /// Whether a build may put a real seed in the pool behind `origin`: a Debug
+    /// build may not put one in the production pool, where its test-K mark would
+    /// single the row out. Any address that is the production host or below it,
+    /// or that has no host to read, counts as production.
+    static func mayCarrySeeds(to origin: URL, inDebugBuild: Bool = ZoneCExchange.isDebugBuild) -> Bool {
+        !(inDebugBuild && isProduction(origin))
+    }
+
+    private static func isProduction(_ origin: URL) -> Bool {
+        guard let host = origin.host(percentEncoded: false)?.lowercased(),
+              let production = PlotService.origin.host(percentEncoded: false)?.lowercased()
+        else { return true }
+        return host == production || host.hasSuffix(".\(production)")
     }
 
     let transit: SuiteTransit
@@ -111,7 +146,10 @@ struct ZoneCExchange: Sendable {
         // answer, so a switch turned over while the request is out cannot
         // leave a seed half taken.
         let zoneCIsOn = isOn()
-        let first = firstRequest(zoneCIsOn: zoneCIsOn)
+        let first = firstRequest(
+            zoneCIsOn: zoneCIsOn,
+            mayCarrySeed: Self.mayCarrySeeds(to: plots.origin)
+        )
         let answered = Answered()
         let keys = self.keys
         let random = self.random
@@ -152,8 +190,8 @@ struct ZoneCExchange: Sendable {
         var returnSpaceSeed: Data?
     }
 
-    private func firstRequest(zoneCIsOn: Bool) -> FirstRequest {
-        let sending = zoneCIsOn ? seedToSend() : nil
+    private func firstRequest(zoneCIsOn: Bool, mayCarrySeed: Bool) -> FirstRequest {
+        let sending = zoneCIsOn && mayCarrySeed ? seedToSend() : nil
         let returning = zoneCIsOn ? returnToSend() : nil
         let slots = AskingSlots(
             aloft: sending?.slot ?? ZoneCSlots.seedPadding(keys: keys, random: random),

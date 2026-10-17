@@ -725,6 +725,75 @@ final class ZoneCExchangeTests: XCTestCase {
         XCTAssertEqual(sink.calls, [], "but half an answer is not handed on")
     }
 
+    // MARK: - A Debug build and the real service
+
+    /// The tests are Debug builds (the test K exists only in them), which is
+    /// what makes the next test mean something.
+    func testTheTestsAreRunningInADebugBuild() {
+        XCTAssertTrue(ZoneCExchange.isDebugBuild)
+    }
+
+    /// The test K is public, so a row marked with it would stand out in the real
+    /// pool. A Debug build that talks to the production origin sends padding.
+    func testADebugBuildTalkingToTheRealServiceSendsOnlyPaddingAndLeavesOutAlone() async throws {
+        zoneCIsOn.value = true
+        autonautSends(r1, named: name1)
+        // A file that, were `out/` opened, would be deleted on sight.
+        writeToOut("not what Autonaut writes", named: name2)
+        let before = outNames().map { try? Data(contentsOf: outFile($0)) }
+        try store.update { $0.addOwedReturn(owed()) }
+        let real = PlotService(transport: stub, origin: PlotService.origin)
+
+        _ = try await exchange().ask(plots: real, tokens: ["aa"])
+
+        XCTAssertEqual(stub.asked, ["/api/walk/pending"], "the request still goes: the crowd stays whole")
+        XCTAssertEqual(try slotText(0, "aloft").utf8.count, 128)
+        XCTAssertFalse(try slotText(0, "aloft").hasPrefix(hex(spaceSeed(r1))), "the seed did not go")
+        XCTAssertFalse(try slotText(0, "aloft").contains(hex(spaceSeed(r1))), "in any position")
+        XCTAssertEqual(outNames(), [name1, name2], "neither file was opened, taken or deleted")
+        XCTAssertEqual(outNames().map { try? Data(contentsOf: outFile($0)) }, before)
+        XCTAssertEqual(try sentRecords(), [], "no record, and so no key, was made")
+    }
+
+    /// And the same seed goes to a server that is not the real one.
+    func testADebugBuildTalkingToAnotherServerCarriesTheSeed() async throws {
+        zoneCIsOn.value = true
+        autonautSends(r1, named: name1)
+        let local = PlotService(transport: stub, origin: URL(string: "http://127.0.0.1:8822")!)
+
+        _ = try await exchange().ask(plots: local, tokens: [])
+
+        XCTAssertEqual(Data(try aloftBytes(0).prefix(32)), spaceSeed(r1))
+        XCTAssertEqual(outNames(), [], "and it was taken as usual")
+    }
+
+    func testWhichAddressesAreTheRealServiceForADebugBuild() {
+        let real = [
+            PlotService.origin,
+            URL(string: "https://peacegarden.app/")!,
+            URL(string: "http://peacegarden.app:8080")!,
+            URL(string: "https://PeaceGarden.App")!,
+            URL(string: "https://www.peacegarden.app")!,
+            URL(string: "https://staging.peacegarden.app")!,
+            URL(string: "/api/walk/pending")!,
+        ]
+        for origin in real {
+            XCTAssertFalse(ZoneCExchange.mayCarrySeeds(to: origin, inDebugBuild: true), "\(origin)")
+            XCTAssertTrue(ZoneCExchange.mayCarrySeeds(to: origin, inDebugBuild: false), "a Release build always does: \(origin)")
+        }
+        let other = [
+            URL(string: "https://example.invalid")!,
+            URL(string: "http://127.0.0.1:8822")!,
+            URL(string: "http://localhost")!,
+            URL(string: "https://notpeacegarden.app")!,
+            URL(string: "https://peacegarden.app.example.invalid")!,
+        ]
+        for origin in other {
+            XCTAssertTrue(ZoneCExchange.mayCarrySeeds(to: origin, inDebugBuild: true), "\(origin)")
+            XCTAssertTrue(ZoneCExchange.mayCarrySeeds(to: origin, inDebugBuild: false), "\(origin)")
+        }
+    }
+
     // MARK: - A service that ignores the slots
 
     /// A service that does not know the slots answers 200 and stores nothing.
