@@ -160,7 +160,7 @@ needs no line at all.
 | Name | Label `YOUR PEACE GARDEN USERNAME`, field on the rule | *Plants grown under this name will keep it.* |
 | Preferred place | Label `DEFAULT SEED PLANTING LOCATION`, menu | none |
 | Location | Toggle **Log where new seeds are planted** | *By default, only you see this.* |
-| Being told | Toggle **Alert me when a joint seed is shared** | *Your username will only show publicly if you approve.* |
+| Being told | Toggle **News from the garden** | *The app asks the web garden each time it starts.* |
 | Starting again | Three rows, held rather than tapped — see below | revealed while held |
 
 That is around forty words against roughly three hundred.
@@ -175,8 +175,11 @@ screen holds now:
 | --- | --- | --- |
 | Display | **Show plant name**, **Show growth stage**, *Menu bar*, **Let the plant turn**, *How the plant is drawn* (with *Its colour* when the drawing is tinted), *Appearance*, and *Light and dark* — three marks, day, the clock, night, the chosen one in colour | Under the menu bar, turning, appearance and light, each saying what the choice does |
 | Seed planting location | *Location description*: A place from abstract list, Where you actually are, Something you write — and under the first, *Abstract list*; under the third, the words | One line, for the chosen answer only (since 13 October; see below) |
-| Joint seeds | Label `GARDENER USERNAME`, field on the rule; toggle **Alert me when a joint seed is shared** | *Plants you have already grown keep the name they were grown under.* and *Your username will only show publicly if you approve.* |
+| Joint seeds | Label `GARDENER USERNAME`, field on the rule; toggle **News from the garden**; a second toggle, **Zone C** | *Plants you have already grown keep the name they were grown under.*; under **News from the garden**, *The app asks the web garden each time it starts.*; under **Zone C**, *Seeds can pass between this app and Autonaut.* |
 | Starting again | The held rows, below | revealed while held |
+
+**Zone C** is the second row. It is off by default and is shown only while
+Autonaut is on the phone. Turning it on is the consent. See `docs/ZONE-C.md`.
 
 The username moved into *Joint seeds*, because it is not
 something you look at: it is what the other phone is told you are called. Its

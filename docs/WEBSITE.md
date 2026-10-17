@@ -1050,11 +1050,18 @@ of *and a token that lets one of you tell the other if the plant is ever shared*
 
 | Control | Key | Today | From phase 2 |
 | --- | --- | --- | --- |
-| **Alert me when a joint seed is shared** | `sharing.invitations.v1`, on by default | Stores a bool that nothing reads | **On:** when you open the app, it asks the service whether a plant of yours has been shared, presenting the contact tokens in your garden. **Off:** the app makes no such request, so the service is never told this phone exists. |
+| **News from the garden** | `sharing.invitations.v1`, on by default | Stores a bool that nothing reads | **On:** when you open the app, it asks the service whether a plant of yours has been shared, presenting the contact tokens in your garden. **Off:** the app makes no such request, so the service is never told this phone exists. |
 | **Gardener username** | `GardenModel.identity.displayName` | What the other phone is told at a meeting — a claim, decoration, never matched on | Also the name printed on any plant you share, read live at page load. |
 | **Use geographical coordinates** | `PlaceKeeping` | A coordinate written to the local note | Behaviour unchanged, and that is the decision. The paragraph beside it gains one clause: a shared plant carries the place as it was named. |
 
 Two notes on those.
+
+**The same request carries Zone C's two slots.** The switch was *Alert me when a
+joint seed is shared*; it is now *News from the garden*, in the app's Settings,
+with the stored key unchanged. The pending route also takes two fixed-size
+slots and returns two fixed-size bundles, which belong to Zone C and are
+described in `design/space-seeds-2026-10-16/DESIGN.md`. Off still means no
+request, so neither the meeting tokens nor the slots are sent.
 
 **Off must mean no request.** If *off* only suppressed a banner while the app
 still asked, the switch would be a lie of the specific kind this project has been
