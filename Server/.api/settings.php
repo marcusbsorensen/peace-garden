@@ -21,6 +21,8 @@ function settings(): array
     return $given + [
         // Outside public_html, beside it, so the file is never a URL.
         'dsn' => 'sqlite:' . dirname(__DIR__, 2) . '/peacegarden-data/walk.sqlite',
+        // The aloft pools (`Aloft.php`): a file of their own, beside it too.
+        'aloft' => dirname(__DIR__, 2) . '/peacegarden-data/aloft.sqlite',
         'user' => null,
         'password' => null,
         'open_for_planting' => false,
