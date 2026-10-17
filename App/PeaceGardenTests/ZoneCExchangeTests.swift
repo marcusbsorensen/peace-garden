@@ -65,7 +65,7 @@ final class ZoneCExchangeTests: XCTestCase {
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        stub = AskingTests.Stub()
+        stub = answeringStub()
         sink = Sink()
         zoneCIsOn = Box(false)
         let base = FileManager.default.temporaryDirectory
@@ -102,6 +102,19 @@ final class ZoneCExchangeTests: XCTestCase {
             bundles: sink,
             isOn: { switchIsOn.value }
         )
+    }
+
+    /// What the service sends: both bundles, with rows in them, as it does at
+    /// any fill (`DESIGN.md` §4.2). A seed leaves `out/` only on an answer like
+    /// this, so it is what the tests start from.
+    private var serverAnswer: String {
+        #"{"aloft":"\#(bundle([0xa1, 0xa2], as: .aloft))","back":"\#(bundle([0xb1, 0xb2], as: .back))"}"#
+    }
+
+    private func answeringStub() -> AskingTests.Stub {
+        let stub = AskingTests.Stub()
+        stub.replies["/api/walk/pending"] = (200, serverAnswer)
+        return stub
     }
 
     private func plots() -> PlotService {
@@ -255,7 +268,7 @@ final class ZoneCExchangeTests: XCTestCase {
     /// The same request is made again from a clean room, so that each case in a
     /// loop starts from nothing.
     private func setUpWorld() {
-        stub = AskingTests.Stub()
+        stub = answeringStub()
         sink = Sink()
         try? FileManager.default.removeItem(at: root)
         try? FileManager.default.removeItem(at: storeFile)
@@ -649,7 +662,7 @@ final class ZoneCExchangeTests: XCTestCase {
         // Next launch, answered.
         stub.unreachable = false
         stub.script = []
-        stub.replies["/api/walk/pending"] = (200, "{}")
+        stub.replies["/api/walk/pending"] = (200, serverAnswer)
         _ = try await ask()
 
         XCTAssertEqual(try slotText(1, "aloft"), sent, "the same row, so the pool takes it once", file: file, line: line)
@@ -702,7 +715,7 @@ final class ZoneCExchangeTests: XCTestCase {
         zoneCIsOn.value = true
         autonautSends(r1, named: name1)
         let model = try model(meetings: 129)
-        stub.script = [(200, "{}"), (503, "")]
+        stub.script = [(200, serverAnswer), (503, "")]
 
         await model.catchUpOnTheAsking(zoneC: exchange())
 
@@ -710,6 +723,91 @@ final class ZoneCExchangeTests: XCTestCase {
         XCTAssertEqual(outNames(), [], "the first request carried the seed and was answered")
         XCTAssertEqual(try sentRecords().map(\.launchesLeft), [ZoneCSentSeed.launchesAtStart - 1])
         XCTAssertEqual(sink.calls, [], "but half an answer is not handed on")
+    }
+
+    // MARK: - A service that ignores the slots
+
+    /// A service that does not know the slots answers 200 and stores nothing.
+    /// A seed deleted on that answer would be gone from this phone and never in
+    /// the pool. What the service sends back when it does take the slots is a
+    /// bundle in each, so an answer with no `aloft` bundle is not an answer to
+    /// the seed.
+    func testAnAnswerWithoutAnAloftBundleKeepsTheSeedFileAndTheNextLaunchSendsTheSameRow() async throws {
+        let withoutOne: [(String, String)] = [
+            ("nothing at all", "{}"),
+            ("offers only", #"{"offers":[]}"#),
+            ("a bundle that is not a string", #"{"aloft":7,"back":"\#(bundle([1], as: .back))"}"#),
+            ("an empty bundle", #"{"aloft":"","back":"\#(bundle([1], as: .back))"}"#),
+            ("a bundle that does not cut into rows", #"{"aloft":"\#(String(repeating: "a", count: 127))"}"#),
+            ("a bundle of upper case", #"{"aloft":"\#(String(repeating: "AB", count: 64))"}"#),
+            ("only the back bundle", #"{"back":"\#(bundle([1], as: .back))"}"#),
+        ]
+        for (what, answer) in withoutOne {
+            setUpWorld()
+            zoneCIsOn.value = true
+            autonautSends(r1, named: name1)
+            stub.replies["/api/walk/pending"] = (200, answer)
+
+            _ = try await ask()
+
+            let sent = try slotText(0, "aloft")
+            XCTAssertTrue(sent.hasPrefix(hex(spaceSeed(r1))), "\(what): the seed went")
+            XCTAssertEqual(outNames(), [name1], "\(what): the file stays, because the slot may not have been kept")
+            let kept = try XCTUnwrap(try sentRecords().first, what)
+            XCTAssertEqual(
+                kept.launchesLeft, ZoneCSentSeed.launchesAtStart - 1,
+                "\(what): the launch was answered, so it still counts"
+            )
+
+            // The service is brought up to date, and the next launch sends the
+            // same row: the same key, so the pool takes it once.
+            stub.replies["/api/walk/pending"] = (200, serverAnswer)
+            _ = try await ask()
+
+            XCTAssertEqual(try slotText(1, "aloft"), sent, "\(what): the same row")
+            XCTAssertEqual(try sentRecords().map(\.privateKey), [kept.privateKey], "\(what): one record, one key")
+            XCTAssertEqual(outNames(), [], "\(what): and now the file has gone")
+        }
+    }
+
+    func testAnAnswerWithAnAloftBundleTakesTheFile() async throws {
+        zoneCIsOn.value = true
+        autonautSends(r1, named: name1)
+        stub.replies["/api/walk/pending"] = (200, #"{"aloft":"\#(bundle([1], as: .aloft))"}"#)
+
+        _ = try await ask()
+
+        XCTAssertEqual(outNames(), [], "an aloft bundle is the service saying it took the slot")
+    }
+
+    /// Only the first request carries the seed, so it is the first request's
+    /// answer that settles the file, whatever the second one says.
+    @MainActor
+    func testItIsTheFirstRequestsAnswerThatSettlesTheFile() async throws {
+        zoneCIsOn.value = true
+        autonautSends(r1, named: name1)
+        let model = try model(meetings: 129)
+        stub.script = [(200, "{}"), (200, serverAnswer)]
+
+        await model.catchUpOnTheAsking(zoneC: exchange())
+
+        XCTAssertEqual(stub.asked.count, 2)
+        XCTAssertEqual(outNames(), [name1], "the second answer had bundles, but the seed was not in the second request")
+    }
+
+    func testAReturnIsCountedSentOnlyOnAnAnswerWithABackBundle() async throws {
+        zoneCIsOn.value = true
+        try store.update { $0.addOwedReturn(owed()) }
+        stub.replies["/api/walk/pending"] = (200, #"{"aloft":"\#(bundle([1], as: .aloft))"}"#)
+
+        _ = try await ask()
+
+        XCTAssertEqual(try store.load().owedReturns.map(\.sendsLeft), [8], "the service did not take the back slot")
+
+        stub.replies["/api/walk/pending"] = (200, serverAnswer)
+        _ = try await ask()
+
+        XCTAssertEqual(try store.load().owedReturns.map(\.sendsLeft), [7])
     }
 
     // MARK: - The bundles

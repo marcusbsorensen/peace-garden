@@ -104,11 +104,14 @@ struct PlotService: Sendable {
     /// number: a garden of more than 128 meetings asks twice, and a seed or a
     /// return goes in the first request only. Left alone, every request carries
     /// padding. `answered` is told when a request has been answered and the
-    /// answer read, which is the only moment a seed may leave `out/`.
+    /// answer read, and which of the two bundles that answer carried. A seed may
+    /// leave `out/` only on an answer that carried `aloft`: a service that does
+    /// not know the slots answers 200 and stores nothing, and a seed deleted
+    /// then would be lost.
     func pending(
         tokens: [String],
         slots: @Sendable (_ request: Int) -> AskingSlots = { _ in AskingSlots.padding() },
-        answered: @Sendable (_ request: Int) -> Void = { _ in }
+        answered: @Sendable (_ request: Int, _ bundles: Bundles) -> Void = { _, _ in }
     ) async throws -> Pending {
         var heard = Pending()
         // The service takes 128 at a time; a long-standing garden asks twice.
@@ -121,13 +124,24 @@ struct PlotService: Sendable {
                 "/api/walk/pending",
                 Asking(tokens: some, aloft: carried.aloft, back: carried.back)
             )
-            answered(request)
+            let aloft = AskingSlots.rows(reply.aloft?.text, as: .aloft)
+            let back = AskingSlots.rows(reply.back?.text, as: .back)
+            answered(request, Bundles(aloft: !aloft.isEmpty, back: !back.isEmpty))
             heard.offers += reply.offers ?? []
             heard.wild += reply.wild ?? []
-            heard.aloft += AskingSlots.rows(reply.aloft?.text, as: .aloft)
-            heard.back += AskingSlots.rows(reply.back?.text, as: .back)
+            heard.aloft += aloft
+            heard.back += back
         }
         return heard
+    }
+
+    /// Which of Zone C's two bundles one answer carried, as readable rows. The
+    /// service always sends both, topped up with padding to a fixed size, so an
+    /// answer without them came from a service that does not take the slots (or
+    /// from something that is not the service), and nothing it was sent was kept.
+    struct Bundles: Sendable, Equatable {
+        var aloft: Bool
+        var back: Bool
     }
 
     /// What `pending` hears: the asking's rows and the Wild Fields', and the
