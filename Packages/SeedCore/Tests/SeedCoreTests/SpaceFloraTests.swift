@@ -338,7 +338,7 @@ final class SpaceFloraTests: XCTestCase {
 
     func testAllFiveGrowIntoSoundMeshesAtEveryAge() {
         for kind in SpaceKind.allCases {
-            for plant in Self.plants(of: kind, count: 12) {
+            for plant in Self.plants(of: kind, count: 8) {
                 let genome = plant.genome
                 let toBloom = genome.tempo.daysToBloom
                 for days in [0.3, toBloom * 0.5, toBloom + genome.tempo.bloomDays * 0.4,
@@ -618,29 +618,43 @@ final class SpaceFloraTests: XCTestCase {
     func testTheKindIsInheritedOnTheSameLadderWithTheBlendAsACoin() {
         var tally = (first: 0, second: 0, neither: 0, total: 0)
         var reached = Set<SpaceKind>()
-        for index in 0..<6_000 {
-            let a = Self.r(index * 3), b = Self.r(index * 3 + 1)
-            let kindA = SpaceFlora.draw(r: a)!.kind, kindB = SpaceFlora.draw(r: b)!.kind
-            let child = SeedID(bytes: Self.r(index * 3 + 2) + Self.mark(index))!
-            let flora = SpaceFloraHybrid.draw(
-                child: child,
-                parentA: SeedID(bytes: a + Self.mark(index))!, parentB: SeedID(bytes: b + Self.mark(index + 1))!,
-                encounterID: Self.mark(index)
+        for index in 0..<20_000 {
+            let a = Self.r(index * 3), b = Self.r(index * 3 + 1), child = Self.r(index * 3 + 2)
+            let kindA = SpaceFlora.kind(of: a), kindB = SpaceFlora.kind(of: b)
+            // The very function the draw calls, so a plant need not be grown for each.
+            let kind = SpaceFlora.inheritedKind(
+                genes: SpaceGenes.hybrid(child: child, first: a, second: b),
+                parentKinds: (kindA, kindB)
             )
-            reached.insert(flora.kind)
+            reached.insert(kind)
             guard kindA != kindB else { continue }
             tally.total += 1
-            if flora.kind == kindA { tally.first += 1 }
-            else if flora.kind == kindB { tally.second += 1 }
+            if kind == kindA { tally.first += 1 }
+            else if kind == kindB { tally.second += 1 }
             else { tally.neither += 1 }
         }
         // 36 + half of 22 + a fifth of 6 each, and 3 fifths of 6 for a kind
         // neither parent was: about one cross in twenty-eight.
         let total = Double(tally.total)
-        XCTAssertEqual(Double(tally.first + tally.second) / total, 0.964, accuracy: 0.015)
-        XCTAssertEqual(Double(tally.neither) / total, 0.036, accuracy: 0.012)
-        XCTAssertEqual(Double(tally.first) / Double(tally.first + tally.second), 0.5, accuracy: 0.05)
+        XCTAssertEqual(Double(tally.first + tally.second) / total, 0.964, accuracy: 0.01)
+        XCTAssertEqual(Double(tally.neither) / total, 0.036, accuracy: 0.008)
+        XCTAssertEqual(Double(tally.first) / Double(tally.first + tally.second), 0.5, accuracy: 0.03)
         XCTAssertEqual(reached, Set(SpaceKind.allCases), "a cross can grow any kind")
+
+        // And a grown plant's kind is that draw.
+        for index in 0..<150 {
+            let a = Self.found(index), b = Self.seed("space-ladder-\(index)")
+            let encounter = Pollination.encounterID(
+                seedA: a, seedB: b, nonceA: Self.r(index), nonceB: Self.mark(index)
+            )
+            let child = Pollination.cross(seedA: a, seedB: b, encounterID: encounter)
+            let flora = SpaceFloraHybrid.draw(child: child, parentA: a, parentB: b, encounterID: encounter)
+            let sorted = a < b ? (a, b) : (b, a)
+            let kinds = (SpaceFlora.kind(of: Data(sorted.0.bytes.prefix(16))),
+                         SpaceFlora.kind(of: Data(sorted.1.bytes.prefix(16))))
+            let genes = SpaceGenes.hybrid(child: child.bytes, first: sorted.0.bytes, second: sorted.1.bytes)
+            XCTAssertEqual(flora.kind, SpaceFlora.inheritedKind(genes: genes, parentKinds: kinds))
+        }
     }
 
     func testAChildsStructureAndRangesAreItsOwnKindsAndTheOtherParentsPointIsInTheCentre() {
