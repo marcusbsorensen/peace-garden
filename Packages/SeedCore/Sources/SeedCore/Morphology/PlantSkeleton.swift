@@ -106,6 +106,15 @@ public enum SkeletonBuilder {
             radii.append(baseRadius * (1 - (1 - taper) * t) * apexPoint(t, span: pointSpan))
         }
 
+        // **The Orbit Vine runs round its own axis.** A plant that says so is
+        // carried round after the stem is integrated, so lean, sway and the
+        // crozier are the stem's as ever and the loops are laid over them; and
+        // the frames below are cut from the looped path, so the leaves and the
+        // flowers ride it. The default `orbit` is 0, and then this never runs.
+        if genome.habit.orbit > 0 {
+            orbit(&positions, turns: Float(genome.habit.orbit), radius: 0.16 * length)
+        }
+
         let samples = transportFrames(
             positions: positions,
             radii: radii,
@@ -146,6 +155,29 @@ public enum SkeletonBuilder {
                 taper: taper
             )
         )
+    }
+
+    // MARK: - Orbit
+
+    /// Carries a stem's path round its axis in open loops: `turns` times from
+    /// foot to tip, in a circle of `radius` across the horizontal.
+    ///
+    /// **A helix from a point.** The loops open out of the foot over the first
+    /// fifth of the stem rather than starting at full width, because there is
+    /// no ground here to stand on and a vine has to come from somewhere: the
+    /// foot stays where it was, and the first stretch is a spiral widening to
+    /// the radius. The offset is horizontal, in the world's x and z, so the
+    /// stem's own lean and sway are untouched and the loops open into ellipses
+    /// from any viewpoint above the plant.
+    static func orbit(_ positions: inout [SIMD3<Float>], turns: Float, radius: Float) {
+        guard positions.count >= 2 else { return }
+        let last = Float(positions.count - 1)
+        for index in positions.indices {
+            let t = Float(index) / last
+            let opening = smoothstep(0, 0.2, t)
+            let phase = 2 * .pi * turns * t
+            positions[index] += SIMD3<Float>(cos(phase), 0, sin(phase)) * (radius * opening)
+        }
     }
 
     // MARK: - Pedicels
