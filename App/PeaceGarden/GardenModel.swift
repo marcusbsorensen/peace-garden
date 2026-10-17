@@ -587,7 +587,7 @@ final class GardenModel {
         // other gardener chose. Same request, same switch.
         let tokens = garden.plants.compactMap(\.tokens?.oursHex)
             + (garden.released ?? []).map(\.tokens.oursHex)
-        let exchange = zoneC ?? ZoneCExchange(transit: suite, store: zoneCStore)
+        let exchange = zoneC ?? ZoneCExchange(besideGardenAt: store, transit: suite)
         guard let heard = try? await exchange.ask(plots: plots, tokens: tokens) else { return }
 
         for notice in heard.wild { hear(notice) }

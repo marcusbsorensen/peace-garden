@@ -772,6 +772,40 @@ final class ZoneCEngineTests: XCTestCase {
 
     // MARK: - Where the app reaches it
 
+    /// The model's own asking, with no exchange handed in, is the app's path:
+    /// the switches, the suite it holds, the store beside its file, the engine.
+    @MainActor
+    func testTheModelsOwnAskingFindsASeedThroughTheEngine() async throws {
+        let ben = phone("Ben")
+        let file = FileManager.default.temporaryDirectory
+            .appendingPathComponent("zonec-engine-model-\(UUID().uuidString).json")
+        defer { try? FileManager.default.removeItem(at: file) }
+        let garden = GardenStore(fileURL: file, writeOptions: [.atomic])
+        let service = AskingTests.Stub()
+        service.replies["/api/walk/pending"] = (
+            200, #"{"aloft":"\#(SuiteHex.encode(bundleWithPadding([seedRow(1)]).reduce(into: Data()) { $0.append($1) }))"}"#
+        )
+        let model = GardenModel(
+            store: garden,
+            plots: PlotService(transport: service, origin: URL(string: "https://example.invalid")!),
+            suite: ben.transit
+        )
+        UserDefaults.standard.set(true, forKey: Sharing.invitationsKey)
+        UserDefaults.standard.set(true, forKey: ZoneCExchange.enabledKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: Sharing.invitationsKey)
+            UserDefaults.standard.removeObject(forKey: ZoneCExchange.enabledKey)
+        }
+
+        await model.catchUpOnTheAsking()
+
+        let state = try ZoneCStore(besideGardenAt: garden).load()
+        XCTAssertEqual(state.plants.count, 1)
+        XCTAssertEqual(state.plants.first?.side, .finder)
+        XCTAssertEqual(ben.seedsForAutonaut, [spaceSeed(1)])
+        XCTAssertEqual(state.owedReturns.count, 1)
+    }
+
     func testTheAppsOwnExchangeHandsTheBundlesToTheEngine() throws {
         let file = FileManager.default.temporaryDirectory
             .appendingPathComponent("zonec-engine-garden-\(UUID().uuidString).json")
