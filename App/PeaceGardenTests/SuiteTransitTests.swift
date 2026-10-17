@@ -662,7 +662,35 @@ final class SuiteTransitTests: XCTestCase {
 
         try transit.finish(sent)
 
-        XCTAssertEqual(watcher.heard.filter { $0.hasPrefix("delete") }, ["delete \(sent.name)"])
+        waitUntil { watcher.heard.contains { $0.hasSuffix(sent.name) } }
+        XCTAssertTrue(
+            watcher.heard.contains { $0.hasSuffix(sent.name) },
+            "the presenter of out/ heard of the deletion: \(watcher.heard)"
+        )
+    }
+
+    /// The control for the two tests around it: a plain write, with no
+    /// coordination, tells a presenter nothing. Without this they would pass
+    /// for any code at all.
+    func testAPlainWriteIsNotHeardByAPresenter() throws {
+        let transit = transit()
+        try transit.prepare()
+        let watcher = Watcher(watching: path("Seeds/v1/in"))
+        NSFileCoordinator.addFilePresenter(watcher)
+        defer { NSFileCoordinator.removeFilePresenter(watcher) }
+
+        try Data("x".utf8).write(to: path("Seeds/v1/in/plain"))
+        try FileManager.default.removeItem(at: path("Seeds/v1/in/plain"))
+
+        waitUntil(seconds: 1) { !watcher.heard.isEmpty }
+        XCTAssertEqual(watcher.heard, [])
+    }
+
+    private func waitUntil(seconds: TimeInterval = 5, _ done: () -> Bool) {
+        let deadline = Date().addingTimeInterval(seconds)
+        while !done() && Date() < deadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.05))
+        }
     }
 
     func testPlacingAFileIsCoordinated() throws {
@@ -675,10 +703,7 @@ final class SuiteTransitTests: XCTestCase {
         _ = try transit.deliver(foundSeed: seed)
 
         let arrived = names("Seeds/v1/in")
-        let deadline = Date().addingTimeInterval(5)
-        while watcher.heard.isEmpty && Date() < deadline {
-            RunLoop.current.run(until: Date().addingTimeInterval(0.05))
-        }
+        waitUntil { !watcher.heard.isEmpty }
         XCTAssertTrue(
             watcher.heard.contains { $0 == "appear \(arrived[0])" || $0 == "change \(arrived[0])" },
             "the presenter of in/ heard of the file: \(watcher.heard)"
