@@ -39,7 +39,13 @@ struct PeaceGardenApp: App {
                 // and the service is never told this phone exists — see
                 // `Sharing.swift`. It is quiet about failing; nobody asked for
                 // it, so a phone with no signal simply learns nothing today.
+                //
+                // The suite's folder is put in order first, whatever the
+                // switches say: its folders and Peace Garden's presence
+                // marker, and the `exchange` marker only while both switches
+                // are on (`GardenModel.reconcileSuite`).
                 .task {
+                    await model.reconcileSuite()
                     await model.catchUpOnTheAsking()
                 }
                 // Whether this copy shows the developer controls: asked of

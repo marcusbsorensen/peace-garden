@@ -44,6 +44,12 @@ struct SettingsView: View {
     @State private var about: AboutView.Part?
     @AppStorage(Places.preferredKey) private var preferredPlace = ""
     @AppStorage(Sharing.invitationsKey) private var wantsInvitations = Sharing.invitationsDefault
+    /// Zone C's own switch, off until the person turns it on: turning it on is
+    /// the consent (`DESIGN.md` §7, item 16).
+    @AppStorage(ZoneCExchange.enabledKey) private var zoneCIsOn = false
+    /// Whether Autonaut has ever been on this phone, and so whether the Zone C
+    /// row is shown at all. Looked up when the screen opens, off the main actor.
+    @State private var autonautIsHere = false
     @AppStorage(Chrome.namesPlantKey) private var namesPlant = true
     @AppStorage(Chrome.showsStageKey) private var showsStage = true
     @AppStorage(Chrome.turntableKey) private var turntable = true
@@ -566,20 +572,32 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 22) {
             username
 
-            // The note used to say the username would show publicly only if
-            // you approved, which read as though approving could publish it.
-            // Nothing does: the username goes to the other phone at a meeting
-            // and in a seed's link, and no request to the web garden carries a
-            // name of any kind (`WalkArrival`, `PlotService`). A shared plant
-            // stands there with its seeds and nothing that names a person.
-            // The one exception is chosen plant by plant and is not this
-            // note's: beside a plant in the Wild Fields, a gardener may show
-            // their name (`WildBesideView`, 1 October 2026).
+            // This one switch is the whole of what the app asks of the web
+            // garden on its own, so it is named for what comes back (Marcus,
+            // 17 October 2026: *News from the garden*). It was *Alert me when a
+            // joint seed is shared*, and its note said a shared plant goes to
+            // the web garden without the username. That line is on the privacy
+            // page now, where `privacy6` says no name goes with a shared plant:
+            // nothing carries a name of any kind (`WalkArrival`, `PlotService`),
+            // and the one exception is chosen plant by plant and is not this
+            // note's (`WildBesideView`, 1 October 2026). The stored key did not
+            // change, so nobody's choice moved.
             switchRow(
-                "Alert me when a joint seed is shared",
-                note: "A plant you both share goes to the web garden without your username.",
+                "News from the garden",
+                note: "The app asks the web garden each time it starts.",
                 isOn: $wantsInvitations
             )
+
+            // Only while Autonaut is on this phone, and off until it is turned
+            // on. This is the person's consent for seeds to pass between the
+            // two apps; the reasons are in About, not here.
+            if autonautIsHere {
+                switchRow(
+                    "Zone C",
+                    note: "Seeds can pass between this app and Autonaut.",
+                    isOn: $zoneCIsOn
+                )
+            }
 
             letGo
         }
@@ -588,6 +606,14 @@ struct SettingsView: View {
                 .environment(model)
                 .presentationBackground(Chrome.ground)
         }
+        .task {
+            let suite = model.suite
+            autonautIsHere = await Task.detached { suite.autonautIsPresent }.value
+        }
+        // The folder Autonaut reads follows both switches at once, not at the
+        // next start (`GardenModel.reconcileSuite`).
+        .onChange(of: wantsInvitations) { Task { await model.reconcileSuite() } }
+        .onChange(of: zoneCIsOn) { Task { await model.reconcileSuite() } }
     }
 
     /// The plants this person let go into the Wild Fields, each a way back to

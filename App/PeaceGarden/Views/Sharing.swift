@@ -8,7 +8,13 @@ import Foundation
 /// the other things they have already decided rather than sprung on them the
 /// day the feature arrives.
 enum Sharing {
-    /// Whether to be told when a plant this person helped make is shared.
+    /// Whether the app asks the web garden for news each time it starts. In
+    /// Settings, *News from the garden*; until 17 October 2026, *Alert me when a
+    /// joint seed is shared*. The stored key is the old one, so nobody's choice
+    /// moved when the label did.
+    ///
+    /// The first thing it brings is whether a plant this person helped make has
+    /// been shared.
     ///
     /// The story: a plant belongs to two people, so one of them publishing it
     /// is one of them speaking. The public page names the sharer alone. The
@@ -29,9 +35,20 @@ enum Sharing {
     ///
     /// Written down here rather than in `docs/WEBSITE.md` alone, because this is
     /// the property the first line of networking code will quietly break. On,
-    /// the app asks the service — once, when it opens — whether anything has
-    /// been shared against any of the contact tokens in its garden. Off, it does
-    /// not ask, and the service is therefore never told this phone exists.
+    /// the app asks the service — once, each time it starts — whether anything
+    /// has been shared against any of the contact tokens in its garden, with or
+    /// without any (Zone C's two slots ride in the same request, so every phone
+    /// with the switch on sends one). Off, it does not ask, and the service is
+    /// therefore never told this phone exists.
+    ///
+    /// **Turning it off stops all of that.** No request goes at all, so nothing
+    /// is asked about shared plants, nothing goes into either of Zone C's pools,
+    /// no seed is taken from Autonaut's `out/` and no return is sent or opened.
+    /// And `Seeds/v1/exchange` is deleted (`GardenModel.reconcileSuite`), so
+    /// Autonaut stops offering "Send as a seed". Zone C's own switch
+    /// (`ZoneCExchange.enabledKey`) is a second condition on top of this one,
+    /// not a replacement: it can only narrow what a request carries, and this
+    /// one decides whether there is a request.
     ///
     /// A switch that only hid the answer while the question was still being
     /// asked would be the one kind of untruth this project has been careful
