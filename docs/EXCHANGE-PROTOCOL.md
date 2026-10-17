@@ -141,3 +141,11 @@ other's epithet.
 `tools/reference/derivation_reference.py` is an independent implementation of
 the same spec in another language. The two agree byte for byte; if they ever
 stop agreeing, one of them has drifted, and the vectors say which.
+
+## Zone C
+
+Zone C passes space seeds between Peace Garden and Autonaut. A found seed grows
+a cross with the finder's own seed through the same derivation two phones use
+when they knock. The server carries the seeds in pools it cannot read. The
+design is in `design/space-seeds-2026-10-16/DESIGN.md`, and `docs/ZONE-C.md`
+says where each piece lives.
