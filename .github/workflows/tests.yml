@@ -311,6 +311,11 @@ jobs:
             echo "App/PeaceGarden/ZoneC/ZoneCProductionKey.swift is no longer ignored."
             exit 1
           fi
+      # make_key.sh refuses to write the key anywhere git would track it, and
+      # refuses when git cannot answer. This runs each case in a throwaway
+      # folder and prints no key.
+      - name: The key script keeps the key out of the repository
+        run: sh tools/zonec/check_make_key.sh
       - name: The site's own prose is commissioned, not drifting
         run: python3 tools/strings/check.py
       # The numeral rule, which nothing enforced until 6 September and which

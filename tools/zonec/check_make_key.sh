@@ -54,7 +54,7 @@ outside="$work/outside/K.swift"
 mkdir -p "$work/outside"
 expect "outside the repository, git working" 0 yes "$outside" sh "$script" "$outside"
 if [ -f "$outside" ]; then
-  mode=$(stat -f '%Lp' "$outside" 2>/dev/null || stat -c '%a' "$outside")
+  mode=$(stat -c '%a' "$outside" 2>/dev/null || stat -f '%Lp' "$outside")
   [ "$mode" = 600 ] && pass "the key file is owner-only" || fail "the key file mode is $mode"
 fi
 
