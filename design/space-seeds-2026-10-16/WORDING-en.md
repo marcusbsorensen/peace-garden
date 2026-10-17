@@ -6,6 +6,8 @@ Package W1, 17 October 2026. This is the exact English to read before any transl
 
 Nothing here is translated yet. `privacy7` and `privacy11` are already in `Server/assets/js/strings.js`. The rest is a draft, and the app's Swift is not touched by W1 (A5 writes it).
 
+**Danish read by Marcus, 17 October (G2b):** privacy11 as written; privacy7 opens *Med »Nyt fra haven« slået til*, so the app's Danish switch label must be **Nyt fra haven** (T1).
+
 ## 1. `privacy7`: the asking
 
 *Lives in:* `Server/assets/js/strings.js`, shown on `/privacy` (`Server/.pages/privacy`), sixth paragraph.
