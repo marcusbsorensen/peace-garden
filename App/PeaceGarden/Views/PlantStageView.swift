@@ -1,5 +1,6 @@
 import SwiftUI
 import SeedCore
+import PlantRender
 
 /// The main screen: your own plant, alone on black.
 ///

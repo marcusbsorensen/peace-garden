@@ -1,6 +1,7 @@
 import SeedCore
 import SwiftUI
 import UIKit
+@_spi(PeaceGarden) import PlantRender
 
 /// The ground a shared plant stands on, painted once at the picture's size.
 ///

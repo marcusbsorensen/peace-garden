@@ -3,6 +3,7 @@ import SwiftUI
 import UIKit
 import XCTest
 @testable import PeaceGarden
+import PlantRender
 
 /// **The loading animation: what it is made of, how long it runs, that it can be
 /// read on the ground it is drawn on, and that it stays quiet when asked.**

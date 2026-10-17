@@ -8,11 +8,11 @@ import simd
 /// The core hands over plain vertex buffers, so this file is the only part that
 /// knows about SceneKit. Moving to RealityKit later means rewriting this file
 /// and nothing else.
-enum PlantSceneBuilder {
+public enum PlantSceneBuilder {
 
     // MARK: - Geometry
 
-    static func node(for mesh: PlantMesh, palette: Genome.Palette) -> SCNNode {
+    public static func node(for mesh: PlantMesh, palette: Genome.Palette) -> SCNNode {
         let node = SCNNode()
         for part in mesh.parts where !part.indices.isEmpty {
             let child = SCNNode(geometry: geometry(for: part, palette: palette))
@@ -68,7 +68,10 @@ enum PlantSceneBuilder {
     /// so that geometry which is not part of the plant — the seed case it comes
     /// out of — can be built by the same code without borrowing a plant's
     /// material for a surface that is not made of plant.
-    static func geometry(for part: PlantMesh.Part) -> SCNGeometry {
+    ///
+    /// SPI: Peace Garden's time-lapse builds its nodes a part at a time.
+    @_spi(PeaceGarden)
+    public static func geometry(for part: PlantMesh.Part) -> SCNGeometry {
         let vertices = part.positions.map { SCNVector3($0.x, $0.y, $0.z) }
         let normals = part.normals.map { SCNVector3($0.x, $0.y, $0.z) }
         let coordinates = part.uvs.map { CGPoint(x: CGFloat($0.x), y: CGFloat($0.y)) }
@@ -118,7 +121,9 @@ enum PlantSceneBuilder {
         )
     }
 
-    static func material(for role: MeshRole, palette: Genome.Palette) -> SCNMaterial {
+    /// SPI: Peace Garden's time-lapse bakes one material per role and keeps them.
+    @_spi(PeaceGarden)
+    public static func material(for role: MeshRole, palette: Genome.Palette) -> SCNMaterial {
         let material = SCNMaterial()
         material.lightingModel = .physicallyBased
         // Falls back to a flat colour if the texture could not be made, rather
@@ -273,7 +278,7 @@ enum PlantSceneBuilder {
     /// is transparent, and `StageBackdrop` paints the pool of light — a
     /// gradient is far cheaper and far more controllable in SwiftUI than as a
     /// SceneKit environment, which would also swing around as the plant turns.
-    static func makeScene(palette: Genome.Palette) -> SCNScene {
+    public static func makeScene(palette: Genome.Palette) -> SCNScene {
         let scene = SCNScene()
 
         let key = SCNNode()
@@ -343,9 +348,9 @@ enum PlantSceneBuilder {
 
     /// Half the vertical field of view, in radians. Everything that works out
     /// how far away to stand needs it.
-    static var verticalHalfAngle: Float { Float(fieldOfView * .pi / 180) / 2 }
+    public static var verticalHalfAngle: Float { Float(fieldOfView * .pi / 180) / 2 }
 
-    static func makeCameraNode() -> SCNNode {
+    public static func makeCameraNode() -> SCNNode {
         let camera = SCNCamera()
         camera.fieldOfView = fieldOfView
         camera.projectionDirection = .vertical
@@ -366,7 +371,7 @@ enum PlantSceneBuilder {
     ///
     /// Pinned to the hour this genome opens widest, so it is the plant at its
     /// best rather than whatever time it happens to be.
-    static func bloomPreview(for genome: Genome) -> GrowthModel.State {
+    public static func bloomPreview(for genome: Genome) -> GrowthModel.State {
         Maturity.bloomPreview(for: genome)
     }
 
@@ -378,13 +383,13 @@ enum PlantSceneBuilder {
     /// arrived looking like a mature plant drawn badly. Held against what it
     /// will become, a seedling is small in a large space and spends weeks
     /// growing into it, which is the whole of what there is to watch.
-    static func matureBounds(for genome: Genome) -> (min: SIMD3<Float>, max: SIMD3<Float>) {
+    public static func matureBounds(for genome: Genome) -> (min: SIMD3<Float>, max: SIMD3<Float>) {
         Maturity.bounds(for: genome)
     }
 
     /// `matureBounds`, with how far the grown plant reaches from its stem —
     /// what the stage's turntable sweeps. See `framing(reach:)`.
-    static func matureExtent(for genome: Genome) -> (min: SIMD3<Float>, max: SIMD3<Float>, reach: Float) {
+    public static func matureExtent(for genome: Genome) -> (min: SIMD3<Float>, max: SIMD3<Float>, reach: Float) {
         Maturity.extent(for: genome)
     }
 
@@ -415,7 +420,7 @@ enum PlantSceneBuilder {
     ///
     /// `reach` is how far the plant stands out from its stem, for a plant that
     /// turns about it. See below.
-    static func framing(
+    public static func framing(
         min minBounds: SIMD3<Float>,
         max maxBounds: SIMD3<Float>,
         aspect: Float,

@@ -1,5 +1,6 @@
 import SwiftUI
 import SeedCore
+import PlantRender
 
 /// The garden as a grid of tiles: what `PlotView` replaced.
 ///

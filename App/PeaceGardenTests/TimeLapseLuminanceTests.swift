@@ -2,6 +2,7 @@ import SeedCore
 import SwiftUI
 import XCTest
 @testable import PeaceGarden
+import PlantRender
 
 /// **No flashing.** Marcus, 13 October 2026: *"not one revolution per day as
 /// it will flash too fast, just a notion of the sky turning with time so no one

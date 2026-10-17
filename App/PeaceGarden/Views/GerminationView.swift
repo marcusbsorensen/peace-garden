@@ -1,5 +1,6 @@
 import SwiftUI
 import SeedCore
+import PlantRender
 
 /// The seed opening, once, on the day it is sown.
 ///

@@ -1,6 +1,7 @@
 import SceneKit
 import SeedCore
 import UIKit
+import PlantRender
 
 /// What a picture of a plant is made of: the plant as it is now, the ground it
 /// stands on, and the size of the picture in pixels.

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import SeedCore
 
 /// The stage a plant stands on: black, with a soft pool of cool light behind it
@@ -9,7 +10,7 @@ import SeedCore
 /// be without competing for attention. The tint is nudged a little toward the
 /// plant's own colour, so each person's stage is quietly theirs without the
 /// backdrop ever becoming a thing you look at.
-struct StageBackdrop: View {
+public struct StageBackdrop: View {
     let palette: Genome.Palette
 
     /// How much of the stage the plant is taking up, `0...1`, where `1` is the
@@ -27,14 +28,19 @@ struct StageBackdrop: View {
     /// nothing, so nothing needs measuring to get it.
     var presence: Double = 1
 
+    public init(palette: Genome.Palette, presence: Double = 1) {
+        self.palette = palette
+        self.presence = presence
+    }
+
     /// The cool slate of a photographic backdrop.
     static let baseHue = 0.60
     /// How far the glow moves toward the plant's own colour. Kept deliberately
     /// small — at a third, a magenta flower turns the whole screen violet and
     /// the backdrop stops being a backdrop.
     static let tint = 0.12
-    static let saturation = 0.30
-    static let brightness = 0.26
+    @_spi(PeaceGarden) public static let saturation = 0.30
+    @_spi(PeaceGarden) public static let brightness = 0.26
     /// Where a grown plant carries its mass — a little above centre. A young
     /// one is a few centimetres of shoot sitting on the middle of the screen,
     /// so the pool starts centred on it and drifts up as the plant fills out.
@@ -52,16 +58,26 @@ struct StageBackdrop: View {
     /// the plant is changing fastest and there is most to notice.
     static let growthCurve = 0.7
 
-    static let falloff = 2.0
-    static let stopCount = 12
+    @_spi(PeaceGarden) public static let falloff = 2.0
+    @_spi(PeaceGarden) public static let stopCount = 12
+
+    /// What every screen in Peace Garden is painted on, and what this stage is
+    /// laid over.
+    ///
+    /// Near-black rather than black in the dark, and a warm near-white rather
+    /// than white in the light. The app's own `Chrome.ground` is this value.
+    @_spi(PeaceGarden)
+    public static let ground = Color(uiColor: UIColor { trait in
+        trait.userInterfaceStyle == .light ? UIColor(white: 0.965, alpha: 1) : .black
+    })
 
     @Environment(\.colorScheme) private var scheme
 
-    var body: some View {
+    public var body: some View {
         GeometryReader { proxy in
             let span = max(proxy.size.width, proxy.size.height)
             ZStack {
-                Chrome.ground
+                Self.ground
                 RadialGradient(
                     gradient: Gradient(stops: Self.stops(
                         for: palette,
@@ -80,7 +96,8 @@ struct StageBackdrop: View {
         .ignoresSafeArea()
     }
 
-    static func radius(presence: Double) -> Double {
+    @_spi(PeaceGarden)
+    public static func radius(presence: Double) -> Double {
         let t = pow(min(max(presence, 0), 1), growthCurve)
         return seedRadius + (grownRadius - seedRadius) * t
     }
@@ -124,7 +141,8 @@ struct StageBackdrop: View {
     /// Blends the base slate toward the plant's petal hue the short way round
     /// the wheel, so a red flower warms its light rather than detouring
     /// through green to get there.
-    static func glowHue(for palette: Genome.Palette) -> Double {
+    @_spi(PeaceGarden)
+    public static func glowHue(for palette: Genome.Palette) -> Double {
         var delta = palette.petalBase.hue - baseHue
         if delta > 0.5 { delta -= 1 }
         if delta < -0.5 { delta += 1 }

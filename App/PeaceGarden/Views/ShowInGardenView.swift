@@ -1,5 +1,6 @@
 import SwiftUI
 import SeedCore
+import PlantRender
 
 /// The one screen where a plant is put into the shared garden, or kept out of it.
 ///

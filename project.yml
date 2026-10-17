@@ -18,6 +18,10 @@ options:
 packages:
   SeedCore:
     path: Packages/SeedCore
+  # The SceneKit plant layer: the node, the scene it stands in, the view and
+  # the thumbnail. Lives beside SeedCore so a second app can link both.
+  PlantRender:
+    path: Packages/PlantRender
 
 targets:
   PeaceGarden:
@@ -34,6 +38,8 @@ targets:
     dependencies:
       - package: SeedCore
         product: SeedCore
+      - package: PlantRender
+        product: PlantRender
     settings:
       base:
         PRODUCT_NAME: PeaceGarden
@@ -107,6 +113,8 @@ targets:
       - target: PeaceGarden
       - package: SeedCore
         product: SeedCore
+      - package: PlantRender
+        product: PlantRender
     settings:
       base:
         SWIFT_VERSION: "6.0"
