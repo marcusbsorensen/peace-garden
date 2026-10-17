@@ -479,3 +479,153 @@ vocabulary; they are for review.
 
 - **Terms.** semente, planta, jardim da web, encontro, números aleatórios, byte; pool depósito; switch novidades do jardim.
 - **Unsure.** European Portuguese (*aspeto*, *partilhadas*) as the catalogue has it; *um punhado* for a handful.
+
+## ro - Romanian
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- ro: Cu veștile din grădină pornite, aplicația întreabă grădina web, la fiecare pornire, despre plantele pe care le ai în comun, trimițând numerele aleatoare din întâlnirile tale. Întreabă fie că ai întâlnit pe cineva, fie că nu. Fiecare cerere trimite și o valoare cu aspect aleator și un răspuns cu aspect aleator, iar răspunsul la cerere aduce înapoi o mână din fiecare.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- ro: Grădina web păstrează valorile cu aspect aleator pe care le primește în două depozite, unul cu valori de 64 de octeți și unul cu valori de 104 octeți. Fiecare valoare e păstrată singură, fără oră, adresă sau ordine. O valoare rămâne până când valori mai noi o împing afară. Copia de siguranță de noapte a grădinii lasă depozitele deoparte. Un răspuns se deschide doar pe telefonul care și-a trimis sămânța. Semințele de la Autonaut călătoresc și ele așa. Pentru grădina web, fiecare valoare e numere aleatoare.
+
+- **Terms.** sămânță (pl. semințe), plantă, grădină web, întâlnire, numere aleatoare, octet; pool depozit; switch veștile din grădină.
+- **Unsure.** *64 de octeți* and *104 octeți* by the numeral rule; *o mână* for a handful.
+
+## ru - Russian
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- ru: Если новости из сада включены, приложение при каждом запуске спрашивает у сада на сайте о твоих общих растениях, отправляя случайные числа из твоих встреч. Оно спрашивает независимо от того, была ли хоть одна встреча. Каждый запрос отправляет также одно значение, которое выглядит случайным, и один ответ, который выглядит случайным, а ответ на запрос приносит обратно горсть тех и других.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- ru: Сад на сайте хранит получаемые значения, которые выглядят случайными, в двух хранилищах: в одном значения по 64 байта, в другом по 104 байта. Каждое значение хранится отдельно, без времени, адреса и порядка. Значение остаётся, пока его не вытеснят более новые. Ночная резервная копия сада оставляет хранилища за своими пределами. Ответ открывается только на телефоне, который отправил своё семя. Семена из Autonaut путешествуют так же. Для сада на сайте каждое значение — случайные числа.
+
+- **Terms.** семя, растение, сад на сайте, встреча, случайные числа, байт; pool хранилище; switch новости из сада.
+- **Unsure.** *Горсть* for a handful; *оставляет хранилища за своими пределами* for *leaves out*.
+
+## sk - Slovak
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- sk: Keď sú správy zo záhrady zapnuté, aplikácia sa pri každom spustení spýta záhrady na webe na tvoje spoločné rastliny, a to tak, že pošle náhodné čísla z tvojich stretnutí. Pýta sa bez ohľadu na to, či nejaké stretnutie bolo. Každá žiadosť posiela aj jednu hodnotu, ktorá vyzerá náhodne, a jednu odpoveď, ktorá vyzerá náhodne, a odpoveď na žiadosť prináša späť hrsť z každej.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- sk: Záhrada na webe uchováva prijaté hodnoty, ktoré vyzerajú náhodne, v dvoch zásobníkoch, jednom na hodnoty s veľkosťou 64 bajtov a jednom na hodnoty s veľkosťou 104 bajtov. Každá hodnota sa uchováva samostatne, bez času, adresy a poradia. Hodnota zostáva, kým ju nevytlačia novšie. Nočná záloha záhrady zásobníky vynecháva. Odpoveď sa otvorí len na telefóne, ktorý poslal svoje semienko. Semienka z aplikácie Autonaut putujú rovnako. Pre záhradu na webe je každá hodnota náhodné čísla.
+
+- **Terms.** semienko, rastlina, záhrada na webe, stretnutie, náhodné čísla, bajt; pool zásobník; switch správy zo záhrady.
+- **Unsure.** *Hodnoty s veľkosťou 64 bajtov* for the sizes; *hrsť* for a handful; *aplikácia Autonaut* to avoid declining the name.
+
+## sl - Slovenian
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- sl: Če so novice iz vrta vklopljene, aplikacija ob vsakem zagonu vpraša spletni vrt o tvojih deljenih rastlinah, tako da pošlje naključna števila iz tvojih srečanj. Vpraša ne glede na to, ali je bilo kakšno srečanje. Vsaka zahteva pošlje tudi eno vrednost, ki je videti naključna, in en odgovor, ki je videti naključen, odgovor na zahtevo pa prinese nazaj peščico obojega.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- sl: Spletni vrt hrani prejete vrednosti, ki so videti naključne, v dveh shrambah, v eni so vrednosti po 64 bajtov, v drugi vrednosti po 104 bajtov. Vsaka vrednost se hrani sama, brez časa, naslova in vrstnega reda. Vrednost ostane, dokler je ne izpodrinejo novejše. Nočna varnostna kopija vrta obe shrambi izpusti. Odgovor se odpre samo na telefonu, ki je poslal svoje seme. Semena iz aplikacije Autonaut potujejo enako. Za spletni vrt je vsaka vrednost naključna števila.
+
+- **Terms.** seme, rastlina, spletni vrt, srečanje, naključna števila, bajt; pool shramba (dual shrambi); switch novice iz vrta.
+- **Unsure.** The dual (*obe shrambi izpusti*); *po 64 bajtov* for the sizes; *peščica* for a handful.
+
+## sq - Albanian
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- sq: Me lajmet nga kopshti aktive, sa herë që aplikacioni niset, ai pyet kopshtin në web për bimët e tua të ndara, duke dërguar numrat e rastit nga takimet e tua. Ai pyet qoftë se ke takuar dikë, qoftë se jo. Çdo kërkesë dërgon edhe një vlerë që duket e rastit dhe një përgjigje që duket e rastit, dhe përgjigjja ndaj kërkesës sjell mbrapsht një grusht nga secila.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- sq: Kopshti në web i mban vlerat që duken të rastit dhe që merr në dy depo, njërën me vlera 64-bajtëshe dhe tjetrën me vlera 104-bajtëshe. Çdo vlerë mbahet më vete, pa kohë, adresë ose renditje. Një vlerë qëndron derisa ta shtyjnë jashtë të tjera më të reja. Kopja rezervë e natës e kopshtit i lë depot jashtë. Një përgjigje hapet vetëm në telefonin që dërgoi farën e vet. Farat nga Autonaut udhëtojnë po kështu. Për kopshtin në web, çdo vlerë është numra të rastit.
+
+- **Terms.** farë, bimë, kopsht në web, takim, numra të rastit, bajt; pool depo; switch lajme nga kopshti.
+- **Unsure.** *64-bajtëshe* as an adjective; *grusht* for a handful. I am not confident of this one.
+
+## sr - Serbian
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- sr: Ако су вести из баште укључене, апликација при сваком покретању пита веб-башту о твојим дељеним биљкама, тако што пошаље случајне бројеве из твојих сусрета. Пита без обзира на то да ли је било икаквог сусрета. Сваки захтев шаље и једну вредност која изгледа случајно и један одговор који изгледа случајно, а одговор на захтев враћа шаку једних и других.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- sr: Веб-башта чува примљене вредности које изгледају случајно у два спремника, једном за вредности од 64 бајта и једном за вредности од 104 бајта. Свака вредност се чува сама, без времена, адресе и редоследа. Вредност остаје док је не истисну новије. Ноћна резервна копија баште изоставља спремнике. Одговор се отвара само на телефону који је послао своје семе. Семена из апликације Autonaut путују на исти начин. За веб-башту свака вредност су случајни бројеви.
+
+- **Terms.** Cyrillic as the catalogue has it: семе, биљка, веб-башта, сусрет, случајни бројеви, бајт; pool спремник; switch вести из баште.
+- **Unsure.** *Шака* for a handful; the catalogue's ekavian forms.
+
+## sv - Swedish
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- sv: När nytt från trädgården är på, frågar appen trädgården på webben om dina delade växter varje gång den startar, genom att skicka slumptalen från dina möten. Den frågar oavsett om du har mött någon eller inte. Varje förfrågan skickar också ett värde som ser slumpmässigt ut och ett svar som ser slumpmässigt ut, och svaret på förfrågan för med sig en handfull av vardera tillbaka.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- sv: Trädgården på webben behåller de värden som ser slumpmässiga ut och som den tar emot i två förråd, ett med värden på 64 byte och ett med värden på 104 byte. Varje värde sparas för sig, utan tid, adress eller ordning. Ett värde blir kvar tills nyare värden trycker ut det. Trädgårdens nattliga säkerhetskopia lämnar förråden utanför. Ett svar öppnas bara på telefonen som skickade sitt frö. Frön från Autonaut reser på samma sätt. För trädgården på webben är varje värde slumptal.
+
+- **Terms.** frö (pl. frön), växt, trädgården på webben, möte, slumptal, byte; pool förråd; switch nytt från trädgården.
+- **Unsure.** *En handfull*. The app is translated into Swedish but has no label yet for the switch.
+
+## tr - Turkish
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- tr: Bahçeden haberler açıkken, uygulama her başladığında paylaştığın bitkileri web bahçesine sorar; bunu karşılaşmalarından gelen rastgele sayıları göndererek yapar. Biriyle karşılaşmış olsan da olmasan da sorar. Her istek ayrıca rastgele görünen bir değer ve rastgele görünen bir yanıt gönderir, isteğin yanıtı ise her birinden bir avuç geri getirir.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- tr: Web bahçesi aldığı rastgele görünen değerleri iki depoda tutar: birinde 64 baytlık değerler, ötekinde 104 baytlık değerler vardır. Her değer zaman, adres ve sıra olmadan tek başına tutulur. Bir değer, daha yeniler onu dışarı itene kadar durur. Bahçenin gecelik yedeği depoları dışarıda bırakır. Bir yanıt yalnızca tohumunu gönderen telefonda açılır. Autonaut'tan gelen tohumlar da böyle yolculuk eder. Web bahçesi için her değer rastgele sayılardır.
+
+- **Terms.** tohum, bitki, web bahçesi, karşılaşma, rastgele sayılar, bayt; pool depo; switch bahçeden haberler.
+- **Unsure.** *Bir avuç* for a handful; *Autonaut'tan* with the apostrophe suffix.
+
+## uk - Ukrainian
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- uk: Якщо новини з саду увімкнені, застосунок при кожному запуску запитує сад на сайті про твої спільні рослини, надсилаючи випадкові числа з твоїх зустрічей. Він запитує незалежно від того, чи була хоч одна зустріч. Кожен запит надсилає також одне значення, що виглядає випадковим, і одну відповідь, що виглядає випадковою, а відповідь на запит приносить назад жменю кожного.
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- uk: Сад на сайті зберігає отримані значення, що виглядають випадковими, у двох сховищах: в одному значення по 64 байти, в іншому по 104 байти. Кожне значення зберігається окремо, без часу, адреси й порядку. Значення лишається, доки його не витіснять новіші. Нічна резервна копія саду сховища залишає поза собою. Відповідь відкривається лише на телефоні, який надіслав свою насінину. Насінини з Autonaut подорожують так само. Для саду на сайті кожне значення — випадкові числа.
+
+- **Terms.** насінина, рослина, сад на сайті, зустріч, випадкові числа, байт; pool сховище; switch новини з саду.
+- **Unsure.** *Жменя* for a handful.
+
+## zh - Chinese (Simplified)
+
+**privacy7**
+
+- en: With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.
+- zh: 打开花园消息后，应用每次启动时都会向网上花园询问你分享的那些植物，询问的办法是把你各次相遇的随机数发过去。无论你有没有遇见过谁，它都会询问。每次请求还会发出一个看起来随机的值和一个看起来随机的回复，请求的答复会带回两者各一小把。
+
+**privacy11**
+
+- en: The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The garden's nightly backup leaves the pools out. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.
+- zh: 网上花园把收到的看起来随机的值存放在两个存储池里，一个存放64字节的值，一个存放104字节的值。每个值单独保存，没有时间、地址和顺序。值会一直留着，直到更新的值把它挤出去。花园的夜间备份不包含这两个存储池。回复只能在发出该种子的那部手机上打开。来自 Autonaut 的种子也走这条路。对网上花园来说，每个值都是随机数。
+
+- **Terms.** 种子, 植物, 网上花园, 相遇, 随机数, 字节; pool 存储池; switch 花园消息.
+- **Unsure.** *一小把* for a handful; the catalogue's 提醒 is replaced by 花园消息. I used the numerals 64 and 104 and left no space before 字节, as Chinese does.
