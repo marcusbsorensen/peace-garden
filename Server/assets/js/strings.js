@@ -586,10 +586,29 @@ export const EN = Object.freeze({
   // `GardenModel.catchUpOnTheAsking`, run when the app starts and only while
   // `sharing.invitations.v1` is on: it sends this phone's own token for each
   // meeting — every meeting's, shared or not, which is what *the random numbers
-  // from your meetings* says — and nothing else, and hears back about the
-  // plants that were offered.
+  // from your meetings* says — and hears back about the plants that were
+  // offered.
+  //
+  // **Rewritten for Zone C** (`design/space-seeds-2026-10-16/DESIGN.md` §4.1,
+  // §6.3). The request now goes at every start, with meetings or without, and
+  // every request carries one random-looking value up (`aloft`, 128 hex
+  // characters) and one reply (`back`, 208), and every answer a bundle of each.
+  // The switch is relabelled in the app; the words here name what it does, not
+  // its label. The old text said *with alerts on*.
   privacy7:
-    "With alerts on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings.",
+    "With news from the garden on, each time the app starts it asks the web garden about your shared plants, by sending the random numbers from your meetings. It asks whether or not you have met anyone. Each request also sends up one random-looking value and one random-looking reply, and the answer brings back a handful of each.",
+  // What the web garden keeps of those values, `Aloft.php` (S1): two pools in
+  // a file of their own, `aloft` for the 64-byte values and `back` for the
+  // 104-byte ones, one column each and no more — no time, no address, no
+  // order. A full pool pushes out one value at random for each new one, so a
+  // value stays until newer ones push it out. Neither pool is in `backup.php`'s
+  // list. A reply is sealed to a key that stays on the phone that sent the
+  // seed, so only that phone opens it. *Seeds from Autonaut* is the one place
+  // the page names it, as DESIGN.md §6.3 allows: it says what happens, not who
+  // uses it. The web garden holds no key and cannot tell a seed or a reply
+  // from random numbers, which is what the last sentence says.
+  privacy11:
+    "The web garden keeps the random-looking values it receives in two pools, one of 64-byte values and one of 104-byte values. Each is kept alone, with no time, address or order. A value stays until newer ones push it out. The pools are in no backup. A reply opens only on the phone that sent its seed. Seeds from Autonaut travel this way too. To the web garden, every value is random numbers.",
   // Release, since 1 October 2026: `WildRelease` in SeedCore is what is sent,
   // `router.php`'s release route what is checked, and `WildStore.php` what is
   // kept — the seed and the two parents, and no column for anything else. The

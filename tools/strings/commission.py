@@ -257,9 +257,13 @@ PRIVACY = {
         "seen": "Sixth paragraph of /privacy, about the app asking the web "
                 "garden.",
         "must": [
-            "With alerts on, each time the app starts it asks the web garden "
-            "about your shared plants.",
+            "With news from the garden on, each time the app starts it asks "
+            "the web garden about your shared plants.",
             "It asks by sending the random numbers from your meetings.",
+            "It asks whether or not the reader has met anyone.",
+            "Each request also sends up one random-looking value and one "
+            "random-looking reply, and the answer brings back a handful of "
+            "each.",
         ],
         "must not": [
             "Say it asks all the time, or in the background. It asks when it "
@@ -267,8 +271,14 @@ PRIVACY = {
             "Narrow *the random numbers from your meetings* to the shared plants' "
             "alone. It sends one for every meeting, and the answer is about the "
             "shared plants.",
+            "Say the request goes only when there are meetings. It goes at "
+            "every start.",
+            "Say what the two values are for, or name Autonaut. `privacy11` "
+            "says what is kept; this sentence says only what is sent.",
+            "Say *a handful* is a number. It is a few, as the English says.",
             "Name the setting differently from the app's own switch, if your "
-            "language has the app.",
+            "language has the app. The switch reads *Ask the garden for news "
+            "when it opens*.",
         ],
     },
     "privacy5": {
@@ -1109,6 +1119,45 @@ UPDATE = {
 }
 
 
+# Zone C, the pools on the web garden's side (October 2026), and the privacy
+# page's paragraph about them. **A group of its own, for the reason `WEAR` and
+# `UPDATE` are**: every catalogue that has the page would otherwise be
+# half-commissioned the day it was added. The wording is in
+# `design/space-seeds-2026-10-16/WORDING-en.md`.
+ZONEC = {
+    "privacy11": {
+        "seen": "On /privacy straight after `privacy7`, the paragraph on the "
+                "asking, since the two pools are what the asking fills.",
+        "must": [
+            "The web garden keeps the random-looking values it receives in two "
+            "pools, one of 64-byte values and one of 104-byte values.",
+            "Each value is kept alone, with no time, address or order.",
+            "A value stays until newer ones push it out.",
+            "The pools are in no backup.",
+            "A reply opens only on the phone that sent its seed.",
+            "Seeds from Autonaut travel this way too.",
+            "To the web garden, every value is random numbers.",
+        ],
+        "must not": [
+            "Say the values are deleted after a time. They stay until newer "
+            "ones push them out, which is sooner on a busy day and later on a "
+            "quiet one.",
+            "Say the web garden can read, open or tell apart the values. It "
+            "holds no key.",
+            "Say the pools are encrypted or anonymous. They are random-looking "
+            "bytes, and that is all the sentence claims.",
+            "Say *nothing is kept* or *nothing is stored*. Two pools are kept.",
+            "Translate *Autonaut*. It is a name.",
+            "Call a reply a message or a letter. It is a reply to a seed, "
+            "which only the phone that sent that seed can open.",
+        ],
+        "note": "*64-byte* and *104-byte* are sizes, as written; keep the "
+                "numerals and your language's word for byte. *Pools* are "
+                "places values are kept together and drawn from, not water.",
+    },
+}
+
+
 def english():
     """The six, the thirteen and the ten, as `strings.js` has them today."""
     source = SOURCE.read_text()
@@ -1224,7 +1273,7 @@ def privacy(catalogue, code, source):
     print("## The words this language has already chosen\n")
     settled_words(theirs, source, code,
                   [k for k in source if k not in PRIVACY and k not in WEAR
-                   and k not in UPDATE])
+                   and k not in UPDATE and k not in ZONEC])
 
     print("\n## The eight\n")
     for key, claim in PRIVACY.items():
@@ -1245,6 +1294,13 @@ def privacy(catalogue, code, source):
     print("## And the tenth, on the App Store's update check\n")
     print("Its own commission, as the ninth is.\n")
     for key, claim in UPDATE.items():
+        claimed(key, claim, source)
+
+    # **And the eleventh, since October 2026** (`ZONEC`), on what the pools
+    # keep, on its own for the same reason.
+    print("## And the eleventh, on what the pools keep\n")
+    print("Its own commission, as the ninth and tenth are.\n")
+    for key, claim in ZONEC.items():
         claimed(key, claim, source)
 
 
