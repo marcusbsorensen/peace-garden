@@ -10,5 +10,19 @@
 		<string>applinks:peacegarden.app</string>
 		<string>appclips:peacegarden.app</string>
 	</array>
+
+	<!-- The suite's shared folder, named by the Hub on 16 October 2026 and held
+	     by every app signed by team R94VDZ56RY that opts in. Zone C uses it to
+	     pass a seed one way and the seeds it finds the other: small files in
+	     `Seeds/v1/`, and a presence marker in `Presence/v1/`. The name has to
+	     be registered for the team on developer.apple.com before a signed
+	     device build can carry it (G6); the simulator takes it as it stands.
+	     An App Group cannot enforce which folder an app keeps to, so
+	     `SuiteGroup` and `SuiteTransit` hold Peace Garden to its own files, and
+	     their tests check it. -->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.interfulgent.suite</string>
+	</array>
 </dict>
 </plist>
