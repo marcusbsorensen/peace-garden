@@ -31,15 +31,34 @@ if [ -e "$out" ]; then
 fi
 
 # Inside this repository the file must be ignored, or `git add -A` could commit
-# it. check-ignore exits 1 for a path that is not ignored (or is tracked) and
-# 128 for one outside the repository, which is fine.
-rc=0
-git -C "$root" check-ignore -q -- "$out" 2>/dev/null || rc=$?
-if [ "$rc" -eq 1 ]; then
-  echo "make_key: $out is inside the repository and not ignored by git." >&2
-  echo "  Add it to .gitignore before generating a key there." >&2
+# it, and the only answer that says so is `git check-ignore` exiting 0. Exit 1
+# is "not ignored (or tracked)". Anything else (127 for no git on the PATH, 128
+# for a tarball or a checkout git cannot read) says nothing about the file, so
+# it is refused too: a check that cannot run is not a check that passed.
+#
+# A path outside the repository needs no such answer. "Inside" is decided on
+# the real path of the folder, so `..` and symlinks cannot walk out of it.
+out_dir=$(cd "$(dirname "$out")" 2>/dev/null && pwd -P) || {
+  echo "make_key: the folder for $out does not exist; nothing written." >&2
   exit 1
-fi
+}
+real_root=$(cd "$root" && pwd -P)
+case "$out_dir/" in
+  "$real_root"/*)
+    rc=0
+    git -C "$root" check-ignore -q -- "$out_dir/$(basename "$out")" 2>/dev/null || rc=$?
+    if [ "$rc" -ne 0 ]; then
+      if [ "$rc" -eq 1 ]; then
+        echo "make_key: $out is inside the repository and not ignored by git." >&2
+        echo "  Add it to .gitignore before generating a key there." >&2
+      else
+        echo "make_key: $out is inside the repository, and git could not say whether" >&2
+        echo "  it is ignored (check-ignore exited $rc). Nothing written." >&2
+      fi
+      exit 1
+    fi
+    ;;
+esac
 
 # 32 bytes from the system's random source, as 64 hex digits. Held in a shell
 # variable only; the builtins below do not put it on a command line.
