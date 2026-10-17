@@ -145,8 +145,15 @@ final class PlantRenderTests: XCTestCase {
         let genome = genome("view")
         let growth = PlantSceneBuilder.bloomPreview(for: genome)
         let host = UIHostingController(rootView: PlantSceneView(genome: genome, growth: growth, isInteractive: false))
-        host.view.frame = CGRect(x: 0, y: 0, width: 200, height: 300)
+        // SwiftUI makes a representable's view once it is on screen, so the
+        // controller is given a window to be in.
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 200, height: 300))
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+        host.view.frame = window.bounds
+        host.view.setNeedsLayout()
         host.view.layoutIfNeeded()
+        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.3))
 
         func scnView(in view: UIView) -> SCNView? {
             if let found = view as? SCNView { return found }
