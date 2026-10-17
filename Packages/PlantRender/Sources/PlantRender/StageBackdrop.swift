@@ -66,8 +66,11 @@ public struct StageBackdrop: View {
     ///
     /// Near-black rather than black in the dark, and a warm near-white rather
     /// than white in the light. The app's own `Chrome.ground` is this value.
+    ///
+    /// `nonisolated`, because the app's `Chrome` is not on the main actor and
+    /// reads this where it declares its own `ground`.
     @_spi(PeaceGarden)
-    public static let ground = Color(uiColor: UIColor { trait in
+    public nonisolated static let ground = Color(uiColor: UIColor { trait in
         trait.userInterfaceStyle == .light ? UIColor(white: 0.965, alpha: 1) : .black
     })
 
