@@ -16,6 +16,17 @@ import SeedCore
 /// comes first. Looking first keeps the record holding its seed back to the end
 /// of the answer, whatever else may end a record later.
 ///
+/// ## Off the main actor
+///
+/// All of it runs in one task detached from the caller, at utility priority.
+/// The returns are up to 1,024 key agreements, about 100 ms on a Mac and a few
+/// hundred on the oldest phone Peace Garden supports (`REVIEW-A2.md`,
+/// finding 1), and nobody is waiting for the answer: the launch has already
+/// painted. The call is detached rather than left to the executor that happens
+/// to run `ask`, so that where the work runs does not depend on the
+/// concurrency settings the project is built with, and `ZoneCEngineTests`
+/// holds it.
+///
 /// ## What it writes
 ///
 /// To Zone C's own store, always. To the App Group, once per find, to `in/`
@@ -40,7 +51,9 @@ struct ZoneCEngine: ZoneCBundles {
     }
 
     func receive(aloft: [Data], back: [Data]) async {
-        finder.find(in: aloft)
-        returns.receive(back: back)
+        await Task.detached(priority: .utility) { [finder, returns] in
+            finder.find(in: aloft)
+            returns.receive(back: back)
+        }.value
     }
 }

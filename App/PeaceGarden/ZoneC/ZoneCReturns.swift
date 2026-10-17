@@ -35,7 +35,8 @@ import SeedCore
 ///
 /// These are synchronous, and `receive(back:)` is the 1,024 key agreements: about
 /// 100 ms on a Mac and a few hundred on the oldest phone Peace Garden supports.
-/// It should not run on the main actor.
+/// It must not run on the main actor. `ZoneCEngine` is the one place that
+/// decides where the work runs, and it puts all of it off the main actor.
 struct ZoneCReturns: Sendable {
     /// One attempt to open one row, with one record's seed key, for the space
     /// seed that key was sent beside. Injected so that a test can see where the

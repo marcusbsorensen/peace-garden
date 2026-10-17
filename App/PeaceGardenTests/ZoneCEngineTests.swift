@@ -701,6 +701,45 @@ final class ZoneCEngineTests: XCTestCase {
         XCTAssertEqual(tries.count, 0, "no cryptography at all for a phone that sent nothing")
     }
 
+    /// 1,024 key agreements take about 100 ms on a Mac and a few hundred on an
+    /// old phone (REVIEW-A2, finding 1), so they must not run on the main actor
+    /// whichever actor calls the engine.
+    @MainActor
+    func testTheOpeningLoopRunsOffTheMainActor() async throws {
+        let tries = Tries()
+        let ana = phone("Ana", opening: counting(tries))
+        try ana.store.update { state in
+            for n in 1...8 { state.addSentSeed(record(UInt8(n))) }
+        }
+        XCTAssertTrue(Thread.isMainThread, "the test itself is on the main actor")
+
+        await ana.engine.receive(aloft: [], back: backBundle([]))
+
+        XCTAssertEqual(tries.count, 8 * 128)
+        XCTAssertFalse(tries.anyOnTheMainThread, "not one of them ran on the main thread")
+        XCTAssertTrue(Thread.isMainThread, "and the caller is back where it was")
+    }
+
+    /// The same, from the exchange, which is how the app reaches the engine.
+    @MainActor
+    func testTheOpeningLoopRunsOffTheMainActorWhenTheExchangeCallsIt() async throws {
+        let tries = Tries()
+        let ana = phone("Ana", opening: counting(tries))
+        try ana.store.update { state in
+            for n in 1...8 { state.addSentSeed(record(UInt8(n))) }
+        }
+        let rows = backBundle([]).map { SuiteHex.encode($0) }.joined()
+        let service = AskingTests.Stub()
+        service.replies["/api/walk/pending"] = (
+            200, #"{"aloft":"\#(String(repeating: "ab", count: 64 * 2))","back":"\#(rows)"}"#
+        )
+
+        try await ana.launch(service)
+
+        XCTAssertEqual(tries.count, 8 * 128)
+        XCTAssertFalse(tries.anyOnTheMainThread)
+    }
+
     // MARK: - The order
 
     /// The third return ends a record in the same answer that carries its own
